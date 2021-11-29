@@ -19,15 +19,15 @@ namespace DobakBot.Controller
             set 
             {
                 animals = value;
-                Bettings = new Dictionary<string, List<BettingMember>>();
+                Bettings = new AnimalRaceBettings();
                 foreach (var item in value)
                 {
                     Bettings.Add(item.Name, new List<BettingMember>());
                 }
             } 
         }
-        public Dictionary<string, List<BettingMember>> Bettings { get; private set; }
-        public int TotalMoney => GetTotalMoney();
+        public AnimalRaceBettings Bettings { get; private set; }
+        public int TotalMoney => Bettings.TotalMoney;
         public bool IsSetting => Animals != null;
 
         public Embed GetBettingPanel()
@@ -41,23 +41,9 @@ namespace DobakBot.Controller
             return builder.Build();
         }
 
-        public int GetBettingMoney(string animalName)
-        {
-            int money = 0;
-            Bettings[animalName].ForEach(x =>
-            {
-                money += x.Money;
-            });
-            return money;
-        }
+        public int GetBettingMoney(string animalName) => Bettings.GetBettingMoney(animalName);
 
-        public float GetBettingOdds(string animalName)
-        {
-            var betting = GetBettingMoney(animalName);
-            if (TotalMoney == 0 || betting == 0)
-                return 0;
-            return (float) TotalMoney / betting;
-        }
+        public float GetBettingOdds(string animalName) => Bettings.GetBettingOdds(animalName);
 
 
         public bool TryAddBetting(ulong id, string nickname, string animalName, int money)
@@ -101,16 +87,6 @@ namespace DobakBot.Controller
                     $"　배당률 : {GetBettingOdds(item.Name):0.00}\n";
             }
             return text;
-        }
-
-        private int GetTotalMoney()
-        {
-            int money = 0;
-            foreach (var item in Bettings)
-            {
-                money += GetBettingMoney(item.Key);
-            }
-            return money;
         }
     }
 }

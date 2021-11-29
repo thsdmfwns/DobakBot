@@ -11,7 +11,7 @@ namespace DobakBot.Model
 {
     class AnimalRace
     {
-        public AnimalRace(List<Animal> animals, Dictionary<string, List<BettingMember>> bettings)
+        public AnimalRace(List<Animal> animals, AnimalRaceBettings bettings)
         {
             embedBuilder.Title = "경마?";
             embedBuilder.Color = Color.Red;
@@ -21,7 +21,7 @@ namespace DobakBot.Model
 
         public int RaceDistance { get; set; } = 30;
         public List<Animal> Animals { get; set; }
-        public Dictionary<string, List<BettingMember>> Bettings { get; set; }
+        public AnimalRaceBettings Bettings { get; set; }
         public Queue<Animal> ArrivedAnimals { get; private set; } = new Queue<Animal>();
         public bool isRaceDone { get; private set; } = false;
 
@@ -105,7 +105,7 @@ namespace DobakBot.Model
                 return "아쉽게도 무승부네요!";
             }
             var bettings = Bettings[winner.Name];
-            var odd = GambleController.Instance.animalRace.GetBettingOdds(winner.Name);
+            var odd = Bettings.GetBettingOdds(winner.Name);
             foreach (var item in bettings)
             {
                 text += $"{item.Nickname} : {(int)(item.Money * odd)}\n";
