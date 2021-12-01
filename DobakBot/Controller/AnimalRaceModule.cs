@@ -13,19 +13,23 @@ namespace DobakBot.Controller
     {
         private AnimalRaceController controller = GambleController.Instance.animalRace;
 
-        string HelpStart = "경마 시작 : !경마 시작 별명#이모티콘 별명#이모티콘 \n" +
-                    "(ex : !경마 시작 토끼#:rabbit2: 거북이#:turtle:";
-        string HelpBetting = "베팅 : !경마 베팅 베팅대상 베팅금액\n" +
-                "(ex : !베팅 토끼 100)";
+        const string HelpStart = "경마 시작 : !경마 시작 별명#이모티콘 별명#이모티콘 \n" +
+                    "(ex : !경마 시작 토끼#:rabbit2: 거북이#:turtle:)";
+        const string HelpAdd = "말 추가 : !경마 추가 별명#이모티콘\n" +
+                    "(ex : !경마 추가 토끼#:rabbit2:)";
+        const string HelpRemove = "말 제거 : !경마 제거 베팅대상\n" +
+                    "(ex : !경마 제거 토끼)";
+        const string HelpBetting = "베팅 : !경마 베팅 베팅대상 베팅금액\n" +
+                    "(ex : !경마 베팅 토끼 100)";
 
         [Command("시작")]
-        public async Task AnimalRaceBetStart()
+        public async Task AnimalRaceStart()
         {
             await ReplyAsync(HelpStart);
         }
 
         [Command("시작")]
-        public async Task AnimalRaceBetStart([Remainder] string args)
+        public async Task AnimalRaceStart([Remainder] string args)
         {
             if (controller.IsSetting)
             {
@@ -57,6 +61,66 @@ namespace DobakBot.Controller
             await Context.Channel.SendMessageAsync("", false, controller.GetBettingPanel());
         }
 
+        [Command("추가")]
+        public async Task AnimalRaceAdd()
+        {
+            await ReplyAsync(HelpAdd);
+        }
+
+        [Command("추가")]
+        public async Task AnimalRaceAdd([Remainder] string args)
+        {
+            if (!controller.IsSetting)
+            {
+                await ReplyAsync("시작을 먼저 해주세요!\n" + HelpStart);
+                return;
+            }
+            var arg = args.Split('#', StringSplitOptions.RemoveEmptyEntries);
+            if (arg.Length < 2)
+            {
+                await ReplyAsync(HelpAdd);
+                return;
+            }
+
+            var animal = new Animal(arg[0], arg[1]);
+
+            if (!controller.TryAddAnimal(animal))
+            {
+                await ReplyAsync("이미 존재하는 말의 이름입니다.");
+                return;
+            }
+            await Context.Channel.SendMessageAsync("", false, controller.GetBettingPanel());
+        }
+
+        [Command("제거")]
+        public async Task AnimalRaceRemove()
+        {
+            await ReplyAsync(HelpRemove);
+        }
+
+        [Command("제거")]
+        public async Task AnimalRaceRemove([Remainder] string args)
+        {
+            if (!controller.IsSetting)
+            {
+                await ReplyAsync("시작을 먼저 해주세요!\n" + HelpStart);
+                return;
+            }
+
+            if (args == string.Empty)
+            {
+                await ReplyAsync(HelpRemove);
+                return;
+            }
+
+            if (!controller.TryRemoveAnimal(args))
+            {
+                await ReplyAsync("존재하지 않는 말의 이름입니다.");
+                return;
+            }
+            await Context.Channel.SendMessageAsync("", false, controller.GetBettingPanel());
+        }
+
         [Command("베팅")]
         public async Task AnimalRaceBetting()
         {
@@ -68,7 +132,7 @@ namespace DobakBot.Controller
         {
             if (!controller.IsSetting)
             {
-                await ReplyAsync("!경마 시작을 먼저 해주세요!");
+                await ReplyAsync("시작을 먼저 해주세요!\n" + HelpStart);
                 return;
             }
 
@@ -103,7 +167,7 @@ namespace DobakBot.Controller
         }
 
         [Command("경기")]
-        public async Task AnimalRace()
+        public async Task AnimalRaceRun()
         {
             if (!controller.IsSetting)
             {
@@ -116,9 +180,7 @@ namespace DobakBot.Controller
 
         private async Task RunAnimalRace()
         {
-            var animals = controller.Animals;
-            var bettings = controller.Bettings;
-            var race = new AnimalRace(animals, bettings);
+            var race = controller.GetAnimalRace;
             var msg = await Context.Channel.SendMessageAsync("", false, race.GetEmbed(isStart: true));
             while (!race.isRaceDone)
             {
@@ -130,7 +192,7 @@ namespace DobakBot.Controller
         }
 
         [Command("취소")]
-        public async Task AnimalRaceCancelCommand()
+        public async Task AnimalRaceCancel()
         {
             controller.Clear();
             await ReplyAsync("경마 취소 완료.");

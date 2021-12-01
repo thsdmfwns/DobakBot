@@ -19,7 +19,7 @@ namespace DobakBot
         {
             string text = string.Empty;
             text += "!파칭코\n";
-            text += "베팅시작 : !베팅시작 별명#이모티콘 별명#이모티콘 (ex : !베팅시작 토끼#:rabbit2: 거북이#:turtle:)\n";
+            text += "베팅시작 : !베팅시작 별명#이모티콘 별명#이모티콘 (ex : !베팅시작 토끼#:rabbit2: 거북이#:turtle: )\n";
             text += "베팅 : !베팅 베팅대상 베팅금액 (ex : !베팅 토끼 100) \n";
             text += "경마시작 : !경마시작\n";
             await ReplyAsync(text);
@@ -43,7 +43,16 @@ namespace DobakBot
             await msg.ModifyAsync(msg => msg.Embed = embeds[2]);
             await Task.Delay(1010);
             await msg.ModifyAsync(msg => msg.Embed = embeds[3]);
-            
+            Context.Guild.SearchUsersAsync
+        }
+
+        [Command("버튼")]
+        public async Task Spawn()
+        {
+            var builder = new ComponentBuilder()
+                .WithButton("label", "custom-id");
+
+            await ReplyAsync("Here is a button!", component:builder.Build());
         }
     }
 }
