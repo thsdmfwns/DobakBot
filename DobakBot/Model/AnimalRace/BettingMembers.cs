@@ -16,7 +16,7 @@ namespace DobakBot.Model
             string text = string.Empty;
             foreach (var item in this)
             {
-                text += $"{item.Nickname} : {item.Money}\n";
+                text += $"{item.Nickname} : {item.Money}:coin:\n";
             }
             return text;
         }

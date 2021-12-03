@@ -37,10 +37,16 @@ namespace DobakBot.Controller
             var user = channel.Guild.GetUser(arg.User.Id);
             var role = channel.Guild.GetRole(roleId);
 
+            if (user.Nickname == null || user.Nickname == string.Empty)
+            {
+                SendButtonMessage($"{user.Username} => 디스코드 채널의 별명을 IC상의 이름으로 설정해주세요!", channel);
+                await arg.DeferAsync();
+                return;
+            }
 
             if (user.Roles.Contains(role))
             {
-                SendButtonMessage($"{arg.User.Username} => 이미 입장하신분이네요!", channel);
+                SendButtonMessage($"{user.Nickname} => 이미 입장하신분이네요!", channel);
                 await arg.DeferAsync();
                 return;
             }

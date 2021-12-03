@@ -20,9 +20,23 @@ namespace DobakBot
         public async Task HelpCommand()
         {
             string text = string.Empty;
-            text += "!파칭코 배팅금액 (ex : !파칭코 1000)\n";
-            text += "!경마\n";
+            text += "파칭코 : 파칭코 채널을 입장후 !파칭코 배팅금액 (ex : !파칭코 1000)\n";
+            text += "경마 : 경마 채널을 입장후 경마의 베팅이 시작 됫을때 !경마 베팅 베팅이름 베팅금액 (ex : !경마 토끼 1000)\n";
+            text += "지갑보기 : 카지노의 아무 채널에서 !지갑\n";
             await ReplyAsync(text);
+        }
+
+        [Command("지갑")]
+        public async Task GetuserCommand()
+        {
+            var user = DB.GetUserByDiscordId(Context.User.Id);
+            if (user == null)
+            {
+                await ReplyAsync($"등록되지 않은 사용자입니다.");
+                return;
+            }
+            var nick = Context.Guild.GetUser(user.id).Nickname;
+            await ReplyAsync($"{nick}님의 현재 남은:coin:은 {user.coin}:coin: 입니다.");
         }
 
         [RequireChannel("파칭코")]
@@ -33,6 +47,11 @@ namespace DobakBot
             if (!int.TryParse(arg, out money))
             {
                 await ReplyAsync($"{arg} 일치 하지 않는 값입니다.\n" + "!파칭코 배팅금액 (ex : !파칭코 1000)");
+                return;
+            }
+            if (money > 1000)
+            {
+                await ReplyAsync($"베팅 최대 금액을 초과 했습니다. (베팅최대금액 : 1000:coin:)");
                 return;
             }
 
@@ -48,6 +67,7 @@ namespace DobakBot
                 return;
             }
 
+            DB.TrySubtractUserCoin(Context.User.Id, money);
             _ = RunSlotMachine(money);
         }
 

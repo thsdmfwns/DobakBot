@@ -51,7 +51,7 @@ namespace DobakBot.Model
                 Odd = 10;
                 return SlotResult.JackPot;
             }
-            if (ResultMap[SlotCard.Cherry] > 0)
+            if (ResultMap[SlotCard.Cherry] > 1)
             {
                 Coin *= 2;
                 Odd = 2;
@@ -80,7 +80,7 @@ namespace DobakBot.Model
 
             eb.Color = Color.Blue;
             eb.Description = ctxs[3];
-            var ctx = Odd > 0 ? $"+{Coin - (Coin/Odd)}" : $"-{Coin}";
+            var ctx = Odd > 0 ? $"+{Coin}" : $"-{Coin}";
             eb.AddField("결과", $"{userNickname} : {ctx}:coin:");
             list.Add(eb.Build());
 
