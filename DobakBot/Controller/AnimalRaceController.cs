@@ -22,21 +22,21 @@ namespace DobakBot.Controller
                 Bettings = new AnimalRaceBettings();
                 foreach (var item in value)
                 {
-                    Bettings.Add(item.Name, new List<BettingMember>());
+                    Bettings.Add(item.Name, new BettingMembers());
                 }
             } 
         }
         public AnimalRaceBettings Bettings { get; private set; }
         public int TotalMoney => Bettings.TotalMoney;
         public bool IsSetting => Animals != null && Bettings != null;
-        public AnimalRace GetAnimalRace => new AnimalRace(Animals, Bettings);
+        public AnimalRace AnimalRace => new AnimalRace(animals, Bettings);
 
         public bool TryAddAnimal(Animal animal)
         {
             if (GetAnimalByName(animal.Name) != null || Bettings.ContainsKey(animal.Name))
                 return false;
             Animals.Add(animal);
-            Bettings.Add(animal.Name, new List<BettingMember>());
+            Bettings.Add(animal.Name, new BettingMembers());
             return true;
         }
 
@@ -74,7 +74,6 @@ namespace DobakBot.Controller
         }
 
         public int GetBettingMoney(string animalName) => Bettings.GetBettingMoney(animalName);
-
         public float GetBettingOdds(string animalName) => Bettings.GetBettingOdds(animalName);
 
 

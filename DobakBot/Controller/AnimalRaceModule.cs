@@ -12,6 +12,7 @@ namespace DobakBot.Controller
     public class AnimalRaceModule : ModuleBase<SocketCommandContext>
     {
         private AnimalRaceController controller = GambleController.Instance.animalRace;
+        private DBController DB = GambleController.Instance.DB;
 
         const string HelpStart = "경마 시작 : !경마 시작 별명#이모티콘 별명#이모티콘 \n" +
                     "(ex : !경마 시작 토끼#:rabbit2: 거북이#:turtle:)";
@@ -136,14 +137,8 @@ namespace DobakBot.Controller
                 return;
             }
 
-            if (args == string.Empty)
-            {
-                await ReplyAsync(HelpBetting);
-                return;
-            }
-
             var arg = args.Split(' ');
-            if (arg.Length < 2)
+            if (args == string.Empty || arg.Length < 2)
             {
                 await ReplyAsync(HelpBetting);
                 return;
@@ -156,13 +151,28 @@ namespace DobakBot.Controller
                 return;
             }
 
+            var user = DB.GetUserByDiscordId(Context.User.Id);
+            if (user == null)
+            {
+                await ReplyAsync($"등록되지 않은 사용자입니다.");
+                return;
+            }
+            if (user.coin < money)
+            {
+                await ReplyAsync($"{Context.Guild.GetUser(Context.User.Id).Nickname}님의 :coin:이 부족합니다 ({user.coin - money}:coin:).");
+                return;
+            }
             if (!controller.TryAddBetting(
                 Context.User.Id, Context.Guild.GetUser(Context.User.Id).Nickname, arg[0], money))
             {
                 await ReplyAsync($"베팅 : {arg[0]} 일치 하지 않는 값입니다.\n" +  HelpBetting);
                 return;
             }
-
+            if (!DB.TrySubtractUserCoin(Context.User.Id, money))
+            {
+                await ReplyAsync("TrySubtractUserCoin => DB에러");
+                return;
+            }
             await Context.Channel.SendMessageAsync("", false, controller.GetBettingPanel());
         }
 
@@ -174,21 +184,33 @@ namespace DobakBot.Controller
                 await ReplyAsync("시작을 먼저 해주세요!\n"+HelpStart);
                 return;
             }
-            await RunAnimalRace();
+            var winners = await RunAnimalRace();
+            if (!DB.TryAddUsersCoin(winners)) await ReplyAsync("TryAddUsersCoin => DB에러");
             controller.Clear();
         }
 
-        private async Task RunAnimalRace()
+        private async Task<BettingMembers> RunAnimalRace()
         {
-            var race = controller.GetAnimalRace;
+            BettingMembers WinnerMembers;
+            var race = controller.AnimalRace;
             var msg = await Context.Channel.SendMessageAsync("", false, race.GetEmbed(isStart: true));
+
             while (!race.isRaceDone)
             {
                 await Task.Delay(1250);
                 var embed = race.GetEmbed();
-                if (embed == null) return;
+                if (embed == null) break;
                 await msg.ModifyAsync(msg => msg.Embed = embed);
             }
+
+            WinnerMembers = race.WinnerMembers;
+
+            if (race.WinnerMembers == null)
+            {
+                await Task.Delay(5000);
+                WinnerMembers = await RunAnimalRace();
+            }
+            return WinnerMembers;
         }
 
         [Command("취소")]

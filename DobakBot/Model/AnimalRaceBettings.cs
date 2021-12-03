@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DobakBot.Model
 {
-    class AnimalRaceBettings : Dictionary<string, List<BettingMember>>
+    class AnimalRaceBettings : Dictionary<string, BettingMembers>
     {
         public int TotalMoney => GetTotalMoney();
         public int GetBettingMoney(string animalName)

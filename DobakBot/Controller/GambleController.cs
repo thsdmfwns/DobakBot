@@ -15,6 +15,7 @@ namespace DobakBot.Controller
         #endregion
 
         public AnimalRaceController animalRace = new AnimalRaceController();
+        public DBController DB = new DBController();
 
     }
 }

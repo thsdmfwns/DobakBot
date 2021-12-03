@@ -13,9 +13,9 @@ namespace DobakBot.Model
     {
         public AnimalRace(List<Animal> animals, AnimalRaceBettings bettings)
         {
-            embedBuilder.Title = "경마?";
             embedBuilder.Color = Color.Red;
             Animals = animals;
+            Animals.ForEach(animal => animal.reset());
             Bettings = bettings;
         }
 
@@ -24,6 +24,7 @@ namespace DobakBot.Model
         public AnimalRaceBettings Bettings { get; set; }
         public Queue<Animal> ArrivedAnimals { get; private set; } = new Queue<Animal>();
         public bool isRaceDone { get; private set; } = false;
+        public BettingMembers WinnerMembers { get; set; }
 
         private EmbedBuilder embedBuilder = new EmbedBuilder();
         private void CheckRace() =>
@@ -89,7 +90,6 @@ namespace DobakBot.Model
 
         private string GetDividen()
         {
-            var text = string.Empty;
             var winnerCount = 0;
             Animal winner = new Animal("","");
             foreach (var item in Animals)
@@ -102,15 +102,12 @@ namespace DobakBot.Model
             }
             if (winnerCount > 1)
             {
-                return "아쉽게도 무승부네요!";
+                return "아쉽게도 무승부네요! \n 5초후 재경기가 펼쳐집니다!";
             }
-            var bettings = Bettings[winner.Name];
+            WinnerMembers = Bettings[winner.Name];
             var odd = Bettings.GetBettingOdds(winner.Name);
-            foreach (var item in bettings)
-            {
-                text += $"{item.Nickname} : {(int)(item.Money * odd)}\n";
-            }
-            return text;
+            WinnerMembers.SetOdd(odd);
+            return WinnerMembers.ToString();
         }
     }
 }

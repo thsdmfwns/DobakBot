@@ -7,12 +7,6 @@ using System.Threading.Tasks;
 
 namespace DobakBot.Model
 {
-    enum AnimalKind
-    {
-        None,
-        Rabbit,
-        Turtle,
-    }
     class Animal
     {
         public string Name { get; set; }
@@ -30,6 +24,8 @@ namespace DobakBot.Model
             Imoticon = imoticon;
             MaxSpeed = rand.Next(3, 5);
         }
+
+        public void reset() => CurrentDistance = 0;
 
         public void Move(int raceDistance) 
         {

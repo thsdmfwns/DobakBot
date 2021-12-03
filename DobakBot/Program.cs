@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using DobakBot.Controller;
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -21,7 +22,8 @@ namespace DobakBot
         {
             client = new DiscordSocketClient(new DiscordSocketConfig()
             {   
-                LogLevel = LogSeverity.Verbose                              
+                LogLevel = LogSeverity.Verbose,
+                GatewayIntents = GatewayIntents.All,
             });
             commands = new CommandService(new CommandServiceConfig()        
             {
@@ -32,8 +34,9 @@ namespace DobakBot
             commands.Log += OnClientLogReceived;
 
             await client.LoginAsync(TokenType.Bot, "OTEyMzg3MDEzNzE2NjA2OTc4.YZvMnw.tSUKo_CXfjCM4wnYdTciy08NtC4"); 
-            await client.StartAsync();                         
+            await client.StartAsync();
 
+            new ButtonHandler(client);
             client.MessageReceived += OnClientMessage;
             await commands.AddModulesAsync(assembly: Assembly.GetEntryAssembly(), services: null);
             await Task.Delay(-1);   

@@ -13,11 +13,14 @@ namespace DobakBot.Model
     {
         public List<SlotCard> resultCards { get; private set; } = new List<SlotCard>();
         public SlotResult SlotResult { get; private set; }
+        public int Coin { get; set; }
+        public int Odd { get; set; } = 0;
 
         private Dictionary<SlotCard, int> ResultMap = new Dictionary<SlotCard, int>();
 
-        public SlotMachine()
+        public SlotMachine(int coin)
         {
+            Coin = coin;
             for (int i = 1; i < (int)SlotCard.Max; i++)
             {
                 ResultMap.Add((SlotCard)i, 0);
@@ -55,9 +58,17 @@ namespace DobakBot.Model
         private SlotResult getSlotResult()
         {
             if (ResultMap.ContainsValue(3))
+            {
+                Coin *= 10;
+                Odd = 10;
                 return SlotResult.JackPot;
+            }
             if (ResultMap[SlotCard.Cherry] > 0)
+            {
+                Coin *= 2;
+                Odd = 2;
                 return SlotResult.Win;
+            }
             return SlotResult.Lose;
         }
 
@@ -81,6 +92,8 @@ namespace DobakBot.Model
 
             eb.Color = Color.Blue;
             eb.Description = ctxs[3];
+            var ctx = Odd > 0 ? $"+{Coin - (Coin/Odd)}" : $"-{Coin}";
+            eb.AddField("결과", $"{userNickname} : {ctx}:coin:");
             list.Add(eb.Build());
 
             return list;
