@@ -43,18 +43,6 @@ namespace DobakBot.Model
             SlotResult = getSlotResult();
         }
 
-/*        private async Task setValue(SlotCard card)
-        {
-            for (int i = 0; i < 3; i++)
-            {
-                ResultMap[card]++;
-                resultCards.Add(card);
-                await Task.Delay(10);
-            }
-
-            SlotResult = getSlotResult();
-        }*/
-
         private SlotResult getSlotResult()
         {
             if (ResultMap.ContainsValue(3))

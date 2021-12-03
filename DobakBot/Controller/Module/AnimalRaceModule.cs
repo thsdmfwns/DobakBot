@@ -1,4 +1,5 @@
 ﻿using Discord.Commands;
+using DobakBot.Controller.Attribute;
 using DobakBot.Model;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace DobakBot.Controller
 {
+    [RequireChannel("경마")]
     [Group("경마")]
     public class AnimalRaceModule : ModuleBase<SocketCommandContext>
     {
@@ -15,13 +17,13 @@ namespace DobakBot.Controller
         private DBController DB = GambleController.Instance.DB;
 
         const string HelpStart = "경마 시작 : !경마 시작 별명#이모티콘 별명#이모티콘 \n" +
-                    "(ex : !경마 시작 토끼#:rabbit2: 거북이#:turtle:)";
+                    "(ex : !경마 시작 토끼#:rabbit2: 거북이#:turtle:)\n";
         const string HelpAdd = "말 추가 : !경마 추가 별명#이모티콘\n" +
-                    "(ex : !경마 추가 토끼#:rabbit2:)";
+                    "(ex : !경마 추가 토끼#:rabbit2:)\n";
         const string HelpRemove = "말 제거 : !경마 제거 베팅대상\n" +
-                    "(ex : !경마 제거 토끼)";
+                    "(ex : !경마 제거 토끼)\n";
         const string HelpBetting = "베팅 : !경마 베팅 베팅대상 베팅금액\n" +
-                    "(ex : !경마 베팅 토끼 100)";
+                    "(ex : !경마 베팅 토끼 100)\n";
 
         [Command("시작")]
         public async Task AnimalRaceStart()

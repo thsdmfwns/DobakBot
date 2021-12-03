@@ -2,6 +2,7 @@
 using Discord.Commands;
 using Discord.Rest;
 using DobakBot.Controller;
+using DobakBot.Controller.Attribute;
 using DobakBot.Model;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,7 @@ namespace DobakBot
             await ReplyAsync(text);
         }
 
+        [RequireChannel("파칭코")]
         [Command("파칭코")]
         public async Task SlotMachineCommand([Remainder] string arg)
         {
@@ -63,14 +65,6 @@ namespace DobakBot
             await msg.ModifyAsync(msg => msg.Embed = embeds[2]);
             await Task.Delay(1010);
             await msg.ModifyAsync(msg => msg.Embed = embeds[3]);
-        }
-
-        [RequireUserPermission(GuildPermission.Administrator)]
-        [Command("입장버튼")]
-        public async Task Spawn()
-        {
-            var button = new ComponentBuilder().WithButton("카지노 입장하기","casino_enter", style:ButtonStyle.Secondary);
-            await ReplyAsync("", component: button.Build());
         }
     }
 }
