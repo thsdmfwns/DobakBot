@@ -18,7 +18,8 @@ namespace DobakBot.Controller.Attribute
         {
             if (context.Channel is SocketTextChannel textChannel)
             {
-                if (textChannel.Name == _name)
+                var name = textChannel.Name.Split('-', StringSplitOptions.RemoveEmptyEntries)[0];
+                if (name == _name)
                     return Task.FromResult(PreconditionResult.FromSuccess());
                 else
                     return Task.FromResult(PreconditionResult.FromError($"이커맨드는 {_name}채널에서만 가능합니다."));

@@ -34,6 +34,30 @@ namespace DobakBot.Utils
             return "";
         }
 
+        public static int SlotCardToOdd(SlotCard card)
+        {
+            switch (card)
+            {
+                case SlotCard.None:
+                    return 0;
+                case SlotCard.Orange:
+                    return 16;
+                case SlotCard.Grape:
+                    return 13;
+                case SlotCard.Cherry:
+                    return 10;
+                case SlotCard.Card:
+                    return 20;
+                case SlotCard.Gate:
+                    return 8;
+                case SlotCard.Bell:
+                    return 15;
+                default:
+                    break;
+            }
+            return 0;
+        }
+
         public static string SlotResultToString(SlotResult slotResult)
         {
             switch (slotResult)

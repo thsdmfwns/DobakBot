@@ -1,4 +1,5 @@
 ﻿using Discord.Commands;
+using Discord.WebSocket;
 using DobakBot.Controller.Attribute;
 using DobakBot.Model;
 using System;
@@ -18,19 +19,34 @@ namespace DobakBot.Controller
 
         const string HelpStart = "경마 시작 : !경마 시작 별명#이모티콘 별명#이모티콘 \n" +
                     "(ex : !경마 시작 토끼#:rabbit2: 거북이#:turtle:)\n";
-        const string HelpAdd = "말 추가 : !경마 추가 별명#이모티콘\n" +
+        const string HelpAdd = "경마 말 추가 : !경마 추가 별명#이모티콘\n" +
                     "(ex : !경마 추가 토끼#:rabbit2:)\n";
-        const string HelpRemove = "말 제거 : !경마 제거 베팅대상\n" +
+        const string HelpRemove = "경마 말 제거 : !경마 제거 베팅대상\n" +
                     "(ex : !경마 제거 토끼)\n";
-        const string HelpBetting = "베팅 : !경마 베팅 베팅대상 베팅금액\n" +
+        const string HelpBetting = "경마 베팅 : !경마 베팅 베팅대상 베팅금액\n" +
                     "(ex : !경마 베팅 토끼 100)\n";
+        const string HelpCancel = "경마 취소 : !경마 취소\n";
 
+        [Command("help")]
+        public async Task HelpCommand()
+        {
+            var role = (Context.User as SocketGuildUser).Roles.SingleOrDefault(x => x.Name == "CASINO dealer");
+            if(role == null)
+            {
+                await ReplyAsync(HelpBetting);
+                return;
+            }
+            await ReplyAsync(HelpBetting + HelpStart + HelpAdd + HelpRemove + HelpCancel);
+        }
+
+        [RequireRole("CASINO dealer")]
         [Command("시작")]
         public async Task AnimalRaceStart()
         {
             await ReplyAsync(HelpStart);
         }
 
+        [RequireRole("CASINO dealer")]
         [Command("시작")]
         public async Task AnimalRaceStart([Remainder] string args)
         {
@@ -64,12 +80,14 @@ namespace DobakBot.Controller
             await Context.Channel.SendMessageAsync("", false, controller.GetBettingPanel());
         }
 
+        [RequireRole("CASINO dealer")]
         [Command("추가")]
         public async Task AnimalRaceAdd()
         {
             await ReplyAsync(HelpAdd);
         }
 
+        [RequireRole("CASINO dealer")]
         [Command("추가")]
         public async Task AnimalRaceAdd([Remainder] string args)
         {
@@ -95,12 +113,14 @@ namespace DobakBot.Controller
             await Context.Channel.SendMessageAsync("", false, controller.GetBettingPanel());
         }
 
+        [RequireRole("CASINO dealer")]
         [Command("제거")]
         public async Task AnimalRaceRemove()
         {
             await ReplyAsync(HelpRemove);
         }
 
+        [RequireRole("CASINO dealer")]
         [Command("제거")]
         public async Task AnimalRaceRemove([Remainder] string args)
         {
@@ -178,12 +198,18 @@ namespace DobakBot.Controller
             await Context.Channel.SendMessageAsync("", false, controller.GetBettingPanel());
         }
 
+        [RequireRole("CASINO dealer")]
         [Command("경기")]
         public async Task AnimalRaceRun()
         {
             if (!controller.IsSetting)
             {
                 await ReplyAsync("시작을 먼저 해주세요!\n"+HelpStart);
+                return;
+            }
+            if(controller.TotalMoney == 0)
+            {
+                await ReplyAsync("베팅한사람이 아무도 없습니다.\n" + HelpBetting);
                 return;
             }
             var winners = await RunAnimalRace();
@@ -215,6 +241,7 @@ namespace DobakBot.Controller
             return WinnerMembers;
         }
 
+        [RequireRole("CASINO dealer")]
         [Command("취소")]
         public async Task AnimalRaceCancel()
         {

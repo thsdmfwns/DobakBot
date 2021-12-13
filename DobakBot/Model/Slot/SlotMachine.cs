@@ -16,7 +16,10 @@ namespace DobakBot.Model
         public int Coin { get; set; }
         public int Odd { get; set; } = 0;
 
+        public int ResultCoin => Coin * Odd;
+
         private Dictionary<SlotCard, int> ResultMap = new Dictionary<SlotCard, int>();
+        private List<SlotCard> Cards = new List<SlotCard>();
 
         public SlotMachine(int coin)
         {
@@ -25,7 +28,16 @@ namespace DobakBot.Model
             {
                 ResultMap.Add((SlotCard)i, 0);
             }
-
+            for (int i = 0; i < 3; i++)
+            {
+                Cards.Add(SlotCard.Bell);
+                Cards.Add(SlotCard.Card);
+                Cards.Add(SlotCard.Gate);
+                Cards.Add(SlotCard.Grape);
+                Cards.Add(SlotCard.Orange);
+            }
+            Cards.Add(SlotCard.Cherry);
+            Cards.Add(SlotCard.Cherry);
         }
 
         public async Task setValue()
@@ -34,12 +46,12 @@ namespace DobakBot.Model
 
             for (int i = 0; i < 3; i++)
             {
-                var num = random.Next((int)SlotCard.Orange, (int)SlotCard.Max);
-                ResultMap[(SlotCard)num]++;
-                resultCards.Add((SlotCard)num);
-                await Task.Delay(10);
+                var num = random.Next(0, Cards.Count);
+                var card = Cards.ElementAt(num);
+                ResultMap[card]++;
+                resultCards.Add(card);
+                await Task.Delay(1);
             }
-
             SlotResult = getSlotResult();
         }
 
@@ -47,13 +59,17 @@ namespace DobakBot.Model
         {
             if (ResultMap.ContainsValue(3))
             {
-                Coin *= 10;
-                Odd = 10;
+                var result = ResultMap.Single(x => x.Value == 3).Key;
+                Odd = Utility.SlotCardToOdd(result);
                 return SlotResult.JackPot;
             }
-            if (ResultMap[SlotCard.Cherry] > 1)
+            if (ResultMap[SlotCard.Cherry] > 0)
             {
-                Coin *= 2;
+                if (ResultMap[SlotCard.Cherry] > 1)
+                {
+                    Odd = 3;
+                    return SlotResult.Win;
+                }
                 Odd = 2;
                 return SlotResult.Win;
             }
@@ -80,7 +96,7 @@ namespace DobakBot.Model
 
             eb.Color = Color.Blue;
             eb.Description = ctxs[3];
-            var ctx = Odd > 0 ? $"+{Coin}" : $"-{Coin}";
+            var ctx = Odd > 0 ? $"+{ResultCoin}" : $"-{Coin}";
             eb.AddField("결과", $"{userNickname} : {ctx}:coin:");
             list.Add(eb.Build());
 

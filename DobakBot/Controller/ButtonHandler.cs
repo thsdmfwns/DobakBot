@@ -12,7 +12,6 @@ namespace DobakBot.Controller
         private DBController DB = GambleController.Instance.DB;
         private DiscordSocketClient Client;
         private const ulong roleId = 915546552062312468;
-        //private const ulong roleId = 915636004323475487;
 
 
         public ButtonHandler(DiscordSocketClient client)
@@ -25,15 +24,17 @@ namespace DobakBot.Controller
         {
             switch (arg.Data.CustomId)
             {
-                case "casino_enter": OnEnterButton(arg); return;
+                case "casino_enter": await OnEnterButton(arg); return;
                 default: return;
             }
 
         }
 
-        private async void OnEnterButton(SocketMessageComponent arg)
+        private async Task OnEnterButton(SocketMessageComponent arg)
         {
             var channel = arg.Channel as SocketTextChannel;
+            var guild = Client.Guilds.Single(x => x.Id == 911553362393198593);
+            var notifiyChannel = (guild.Channels.Single(x => x.Name == "자유게시판-ic")) as SocketTextChannel;
             var user = channel.Guild.GetUser(arg.User.Id);
             var role = channel.Guild.GetRole(roleId);
 
@@ -57,6 +58,7 @@ namespace DobakBot.Controller
                 return;
             }
             await user.AddRoleAsync(role);
+            await notifiyChannel.SendMessageAsync($"{user.Nickname}님이 카지노에 입장하셨습니다.");
             await arg.DeferAsync();
         }
 

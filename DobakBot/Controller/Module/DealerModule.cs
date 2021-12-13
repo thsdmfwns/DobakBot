@@ -1,5 +1,6 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
+using DobakBot.Controller.Attribute;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,15 +9,26 @@ using System.Threading.Tasks;
 
 namespace DobakBot.Controller.Module
 {
+    [RequireChannel("자유게시판")]
+    [RequireRole("CASINO dealer")]
+    [Group("코인")]
     public class DealerModule : ModuleBase<SocketCommandContext>
     {
-        private DBController DB = GambleController.Instance.DB;
+        private readonly DBController DB = GambleController.Instance.DB;
 
-        const string AddHelp = "코인 충전 : !충전 닉네임 금액 (ex : !충전 Dalsu_Son 10000";
+        const string AddHelp = "코인 충전 : !코인 충전 닉네임-금액 (ex : !코인 충전 Dalsu_Son-10000)\n";
+        const string SubtracktHelp = "코인 환전 : !코인 환전 닉네임-금액 (ex : !코인 환전 Dalsu_Son-10000)\n";
+
+        [Command("help")]
+        public async Task HelpCommand()
+        {
+            await ReplyAsync(AddHelp + SubtracktHelp);
+        }
 
         [Command("충전")]
         public async Task AddUserCoinCommand([Remainder] string arg)
         {
+            _ = Context.Message.DeleteAsync();
             var list = arg.Split('-', StringSplitOptions.RemoveEmptyEntries);
             await Context.Guild.DownloadUsersAsync();
             var user = Context.Guild.Users.FirstOrDefault(x => x.Nickname == list[0]);
@@ -39,12 +51,13 @@ namespace DobakBot.Controller.Module
                 return;
             }
 
-            await ReplyAsync($"{list[0]} => {money} 충전성공.");
+            await ReplyAsync($"{list[0]}님이 {money}:coin: 충전하셨습니다.");
         }
 
         [Command("환전")]
         public async Task SubtractUserCoinCommand([Remainder] string arg)
         {
+            _ = Context.Message.DeleteAsync();
             var list = arg.Split('-', StringSplitOptions.RemoveEmptyEntries);
             await Context.Guild.DownloadUsersAsync();
             var user = Context.Guild.Users.FirstOrDefault(x => x.Nickname == list[0]);
@@ -70,7 +83,8 @@ namespace DobakBot.Controller.Module
 
             if (dbuser.coin < money)
             {
-                await ReplyAsync($"{list[0]}님의 :coin:이 부족합니다 ({dbuser.coin - money}:coin:).");
+                await ReplyAsync($"{list[0]}님의 :coin:이 부족하여 환전이 불가능합니다.\n" +
+                    $"(현재 잔액 : {dbuser.coin}:coin:) (요청금액 : {money}:coin:).");
                 return;
             }
 
@@ -80,7 +94,7 @@ namespace DobakBot.Controller.Module
                 return;
             }
 
-            await ReplyAsync($"{list[0]} => {money} 환전성공.");
+            await ReplyAsync($"{list[0]}님이 {money - money*0.03}$ 환전하셨습니다.");
         }
     }
 }

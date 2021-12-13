@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using DobakBot.Controller.Attribute;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DobakBot.Controller
 {
-    [RequireUserPermission(GuildPermission.Administrator)]
+    [RequireRole("CASINO dealer")]
     public class AdminMoudule : ModuleBase<SocketCommandContext>
     {
         [Command("입장버튼")]
