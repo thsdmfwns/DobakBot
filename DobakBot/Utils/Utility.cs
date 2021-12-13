@@ -58,6 +58,35 @@ namespace DobakBot.Utils
             return 0;
         }
 
+        public static int? WeaponToMoney(Weapon weapon)
+        {
+            switch (weapon)
+            {
+                case Weapon.None:
+                    break;
+                case Weapon.Count:
+                    break;
+                case Weapon.Knife:
+                    return 1000;
+                case Weapon.Desert_Eagle:
+                    return 2460;
+            }
+            return null;
+        }
+
+        public static Weapon? StringtoWeapon(string context)
+        {
+            var weapons = Enum.GetValues(typeof(Weapon));
+            foreach (Weapon item in weapons)
+            {
+                if (item.ToString() == context)
+                {
+                    return item;
+                }
+            }
+            return null;
+        }
+
         public static string SlotResultToString(SlotResult slotResult)
         {
             switch (slotResult)

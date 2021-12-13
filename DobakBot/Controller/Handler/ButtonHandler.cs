@@ -25,9 +25,15 @@ namespace DobakBot.Controller
             switch (arg.Data.CustomId)
             {
                 case "casino_enter": await OnEnterButton(arg); return;
+                case "test": await testButton(arg); return;
                 default: return;
             }
 
+        }
+
+        private async Task testButton(SocketMessageComponent arg)
+        {
+            await arg.RespondAsync("이건 테스트로 만들어진 당신만이 볼수 있는 메세지입니다.", ephemeral: true);
         }
 
         private async Task OnEnterButton(SocketMessageComponent arg)
