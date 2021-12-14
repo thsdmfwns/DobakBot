@@ -18,6 +18,7 @@ namespace DobakBot.Controller.Module
         [Command("장부")]
         public async Task jangbuCommand([Remainder] int count)
         {
+            _ = Context.Message.DeleteAsync();
             var user = Context.User as IGuildUser;
             weaponPay.WeaponPayMap.TryAdd(Context.User.Id, new WeaponPay()
             {
