@@ -8,10 +8,13 @@ namespace DobakBot.Model
 {
     enum Weapon 
     {
-        None,
         Knife,
         Desert_Eagle,
-        Count,
     }
 
+    enum WeaponPayKind {
+        None,
+        supply,
+        Sell,
+    }
 }

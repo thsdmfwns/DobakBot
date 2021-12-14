@@ -2,6 +2,7 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using DobakBot.Controller;
+using DobakBot.Controller.Handler;
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -37,6 +38,7 @@ namespace DobakBot
             await client.StartAsync();
 
             new ButtonHandler(client);
+            new SelectMenuHandler(client);
             client.MessageReceived += OnClientMessage;
             await commands.AddModulesAsync(assembly: Assembly.GetEntryAssembly(), services: null);
             await Task.Delay(-1);   

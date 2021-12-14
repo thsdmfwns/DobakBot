@@ -62,14 +62,24 @@ namespace DobakBot.Utils
         {
             switch (weapon)
             {
-                case Weapon.None:
-                    break;
-                case Weapon.Count:
-                    break;
                 case Weapon.Knife:
                     return 1000;
                 case Weapon.Desert_Eagle:
-                    return 2460;
+                    return 2400;
+            }
+            return null;
+        }
+
+        public static string WeaponPayKindToString(WeaponPayKind kind)
+        {
+            switch (kind)
+            {
+                case WeaponPayKind.None:
+                    break;
+                case WeaponPayKind.supply:
+                    return "보급";
+                case WeaponPayKind.Sell:
+                    return "판매";
             }
             return null;
         }

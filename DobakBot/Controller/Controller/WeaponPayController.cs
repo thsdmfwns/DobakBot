@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DobakBot.Model;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace DobakBot.Controller.Controller
 {
     class WeaponPayController
     {
-       
+        public ConcurrentDictionary<ulong, WeaponPay> WeaponPayMap { get; private set; } = new ConcurrentDictionary<ulong, WeaponPay>();
     }
 }

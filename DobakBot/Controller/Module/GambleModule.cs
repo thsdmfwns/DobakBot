@@ -15,7 +15,7 @@ namespace DobakBot
 {
     public class GambleModule : ModuleBase<SocketCommandContext>
     {
-        private DBController DB = GambleController.Instance.DB;
+        private DBController DB = BotController.Instance.DB;
         [Command("help")]
         public async Task HelpCommand()
         {

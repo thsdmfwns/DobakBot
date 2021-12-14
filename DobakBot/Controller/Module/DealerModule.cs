@@ -14,7 +14,7 @@ namespace DobakBot.Controller.Module
     [Group("코인")]
     public class DealerModule : ModuleBase<SocketCommandContext>
     {
-        private readonly DBController DB = GambleController.Instance.DB;
+        private readonly DBController DB = BotController.Instance.DB;
 
         const string AddHelp = "코인 충전 : !코인 충전 닉네임-금액 (ex : !코인 충전 Dalsu_Son-10000)\n";
         const string SubtracktHelp = "코인 환전 : !코인 환전 닉네임-금액 (ex : !코인 환전 Dalsu_Son-10000)\n";

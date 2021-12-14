@@ -26,7 +26,7 @@ namespace DobakBot.Controller.Module
         const string RunHelp = "파칭코 돌리기 : !파칭코 돌리기 베팅금액 (!파칭코 1000)\n";
         const string OddHelp = "파칭코 배율 보기 : !파칭코 배율\n";
 
-        private DBController DB = GambleController.Instance.DB;
+        private DBController DB = BotController.Instance.DB;
 
         [Command("배율")]
         public async Task GetHelpCommand()

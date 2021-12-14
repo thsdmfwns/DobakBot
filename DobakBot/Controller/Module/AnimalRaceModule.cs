@@ -14,8 +14,8 @@ namespace DobakBot.Controller
     [Group("경마")]
     public class AnimalRaceModule : ModuleBase<SocketCommandContext>
     {
-        private AnimalRaceController controller = GambleController.Instance.animalRace;
-        private DBController DB = GambleController.Instance.DB;
+        private AnimalRaceController controller = BotController.Instance.animalRace;
+        private DBController DB = BotController.Instance.DB;
 
         const string HelpStart = "경마 시작 : !경마 시작 별명#이모티콘 별명#이모티콘 \n" +
                     "(ex : !경마 시작 토끼#:rabbit2: 거북이#:turtle:)\n";
