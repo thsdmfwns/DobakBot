@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using DobakBot.Controller.Attribute;
 using DobakBot.Controller.Controller;
 using DobakBot.Model;
 using System;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace DobakBot.Controller.Module
 {
+    [RequireChannel("장부")]
     public class WeaponPayModule : ModuleBase<SocketCommandContext>
     {
         WeaponPayController weaponPay = BotController.Instance.WeaponPay;
