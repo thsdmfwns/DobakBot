@@ -54,7 +54,7 @@ namespace DobakBot.Controller
             }
             WeaponPay.WeaponPayMap[id].Kind = WeaponPayKind.Sell;
             var comp = new ComponentBuilder().WithSelectMenu(GetWeponSelectMenu());
-            await arg.RespondAsync($"무기를 선택해주세요. 선택후에는 이메세지를 닫아주세요.",component:comp.Build() ,ephemeral: true);
+            await arg.RespondAsync($"무기 또는 탄창을 선택해주세요. \n 선택후, 이메세지를 닫는것을 추천합니다.",component:comp.Build() ,ephemeral: true);
 
         }
 
@@ -71,7 +71,7 @@ namespace DobakBot.Controller
 
             var comp = new ComponentBuilder().WithSelectMenu(GetWeponSelectMenu());
 
-            await arg.RespondAsync($"무기를 선택해주세요. 선택후에는 이메세지를 닫아주세요.", component: comp.Build(), ephemeral: true);
+            await arg.RespondAsync($"무기 또는 탄창을 선택해주세요. \n 선택후, 이메세지를 닫는것을 추천합니다.", component: comp.Build(), ephemeral: true);
         }
 
         private SelectMenuBuilder GetWeponSelectMenu()
@@ -81,10 +81,10 @@ namespace DobakBot.Controller
             .WithCustomId("WeaponPay_SelectMenu")
             .WithMinValues(1)
             .WithMaxValues(1);
-            var options = Enum.GetNames(typeof(Weapon));
+            var options = Weapon.GetList();
             foreach (var item in options)
             {
-                menuBuilder.AddOption(item, item);
+                menuBuilder.AddOption(item.Name, item.Name);
             }
             return menuBuilder;
         }

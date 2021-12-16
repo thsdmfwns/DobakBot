@@ -55,12 +55,36 @@ namespace DobakBot.Model
             SlotResult = getSlotResult();
         }
 
+        public int SlotCardToOdd(SlotCard card)
+        {
+            switch (card)
+            {
+                case SlotCard.None:
+                    return 0;
+                case SlotCard.Orange:
+                    return 16;
+                case SlotCard.Grape:
+                    return 13;
+                case SlotCard.Cherry:
+                    return 10;
+                case SlotCard.Card:
+                    return 20;
+                case SlotCard.Gate:
+                    return 8;
+                case SlotCard.Bell:
+                    return 15;
+                default:
+                    break;
+            }
+            return 0;
+        }
+
         private SlotResult getSlotResult()
         {
             if (ResultMap.ContainsValue(3))
             {
                 var result = ResultMap.Single(x => x.Value == 3).Key;
-                Odd = Utility.SlotCardToOdd(result);
+                Odd = SlotCardToOdd(result);
                 return SlotResult.JackPot;
             }
             if (ResultMap[SlotCard.Cherry] > 0)

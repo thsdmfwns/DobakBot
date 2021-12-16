@@ -30,44 +30,7 @@ namespace DobakBot.Utils
                 default:
                     break;
             }
-
             return "";
-        }
-
-        public static int SlotCardToOdd(SlotCard card)
-        {
-            switch (card)
-            {
-                case SlotCard.None:
-                    return 0;
-                case SlotCard.Orange:
-                    return 16;
-                case SlotCard.Grape:
-                    return 13;
-                case SlotCard.Cherry:
-                    return 10;
-                case SlotCard.Card:
-                    return 20;
-                case SlotCard.Gate:
-                    return 8;
-                case SlotCard.Bell:
-                    return 15;
-                default:
-                    break;
-            }
-            return 0;
-        }
-
-        public static int? WeaponToMoney(Weapon weapon)
-        {
-            switch (weapon)
-            {
-                case Weapon.Knife:
-                    return 1000;
-                case Weapon.Desert_Eagle:
-                    return 2400;
-            }
-            return null;
         }
 
         public static string WeaponPayKindToString(WeaponPayKind kind)
@@ -80,19 +43,6 @@ namespace DobakBot.Utils
                     return "보급";
                 case WeaponPayKind.Sell:
                     return "판매";
-            }
-            return null;
-        }
-
-        public static Weapon? StringtoWeapon(string context)
-        {
-            var weapons = Enum.GetValues(typeof(Weapon));
-            foreach (Weapon item in weapons)
-            {
-                if (item.ToString() == context)
-                {
-                    return item;
-                }
             }
             return null;
         }
