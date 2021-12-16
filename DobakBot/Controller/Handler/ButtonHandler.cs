@@ -40,7 +40,15 @@ namespace DobakBot.Controller
         {
             WeaponPay temp;
             WeaponPay.WeaponPayMap.TryRemove(arg.User.Id, out temp);
-            await arg.Message.DeleteAsync();
+            try
+            {
+                await arg.Message.DeleteAsync();
+            }
+            catch { }
+            finally
+            {
+                await arg.RespondAsync($"장부를 취소 하셨습니다.", ephemeral: true);
+            }
         }
 
         private async Task OnWeaponSellButton(SocketMessageComponent arg)
@@ -54,6 +62,7 @@ namespace DobakBot.Controller
             }
             WeaponPay.WeaponPayMap[id].Kind = WeaponPayKind.Sell;
             var comp = new ComponentBuilder().WithSelectMenu(GetWeponSelectMenu());
+            comp.WithButton(label: "취소", customId: "Weapon_Cancel", row:1);
             await arg.RespondAsync($"무기 또는 탄창을 선택해주세요. \n 선택후, 이메세지를 닫는것을 추천합니다.",component:comp.Build() ,ephemeral: true);
 
         }
@@ -70,6 +79,7 @@ namespace DobakBot.Controller
             WeaponPay.WeaponPayMap[id].Kind = WeaponPayKind.supply;
 
             var comp = new ComponentBuilder().WithSelectMenu(GetWeponSelectMenu());
+            comp.WithButton(label: "취소", customId: "Weapon_Cancel", row: 1);
 
             await arg.RespondAsync($"무기 또는 탄창을 선택해주세요. \n 선택후, 이메세지를 닫는것을 추천합니다.", component: comp.Build(), ephemeral: true);
         }

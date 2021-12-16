@@ -22,7 +22,7 @@ namespace DobakBot.Controller.Module
             var user = Context.User as IGuildUser;
             weaponPay.WeaponPayMap.TryAdd(Context.User.Id, new WeaponPay()
             {
-                Count = count
+                Count = count  
             });
 
             var com = new ComponentBuilder();
