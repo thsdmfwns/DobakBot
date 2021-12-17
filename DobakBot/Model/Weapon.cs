@@ -26,6 +26,7 @@ namespace DobakBot.Model
             list.Add(new Weapon("Knife", 1000, "자루"));
             list.Add(new Weapon("Desert Eagle", 2200, "정"));
             list.Add(new Weapon("12GAUGE Shotgun", 2500, "정"));
+            list.Add(new Weapon("MP5", 3500, "정"));
             list.Add(new Weapon("9mm", 50, "탄창"));
             list.Add(new Weapon("7.62mm", 80, "탄창"));
             list.Add(new Weapon("5.56mm", 70, "탄창"));
