@@ -40,7 +40,7 @@ namespace DobakBot.Controller.Handler
                 return;
             }
 
-            var list = ctx.Kind == WeaponPayKind.supply ? Weapon.GetList() : Weapon.GetSellList();
+            var list = Weapon.GetList(ctx.Kind);
             var wp = list.SingleOrDefault(x => x.Name == data);
             if (wp == null)
             {

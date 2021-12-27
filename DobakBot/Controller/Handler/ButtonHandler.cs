@@ -62,7 +62,7 @@ namespace DobakBot.Controller
                 return;
             }
             WeaponPay.WeaponPayMap[id].Kind = kind;
-            var list = kind == WeaponPayKind.supply ? Weapon.GetList() : Weapon.GetSellList();
+            var list = Weapon.GetList(kind);
             var comp = new ComponentBuilder().WithSelectMenu(GetWeponSelectMenu(list));
             comp.WithButton(label: "취소", customId: "Weapon_Cancel", row:1);
             await arg.RespondAsync($"무기 또는 탄창을 하나만 선택해주세요. \n 선택후, 이메세지를 닫는것을 추천합니다.",component:comp.Build() ,ephemeral: true);
