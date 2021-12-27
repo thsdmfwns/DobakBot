@@ -38,7 +38,7 @@ namespace DobakBot.Model
                 case WeaponKind.Ammo:
                     return "탄창";
                 case WeaponKind.Armor:
-                    return "복";
+                    return "벌";
                 default:
                     break;
             }
