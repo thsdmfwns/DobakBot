@@ -35,5 +35,16 @@ namespace DobakBot.Controller
                 await Task.Delay(1050);
             }
         }
+
+        [Command("clear")]
+        public async Task ClearMessages([Remainder] int count)
+        {
+            var msgs = await Context.Channel.GetMessagesAsync(limit:count).SingleAsync();
+            foreach (var item in msgs)
+            {
+                await item.DeleteAsync();
+                await Task.Delay(1050);
+            }
+        }
     }
 }

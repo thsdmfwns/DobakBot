@@ -27,8 +27,9 @@ namespace DobakBot.Controller
             switch (arg.Data.CustomId)
             {
                 case "casino_enter": await OnEnterButton(arg); return;
-                case "Weapon_Suply": await OnWeaponSuplyButton(arg); return;
-                case "Weapon_Sell": await OnWeaponSellButton(arg); return;
+                case "Weapon_Suply": await OnWeaponButton(arg, WeaponPayKind.supply); return;
+                case "Weapon_Sell": await OnWeaponButton(arg, WeaponPayKind.Sell); return;
+                case "Weapon_DCSell": await OnWeaponButton(arg, WeaponPayKind.DCSell); return;
                 case "Weapon_Cancel": await OnWeaponCancelButton(arg); return;
                 case "test": await testButton(arg); return;
                 default: return;
@@ -51,7 +52,7 @@ namespace DobakBot.Controller
             }
         }
 
-        private async Task OnWeaponSellButton(SocketMessageComponent arg)
+        private async Task OnWeaponButton(SocketMessageComponent arg, WeaponPayKind kind)
         {
             await arg.Message.DeleteAsync();
             var id = arg.User.Id;
@@ -60,42 +61,22 @@ namespace DobakBot.Controller
                 await arg.RespondAsync($"장부 도우미를 한번더 불려와 주세요!\n장부도우미 부르기 : !장부 무기갯수 (!장부 1)", ephemeral: true);
                 return;
             }
-            WeaponPay.WeaponPayMap[id].Kind = WeaponPayKind.Sell;
-            var comp = new ComponentBuilder().WithSelectMenu(GetWeponSelectMenu());
+            WeaponPay.WeaponPayMap[id].Kind = kind;
+            var list = kind == WeaponPayKind.supply ? Weapon.GetList() : Weapon.GetSellList();
+            var comp = new ComponentBuilder().WithSelectMenu(GetWeponSelectMenu(list));
             comp.WithButton(label: "취소", customId: "Weapon_Cancel", row:1);
-            await arg.RespondAsync($"무기 또는 탄창을 선택해주세요. \n 선택후, 이메세지를 닫는것을 추천합니다.",component:comp.Build() ,ephemeral: true);
+            await arg.RespondAsync($"무기 또는 탄창을 하나만 선택해주세요. \n 선택후, 이메세지를 닫는것을 추천합니다.",component:comp.Build() ,ephemeral: true);
 
         }
 
-        private async Task OnWeaponSuplyButton(SocketMessageComponent arg)
-        {
-            await arg.Message.DeleteAsync();
-            var id = arg.User.Id;
-            if (!WeaponPay.WeaponPayMap.ContainsKey(id))
-            {
-                await arg.RespondAsync($"장부 도우미를 한번더 불려와 주세요!\n장부도우미 부르기 : !장부 무기갯수 (!장부 1)", ephemeral: true);
-                return;
-            }
-            WeaponPay.WeaponPayMap[id].Kind = WeaponPayKind.supply;
-
-            var comp = new ComponentBuilder().WithSelectMenu(GetWeponSelectMenu());
-            comp.WithButton(label: "취소", customId: "Weapon_Cancel", row: 1);
-
-            await arg.RespondAsync($"무기 또는 탄창을 선택해주세요. \n 선택후, 이메세지를 닫는것을 추천합니다.", component: comp.Build(), ephemeral: true);
-        }
-
-        private SelectMenuBuilder GetWeponSelectMenu()
+        private SelectMenuBuilder GetWeponSelectMenu(List<Weapon> weapons)
         {
             var menuBuilder = new SelectMenuBuilder()
-            .WithPlaceholder("총기 선택")
+            .WithPlaceholder("장비 선택")
             .WithCustomId("WeaponPay_SelectMenu")
             .WithMinValues(1)
             .WithMaxValues(1);
-            var options = Weapon.GetList();
-            foreach (var item in options)
-            {
-                menuBuilder.AddOption(item.Name, item.Name);
-            }
+            weapons.ForEach(item => menuBuilder.AddOption(item.Name, item.Name));
             return menuBuilder;
         }
 

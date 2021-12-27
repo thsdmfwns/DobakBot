@@ -33,20 +33,6 @@ namespace DobakBot.Utils
             return "";
         }
 
-        public static string WeaponPayKindToString(WeaponPayKind kind)
-        {
-            switch (kind)
-            {
-                case WeaponPayKind.None:
-                    break;
-                case WeaponPayKind.supply:
-                    return "보급";
-                case WeaponPayKind.Sell:
-                    return "판매";
-            }
-            return null;
-        }
-
         public static string SlotResultToString(SlotResult slotResult)
         {
             switch (slotResult)

@@ -32,15 +32,17 @@ namespace DobakBot.Controller.Handler
         private async Task OnWeaponPaySelectMenu(SocketMessageComponent arg)
         {
             var data = arg.Data.Values.First();
-            var wp = Weapon.GetList().SingleOrDefault(x => x.Name == data);
-            if (wp == null)
+
+            WeaponPay ctx;
+            if (!WeaponPay.WeaponPayMap.TryRemove(arg.User.Id, out ctx))
             {
                 await arg.RespondAsync($"장부 도우미를 한번더 불려와 주세요!\n장부도우미 부르기 : !장부 무기갯수 (!장부 1)", ephemeral: true);
                 return;
             }
 
-            WeaponPay ctx;
-            if (!WeaponPay.WeaponPayMap.TryRemove(arg.User.Id, out ctx))
+            var list = ctx.Kind == WeaponPayKind.supply ? Weapon.GetList() : Weapon.GetSellList();
+            var wp = list.SingleOrDefault(x => x.Name == data);
+            if (wp == null)
             {
                 await arg.RespondAsync($"장부 도우미를 한번더 불려와 주세요!\n장부도우미 부르기 : !장부 무기갯수 (!장부 1)", ephemeral: true);
                 return;
