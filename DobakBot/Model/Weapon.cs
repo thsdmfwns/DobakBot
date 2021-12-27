@@ -88,7 +88,7 @@ namespace DobakBot.Model
             list.Add(new Weapon("GLOCK 17", 3000, WeaponKind.Guns));
             list.Add(new Weapon("Desert Eagle", 3000, WeaponKind.Guns));
             list.Add(new Weapon("Shotgun(12GAUGE)", 3500, WeaponKind.Guns));
-            list.Add(new Weapon("MP5", 3500, WeaponKind.Guns));
+            list.Add(new Weapon("MP5", 4500, WeaponKind.Guns));
             list.Add(new Weapon("9mm", 50, WeaponKind.Ammo));
             list.Add(new Weapon("7.62mm", 80, WeaponKind.Ammo));
             list.Add(new Weapon("5.56mm", 70, WeaponKind.Ammo));
