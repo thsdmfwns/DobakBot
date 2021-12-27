@@ -17,10 +17,7 @@ namespace DobakBot.Model
         public WeaponPayKind Kind { get; set; }
         public int Count { get; set; }
         public string UserName { get; set; }
-        public int Price => 
-            Kind == WeaponPayKind.DCSell && Weapon.Kind == WeaponKind.Guns ? 
-            (Weapon.Price - 200) * Count : 
-            Weapon.Price * Count;
+        public int Price => Weapon.Price * Count;
 
         public static string WeaponPayKindToString(WeaponPayKind kind)
         {
