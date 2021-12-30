@@ -40,16 +40,15 @@ namespace DobakBot.Controller.Handler
                 return;
             }
 
-            var list = Weapon.GetList(ctx.Kind);
-            var wp = list.SingleOrDefault(x => x.Name == data);
-            if (wp == null)
+            var Weapon = ctx.Weapons.SingleOrDefault(x => x.Name == data);
+            if (Weapon == null)
             {
                 await arg.RespondAsync($"장부 도우미를 한번더 불려와 주세요!\n장부도우미 부르기 : !장부 무기갯수 (!장부 1)", ephemeral: true);
                 return;
             }
 
 
-            ctx.Weapon = wp;
+            ctx.Weapon = Weapon;
             ctx.UserName = (arg.User as IGuildUser).Nickname;
 
             var builder = new EmbedBuilder();

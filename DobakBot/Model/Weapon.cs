@@ -63,25 +63,7 @@ namespace DobakBot.Model
             return null;
         }
 
-        public static List<Weapon> GetList(WeaponPayKind kind)
-        {
-            switch (kind)
-            {
-                case WeaponPayKind.None:
-                    break;
-                case WeaponPayKind.supply:
-                    return GetSupplyList();
-                case WeaponPayKind.Sell:
-                    return GetSellList();
-                case WeaponPayKind.DCSell:
-                    return GetDcSellList();
-                default:
-                    break;
-            }
-            return null;
-        }
-
-        private static List<Weapon> GetSupplyList()
+        public static List<Weapon> GetSupplyList()
         {
             var list = new List<Weapon>();
             list.Add(new Weapon("Knife", 1000, WeaponKind.Etc));
@@ -104,9 +86,9 @@ namespace DobakBot.Model
             var list = new List<Weapon>();
             list.Add(new Weapon("Knife", 1500, WeaponKind.Etc));
             list.Add(new Weapon("GLOCK 17", 3000, WeaponKind.Guns));
-            list.Add(new Weapon("Desert Eagle", 3000, WeaponKind.Guns));
-            list.Add(new Weapon("Shotgun(12GAUGE)", 3500, WeaponKind.Guns));
-            list.Add(new Weapon("MP5", 4500, WeaponKind.Guns));
+            list.Add(new Weapon("Desert Eagle", 3300, WeaponKind.Guns));
+            list.Add(new Weapon("Shotgun(12GAUGE)", 3800, WeaponKind.Guns));
+            list.Add(new Weapon("MP5", 5300, WeaponKind.Guns));
             list.Add(new Weapon("9mm", 50, WeaponKind.Ammo));
             list.Add(new Weapon("7.62mm", 80, WeaponKind.Ammo));
             list.Add(new Weapon("5.56mm", 70, WeaponKind.Ammo));
@@ -114,7 +96,7 @@ namespace DobakBot.Model
             list.Add(new Weapon(".22LR", 40, WeaponKind.Ammo));
             list.Add(new Weapon(".45acp", 30, WeaponKind.Ammo));
             list.Add(new Weapon(".50BMG", 20, WeaponKind.Ammo));
-            list.Add(new Weapon("경량 방탄복", 700, WeaponKind.Armor));
+            list.Add(new Weapon("경량 방탄복", 800, WeaponKind.Armor));
             list.Add(new Weapon("중량 방탄복", 1500, WeaponKind.Armor));
             return list;
         }
@@ -122,11 +104,11 @@ namespace DobakBot.Model
         public static List<Weapon> GetDcSellList()
         {
             var list = new List<Weapon>();
-            list.Add(new Weapon("Knife", 1200, WeaponKind.Etc));
+            list.Add(new Weapon("Knife", 1300, WeaponKind.Etc));
             list.Add(new Weapon("GLOCK 17", 2800, WeaponKind.Guns));
-            list.Add(new Weapon("Desert Eagle", 2800, WeaponKind.Guns));
-            list.Add(new Weapon("Shotgun(12GAUGE)", 3300, WeaponKind.Guns));
-            list.Add(new Weapon("MP5", 4300, WeaponKind.Guns));
+            list.Add(new Weapon("Desert Eagle", 3100, WeaponKind.Guns));
+            list.Add(new Weapon("Shotgun(12GAUGE)", 3600, WeaponKind.Guns));
+            list.Add(new Weapon("MP5", 5100, WeaponKind.Guns));
             list.Add(new Weapon("9mm", 50, WeaponKind.Ammo));
             list.Add(new Weapon("7.62mm", 80, WeaponKind.Ammo));
             list.Add(new Weapon("5.56mm", 70, WeaponKind.Ammo));
@@ -134,7 +116,7 @@ namespace DobakBot.Model
             list.Add(new Weapon(".22LR", 40, WeaponKind.Ammo));
             list.Add(new Weapon(".45acp", 30, WeaponKind.Ammo));
             list.Add(new Weapon(".50BMG", 20, WeaponKind.Ammo));
-            list.Add(new Weapon("경량 방탄복", 700, WeaponKind.Armor));
+            list.Add(new Weapon("경량 방탄복", 800, WeaponKind.Armor));
             list.Add(new Weapon("중량 방탄복", 1200, WeaponKind.Armor));
             return list;
         }
