@@ -71,6 +71,7 @@ namespace DobakBot.Model
             list.Add(new Weapon("Desert Eagle", 2200, WeaponKind.Guns));
             list.Add(new Weapon("Shotgun(12GAUGE)", 2500, WeaponKind.Guns));
             list.Add(new Weapon("MP5", 3500, WeaponKind.Guns));
+            list.Add(new Weapon("K2", 4600, WeaponKind.Guns));
             list.Add(new Weapon("9mm", 50, WeaponKind.Ammo));
             list.Add(new Weapon("7.62mm", 80, WeaponKind.Ammo));
             list.Add(new Weapon("5.56mm", 70, WeaponKind.Ammo));
@@ -89,6 +90,7 @@ namespace DobakBot.Model
             list.Add(new Weapon("Desert Eagle", 3300, WeaponKind.Guns));
             list.Add(new Weapon("Shotgun(12GAUGE)", 3800, WeaponKind.Guns));
             list.Add(new Weapon("MP5", 5300, WeaponKind.Guns));
+            list.Add(new Weapon("K2", 10000, WeaponKind.Guns));
             list.Add(new Weapon("9mm", 50, WeaponKind.Ammo));
             list.Add(new Weapon("7.62mm", 80, WeaponKind.Ammo));
             list.Add(new Weapon("5.56mm", 70, WeaponKind.Ammo));
@@ -109,6 +111,7 @@ namespace DobakBot.Model
             list.Add(new Weapon("Desert Eagle", 3100, WeaponKind.Guns));
             list.Add(new Weapon("Shotgun(12GAUGE)", 3600, WeaponKind.Guns));
             list.Add(new Weapon("MP5", 5100, WeaponKind.Guns));
+            list.Add(new Weapon("K2", 9800, WeaponKind.Guns));
             list.Add(new Weapon("9mm", 50, WeaponKind.Ammo));
             list.Add(new Weapon("7.62mm", 80, WeaponKind.Ammo));
             list.Add(new Weapon("5.56mm", 70, WeaponKind.Ammo));
