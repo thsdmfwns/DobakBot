@@ -18,8 +18,8 @@ namespace DobakBot.Model
         public WeaponPayKind Kind { get; set; }
         public int Count { get; set; }
         public string UserName { get; set; }
-        public int Price => Weapon.Price * Count;
-        public List<Weapon> Weapons => GetList();
+        public int Price => Weapon.GetPrice(Kind) * Count;
+        public List<Weapon> Weapons => Weapon.GetList();
 
         public static string WeaponPayKindToString(WeaponPayKind kind)
         {
@@ -33,24 +33,6 @@ namespace DobakBot.Model
                     return "판매";
                 case WeaponPayKind.DCSell:
                     return "할인 판매";
-            }
-            return null;
-        }
-
-        private List<Weapon> GetList()
-        {
-            switch (Kind)
-            {
-                case WeaponPayKind.None:
-                    break;
-                case WeaponPayKind.supply:
-                    return Weapon.GetSupplyList();
-                case WeaponPayKind.Sell:
-                    return Weapon.GetSellList();
-                case WeaponPayKind.DCSell:
-                    return Weapon.GetDcSellList();
-                default:
-                    break;
             }
             return null;
         }
