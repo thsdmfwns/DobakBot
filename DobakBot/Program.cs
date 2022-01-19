@@ -16,10 +16,10 @@ namespace DobakBot
 
         static void Main(string[] args)
         {
-            new Program().BotMain().GetAwaiter().GetResult();
+            new Program().BotMain(args[0]).GetAwaiter().GetResult();
         }
 
-        public async Task BotMain()
+        public async Task BotMain(string token)
         {
             client = new DiscordSocketClient(new DiscordSocketConfig()
             {   
@@ -34,7 +34,7 @@ namespace DobakBot
             client.Log += OnClientLogReceived;
             commands.Log += OnClientLogReceived;
 
-            await client.LoginAsync(TokenType.Bot, "OTEyMzg3MDEzNzE2NjA2OTc4.YZvMnw.tSUKo_CXfjCM4wnYdTciy08NtC4"); 
+            await client.LoginAsync(TokenType.Bot, token);
             await client.StartAsync();
 
             new ButtonHandler(client);
