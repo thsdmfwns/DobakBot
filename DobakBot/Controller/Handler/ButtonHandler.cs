@@ -14,7 +14,6 @@ namespace DobakBot.Controller
     {
         private DBController DB = BotController.Instance.DB;
         private WeaponPayController WeaponPay = BotController.Instance.WeaponPay;
-        private const ulong roleId = 915546552062312468;
 
 
         public ButtonHandler(DiscordSocketClient client)
@@ -91,7 +90,7 @@ namespace DobakBot.Controller
             var guild = channel.Guild;
             var notifiyChannel = guild.Channels.Single(x => x.Name == "자유게시판-ic") as SocketTextChannel;
             var user = guild.GetUser(arg.User.Id);
-            var role = guild.GetRole(roleId);
+            var role = guild.Roles.Single(x => x.Name == "Customer");
 
             if (user.Nickname == null || user.Nickname == string.Empty)
             {
