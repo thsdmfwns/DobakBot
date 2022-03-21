@@ -78,7 +78,7 @@ namespace DobakBot.Controller.Module
         private async Task RunSlotMachine(int money)
         {
             var slot = new SlotMachine(money);
-            await slot.setValue();
+            await slot.SetResult();
 
             var embeds = slot.getEmbeds(Context.Guild.GetUser(Context.User.Id).Nickname);
             var msg = await Context.Channel.SendMessageAsync("", false, embeds[0]);

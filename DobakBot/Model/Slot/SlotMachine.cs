@@ -27,20 +27,11 @@ namespace DobakBot.Model
             for (int i = 1; i < (int)SlotCard.Max; i++)
             {
                 ResultMap.Add((SlotCard)i, 0);
+                Cards.Add((SlotCard)i);
             }
-            for (int i = 0; i < 3; i++)
-            {
-                Cards.Add(SlotCard.Bell);
-                Cards.Add(SlotCard.Card);
-                Cards.Add(SlotCard.Gate);
-                Cards.Add(SlotCard.Grape);
-                Cards.Add(SlotCard.Orange);
-            }
-            Cards.Add(SlotCard.Cherry);
-            Cards.Add(SlotCard.Cherry);
         }
 
-        public async Task setValue()
+        public async Task SetResult()
         {
             Random random = new Random();
 
