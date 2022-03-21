@@ -6,7 +6,7 @@ namespace DobakBot.Controller
 {
     class DBController
     {
-        const string conString = "server=127.0.0.1;Port=3306;uid=root;pwd=kiki*3279;database=dalsubot";
+        const string conString = "server=127.0.0.1;Port=3306;uid=son;pwd=kiki*3279;database=DalsuBot";
 
         private MySqlConnection Connection => new MySqlConnection(conString);
 
