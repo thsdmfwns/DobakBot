@@ -33,6 +33,7 @@ namespace DobakBot.Controller
                 case "customer_Wallet": await OnCustomerWalletButton(arg); return;
                 case "customer_pay": await OnCustomerPayButton(arg); return;
                 case "customer_return": await OnCustomerReturnButton(arg); return;
+                case "customer_Cancel": await arg.Message.DeleteAsync(); ; return;
                 default: return;
             }
 
@@ -40,14 +41,32 @@ namespace DobakBot.Controller
 
         private async Task OnCustomerReturnButton(SocketMessageComponent arg)
         {
-            return;
+            var comp = new ComponentBuilder().WithSelectMenu(GetMoneySelectMenu("return"));
+            comp.WithButton(label: "취소", customId: "customer_Cancel", row: 1);
+            await arg.RespondAsync($"충전할 금액을 선택해주세요.", component: comp.Build(), ephemeral: true);
         }
 
         private async Task OnCustomerPayButton(SocketMessageComponent arg)
         {
-            return;
+            var comp = new ComponentBuilder().WithSelectMenu(GetMoneySelectMenu("pay"));
+            comp.WithButton(label: "취소", customId: "customer_Cancel", row: 1);
+            await arg.RespondAsync($"충전할 금액을 선택해주세요.", component: comp.Build(), ephemeral: true);
         }
 
+        private SelectMenuBuilder GetMoneySelectMenu(string id)
+        {
+            var menuBuilder = new SelectMenuBuilder()
+            .WithPlaceholder("금액 선택")
+            .WithCustomId($"customer{id}_select")
+            .WithMinValues(1)
+            .WithMaxValues(1);
+            for (int i = 1; i < 21; i++)
+            {
+                var item = (i * 1000).ToString();
+                menuBuilder.AddOption(item, item);
+            }
+            return menuBuilder;
+        }
         private async Task OnCustomerWalletButton(SocketMessageComponent arg)
         {
             var user = DB.GetUserByDiscordId(arg.User.Id);

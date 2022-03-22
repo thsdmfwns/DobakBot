@@ -14,6 +14,7 @@ namespace DobakBot.Controller.Handler
     class SelectMenuHandler
     {
         private WeaponPayController WeaponPay = BotController.Instance.WeaponPay;
+        private DBController DB = BotController.Instance.DB;
 
         public SelectMenuHandler(DiscordSocketClient client)
         {
@@ -25,8 +26,72 @@ namespace DobakBot.Controller.Handler
             switch (arg.Data.CustomId)
             {
                 case "WeaponPay_SelectMenu": await OnWeaponPaySelectMenu(arg); return;
+                case "customerpay_select": await OnCustomerPaySelectMenu(arg); return;
+                case "customerreturn_select": await OnCustomerReturnSelectMenu(arg); return;
                 default: return;
             }
+        }
+
+        private async Task OnCustomerReturnSelectMenu(SocketMessageComponent arg)
+        {
+            var channel = arg.Channel as SocketTextChannel;
+            var guild = channel.Guild;
+            var user = arg.User.Id;
+            var nick = guild.GetUser(user).Nickname;
+            var data = arg.Data.Values.First();
+
+            int money;
+            if (!int.TryParse(data, out money))
+            {
+                await arg.RespondAsync($"{data} 일치 하지 않는 값입니다.\n");
+                return;
+            }
+
+            var dbuser = DB.GetUserByDiscordId(user);
+            if (dbuser == null)
+            {
+                await arg.RespondAsync($"{nick} 등록되지 않은 사용자입니다.");
+                return;
+            }
+
+            if (dbuser.coin < money)
+            {
+                await arg.RespondAsync($"{nick}님의 :coin:이 부족하여 환전이 불가능합니다.\n" +
+                    $"(현재 잔액 : {dbuser.coin}:coin:) (요청금액 : {money}:coin:).");
+                return;
+            }
+
+            if (!DB.TrySubtractUserCoin(user, money))
+            {
+                await arg.RespondAsync($"TrySubtractUserCoin Error");
+                return;
+            }
+
+            await arg.RespondAsync($"{nick}님이 {money}$ 환전하셨습니다.");
+        }
+
+        private async Task OnCustomerPaySelectMenu(SocketMessageComponent arg)
+        {
+            var channel = arg.Channel as SocketTextChannel;
+            var guild = channel.Guild;
+            var data = arg.Data.Values.First();
+            await guild.DownloadUsersAsync();
+            var user = arg.User.Id;
+            var nick = guild.GetUser(user).Nickname;
+            int money;
+            if (!int.TryParse(data, out money))
+            {
+                await arg.RespondAsync($"{data} 일치 하지 않는 값입니다.\n", ephemeral: true);
+                return;
+            }
+
+            if (!DB.TryAddUserCoin(user, money))
+            {
+                await arg.RespondAsync($"TryAddUserCoin Error", ephemeral: true);
+                return;
+            }
+
+            await arg.RespondAsync($"{nick}님이 {money}:coin: 충전하셨습니다.", ephemeral: true);
         }
 
         private async Task OnWeaponPaySelectMenu(SocketMessageComponent arg)
