@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace DobakBot.Controller
 {
-    [RequireRole("dealer")]
+    [RequireRole("Admin-")]
     public class AdminMoudule : ModuleBase<SocketCommandContext>
     {
         [Command("입장버튼")]
-        public async Task ButtonSpawn()
+        public async Task EnterButtonSpawn()
         {
             var button = new ComponentBuilder().WithButton("카지노 입장하기", "casino_enter", style: ButtonStyle.Secondary, emote: new Emoji("\uD83C\uDFB4"));
             var builder = new EmbedBuilder();
@@ -23,6 +23,19 @@ namespace DobakBot.Controller
                 "카지노에 입장하시기 전, \n 디스코드 채널의 별명을 IC상의 이름으로 설정해주세요.\n" +
                 "IC상에서의 코인 충전과 코인 환전을 위해 필요합니다.";
             await ReplyAsync("", embed: builder.Build(), component: button.Build());
+        }
+
+        [Command("지갑버튼")]
+        public async Task WalletButtonSpawn()
+        {
+            var buttons = new ComponentBuilder()
+                .WithButton("지갑보기", "customer_Wallet", style: ButtonStyle.Primary)
+                .WithButton("충전하기", "customer_pay", style: ButtonStyle.Success)
+                .WithButton("환전하기", "customer_return", style: ButtonStyle.Danger);
+            var builder = new EmbedBuilder();
+            builder.Title = "환전소";
+            builder.Color = Color.Blue;
+            await ReplyAsync("", embed: builder.Build(), component: buttons.Build());
         }
 
         [Command("clear")]
