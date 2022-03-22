@@ -30,10 +30,36 @@ namespace DobakBot.Controller
                 case "Weapon_Sell": await OnWeaponButton(arg, WeaponPayKind.Sell); return;
                 case "Weapon_DCSell": await OnWeaponButton(arg, WeaponPayKind.DCSell); return;
                 case "Weapon_Cancel": await OnWeaponCancelButton(arg); return;
-                case "test": await testButton(arg); return;
+                case "customer_Wallet": await OnCustomerWalletButton(arg); return;
+                case "customer_pay": await OnCustomerPayButton(arg); return;
+                case "customer_return": await OnCustomerReturnButton(arg); return;
                 default: return;
             }
 
+        }
+
+        private async Task OnCustomerReturnButton(SocketMessageComponent arg)
+        {
+            return;
+        }
+
+        private async Task OnCustomerPayButton(SocketMessageComponent arg)
+        {
+            return;
+        }
+
+        private async Task OnCustomerWalletButton(SocketMessageComponent arg)
+        {
+            var user = DB.GetUserByDiscordId(arg.User.Id);
+            if (user == null)
+            {
+                await arg.RespondAsync($"등록되지 않은 사용자입니다.", ephemeral: true);
+                return;
+            }
+            var channel = arg.Channel as SocketTextChannel;
+            var guild = channel.Guild;
+            var nick = guild.GetUser(user.id).Nickname;
+            await arg.RespondAsync($"{nick}님의 현재 남은:coin:은 {user.coin}:coin: 입니다.", ephemeral: true);
         }
 
         private async Task OnWeaponCancelButton(SocketMessageComponent arg)
@@ -77,11 +103,6 @@ namespace DobakBot.Controller
             .WithMaxValues(1);
             weapons.ForEach(item => menuBuilder.AddOption(item.Name, item.Name));
             return menuBuilder;
-        }
-
-        private async Task testButton(SocketMessageComponent arg)
-        {
-            await arg.RespondAsync("이건 테스트로 만들어진 당신만이 볼수 있는 메세지입니다.", ephemeral: true);
         }
 
         private async Task OnEnterButton(SocketMessageComponent arg)
