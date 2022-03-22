@@ -128,7 +128,7 @@ namespace DobakBot.Controller
         {
             var channel = arg.Channel as SocketTextChannel;
             var guild = channel.Guild;
-            var notifiyChannel = guild.Channels.Single(x => x.Name == "자유게시판-ic") as SocketTextChannel;
+            //var notifiyChannel = guild.Channels.Single(x => x.Name == "자유게시판-ic") as SocketTextChannel;
             var user = guild.GetUser(arg.User.Id);
             var role = guild.Roles.Single(x => x.Name == "Customer");
 
@@ -150,7 +150,7 @@ namespace DobakBot.Controller
                 return;
             }
             await user.AddRoleAsync(role);
-            await notifiyChannel.SendMessageAsync($"{user.Nickname}님이 카지노에 입장하셨습니다.");
+            //await notifiyChannel.SendMessageAsync($"{user.Nickname}님이 카지노에 입장하셨습니다.");
             await arg.DeferAsync();
         }
     }

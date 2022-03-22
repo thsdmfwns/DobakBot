@@ -43,31 +43,31 @@ namespace DobakBot.Controller.Handler
             int money;
             if (!int.TryParse(data, out money))
             {
-                await arg.RespondAsync($"{data} 일치 하지 않는 값입니다.\n");
+                await arg.RespondAsync($"{data} 일치 하지 않는 값입니다.", ephemeral: true);
                 return;
             }
 
             var dbuser = DB.GetUserByDiscordId(user);
             if (dbuser == null)
             {
-                await arg.RespondAsync($"{nick} 등록되지 않은 사용자입니다.");
+                await arg.RespondAsync($"{nick} 등록되지 않은 사용자입니다.", ephemeral: true);
                 return;
             }
 
             if (dbuser.coin < money)
             {
                 await arg.RespondAsync($"{nick}님의 :coin:이 부족하여 환전이 불가능합니다.\n" +
-                    $"(현재 잔액 : {dbuser.coin}:coin:) (요청금액 : {money}:coin:).");
+                    $"(현재 잔액 : {dbuser.coin}:coin:) (요청금액 : {money}:coin:).", ephemeral: true);
                 return;
             }
 
             if (!DB.TrySubtractUserCoin(user, money))
             {
-                await arg.RespondAsync($"TrySubtractUserCoin Error");
+                await arg.RespondAsync($"TrySubtractUserCoin Error", ephemeral: true);
                 return;
             }
 
-            await arg.RespondAsync($"{nick}님이 {money}$ 환전하셨습니다.");
+            await arg.RespondAsync($"{nick}님이 {money}$ 환전하셨습니다.", ephemeral: true);
         }
 
         private async Task OnCustomerPaySelectMenu(SocketMessageComponent arg)
