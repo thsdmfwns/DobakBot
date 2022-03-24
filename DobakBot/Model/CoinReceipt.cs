@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,7 +26,7 @@ namespace DobakBot.Model
         public bool IsPay { get; private set; }
 
 
-        public string toJson => JsonSerializer.Serialize(this);
-        static CoinReceipt fromJson(string receipt) => JsonSerializer.Deserialize<CoinReceipt>(receipt);
+        static public string toJson(CoinReceipt receipt) => JsonConvert.SerializeObject(receipt);
+        static public CoinReceipt fromJson(string receipt) => JsonConvert.DeserializeObject<CoinReceipt>(receipt);
     }
 }
