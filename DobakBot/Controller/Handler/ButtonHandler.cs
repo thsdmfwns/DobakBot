@@ -33,7 +33,6 @@ namespace DobakBot.Controller
                 case "customer_Wallet": await OnCustomerWalletButton(arg); return;
                 case "customer_pay": await OnCustomerPayButton(arg); return;
                 case "customer_return": await OnCustomerReturnButton(arg); return;
-                case "customer_Cancel": await arg.Message.DeleteAsync(); ; return;
                 default: return;
             }
 
@@ -42,14 +41,12 @@ namespace DobakBot.Controller
         private async Task OnCustomerReturnButton(SocketMessageComponent arg)
         {
             var comp = new ComponentBuilder().WithSelectMenu(GetMoneySelectMenu("return"));
-            comp.WithButton(label: "취소", customId: "customer_Cancel", row: 1);
             await arg.RespondAsync($"충전할 금액을 선택해주세요.", component: comp.Build(), ephemeral: true);
         }
 
         private async Task OnCustomerPayButton(SocketMessageComponent arg)
         {
             var comp = new ComponentBuilder().WithSelectMenu(GetMoneySelectMenu("pay"));
-            comp.WithButton(label: "취소", customId: "customer_Cancel", row: 1);
             await arg.RespondAsync($"충전할 금액을 선택해주세요.", component: comp.Build(), ephemeral: true);
         }
 

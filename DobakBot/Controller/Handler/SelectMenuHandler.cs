@@ -34,6 +34,7 @@ namespace DobakBot.Controller.Handler
 
         private async Task OnCustomerReturnSelectMenu(SocketMessageComponent arg)
         {
+
             var channel = arg.Channel as SocketTextChannel;
             var guild = channel.Guild;
             var user = arg.User.Id;
@@ -61,6 +62,12 @@ namespace DobakBot.Controller.Handler
                 return;
             }
 
+            var notifiyChannel = guild.Channels.Single(x => x.Name == "딜러-사무실") as SocketTextChannel;
+            var Cr = new CoinReceipt(nick, money, user, false);
+            var msg = Cr.toJson;
+            var comp = new ComponentBuilder().WithButton("승인", "dealer_accept").WithButton("거부", "dealer_deny");
+            await notifiyChannel.SendMessageAsync(msg, component: comp.Build());
+
             if (!DB.TrySubtractUserCoin(user, money))
             {
                 await arg.RespondAsync($"TrySubtractUserCoin Error", ephemeral: true);
@@ -84,6 +91,12 @@ namespace DobakBot.Controller.Handler
                 await arg.RespondAsync($"{data} 일치 하지 않는 값입니다.\n", ephemeral: true);
                 return;
             }
+
+            var notifiyChannel = guild.Channels.Single(x => x.Name == "딜러-사무실") as SocketTextChannel;
+            var Cr = new CoinReceipt(nick, money, user, true);
+            var msg = Cr.toJson;
+            var comp = new ComponentBuilder().WithButton("승인", "dealer_accept").WithButton("거부", "dealer_deny");
+            await notifiyChannel.SendMessageAsync(msg, component: comp.Build());
 
             if (!DB.TryAddUserCoin(user, money))
             {
