@@ -42,12 +42,36 @@ namespace DobakBot.Controller
 
         private async Task OnDealerDenyButton(SocketMessageComponent arg)
         {
-            Console.WriteLine(arg.Message.CleanContent);
+            var cr = CoinReceipt.fromJson(arg.Message.CleanContent);
+            if (cr.IsPay)
+            {
+                if (!DB.TryAddUserCoin(cr.Id, cr.Money))
+                {
+                    await arg.RespondAsync($"TryAddUserCoin Error \nID : {cr.Id}, Money {cr.Money}");
+                    return;
+                }
+            }
+            else
+            {
+                if (!DB.TrySubtractUserCoin(cr.Id, cr.Money))
+                {
+                    await arg.RespondAsync($"TrySubtractUserCoin Error \nID : {cr.Id}, Money {cr.Money}");
+                    return;
+                }
+            }
+            await arg.Message.ModifyAsync(msg => {
+                msg.Components = new ComponentBuilder().Build();
+                msg.Content = $"{cr.Nickname}님의 {cr.Kind}요청은 성사되었습니다. ({cr.Money}$)";
+            });
         }
 
         private async Task OnDealerAcceptButton(SocketMessageComponent arg)
         {
-            Console.WriteLine(arg.Message.CleanContent);
+            var cr = CoinReceipt.fromJson(arg.Message.CleanContent);
+            await arg.Message.ModifyAsync(msg => {
+                msg.Components = new ComponentBuilder().Build();
+                msg.Content = $"{cr.Nickname}님의 {cr.Kind}요청은 취소됫습니다.";
+            });
         }
 
         private async Task OnCustomerReturnButton(SocketMessageComponent arg)

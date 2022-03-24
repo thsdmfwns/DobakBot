@@ -67,14 +67,7 @@ namespace DobakBot.Controller.Handler
             var msg = CoinReceipt.toJson(Cr);
             var comp = new ComponentBuilder().WithButton("승인", "dealer_accept").WithButton("거부", "dealer_deny");
             await notifiyChannel.SendMessageAsync(msg, component: comp.Build());
-
-            if (!DB.TrySubtractUserCoin(user, money))
-            {
-                await arg.RespondAsync($"TrySubtractUserCoin Error", ephemeral: true);
-                return;
-            }
-
-            await arg.RespondAsync($"{nick}님이 {money}$ 환전하셨습니다.", ephemeral: true);
+            await arg.RespondAsync($"요청 되었습니다! 딜러의 확인까지 기달려주세요.", ephemeral: true);
         }
 
         private async Task OnCustomerPaySelectMenu(SocketMessageComponent arg)
@@ -98,13 +91,7 @@ namespace DobakBot.Controller.Handler
             var comp = new ComponentBuilder().WithButton("승인", "dealer_accept").WithButton("거부", "dealer_deny");
             await notifiyChannel.SendMessageAsync(msg, component: comp.Build());
 
-            if (!DB.TryAddUserCoin(user, money))
-            {
-                await arg.RespondAsync($"TryAddUserCoin Error", ephemeral: true);
-                return;
-            }
-
-            await arg.RespondAsync($"{nick}님이 {money}:coin: 충전하셨습니다.", ephemeral: true);
+            await arg.RespondAsync($"요청 되었습니다! 딜러의 확인까지 기달려주세요.", ephemeral: true);
         }
 
         private async Task OnWeaponPaySelectMenu(SocketMessageComponent arg)
