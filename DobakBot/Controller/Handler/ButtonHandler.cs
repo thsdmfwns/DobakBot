@@ -33,9 +33,21 @@ namespace DobakBot.Controller
                 case "customer_Wallet": await OnCustomerWalletButton(arg); return;
                 case "customer_pay": await OnCustomerPayButton(arg); return;
                 case "customer_return": await OnCustomerReturnButton(arg); return;
+                case "dealer_accept": await OnDealerAcceptButton(arg); return;
+                case "dealer_deny": await OnDealerDenyButton(arg); return;
                 default: return;
             }
 
+        }
+
+        private async Task OnDealerDenyButton(SocketMessageComponent arg)
+        {
+            Console.WriteLine(arg.Message.CleanContent);
+        }
+
+        private async Task OnDealerAcceptButton(SocketMessageComponent arg)
+        {
+            Console.WriteLine(arg.Message.CleanContent);
         }
 
         private async Task OnCustomerReturnButton(SocketMessageComponent arg)
@@ -125,7 +137,6 @@ namespace DobakBot.Controller
         {
             var channel = arg.Channel as SocketTextChannel;
             var guild = channel.Guild;
-            //var notifiyChannel = guild.Channels.Single(x => x.Name == "자유게시판-ic") as SocketTextChannel;
             var user = guild.GetUser(arg.User.Id);
             var role = guild.Roles.Single(x => x.Name == "Customer");
 
@@ -147,7 +158,6 @@ namespace DobakBot.Controller
                 return;
             }
             await user.AddRoleAsync(role);
-            //await notifiyChannel.SendMessageAsync($"{user.Nickname}님이 카지노에 입장하셨습니다.");
             await arg.DeferAsync();
         }
     }
