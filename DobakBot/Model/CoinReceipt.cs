@@ -12,7 +12,7 @@ namespace DobakBot.Model
     {
         public CoinReceipt(string nickname, int money, ulong id, bool isPay)
         {
-            Kind = isPay ? "환전" : "충전";
+            Kind = isPay ? "충전" : "환전";
             Nickname = nickname;
             Money = money;
             Id = id;
