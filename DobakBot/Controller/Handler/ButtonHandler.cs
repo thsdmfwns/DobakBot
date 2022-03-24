@@ -40,7 +40,7 @@ namespace DobakBot.Controller
 
         }
 
-        private async Task OnDealerDenyButton(SocketMessageComponent arg)
+        private async Task OnDealerAcceptButton(SocketMessageComponent arg)
         {
             var cr = CoinReceipt.fromJson(arg.Message.CleanContent);
             if (cr.IsPay)
@@ -65,7 +65,7 @@ namespace DobakBot.Controller
             });
         }
 
-        private async Task OnDealerAcceptButton(SocketMessageComponent arg)
+        private async Task OnDealerDenyButton(SocketMessageComponent arg)
         {
             var cr = CoinReceipt.fromJson(arg.Message.CleanContent);
             await arg.Message.ModifyAsync(msg => {
