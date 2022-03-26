@@ -77,13 +77,13 @@ namespace DobakBot.Controller
         private async Task OnCustomerReturnButton(SocketMessageComponent arg)
         {
             var comp = new ComponentBuilder().WithSelectMenu(GetMoneySelectMenu("return"));
-            await arg.RespondAsync($"충전할 금액을 선택해주세요.", component: comp.Build(), ephemeral: true);
+            await arg.RespondAsync($"충전할 금액을 선택해주세요.", components: comp.Build(), ephemeral: true);
         }
 
         private async Task OnCustomerPayButton(SocketMessageComponent arg)
         {
             var comp = new ComponentBuilder().WithSelectMenu(GetMoneySelectMenu("pay"));
-            await arg.RespondAsync($"충전할 금액을 선택해주세요.", component: comp.Build(), ephemeral: true);
+            await arg.RespondAsync($"충전할 금액을 선택해주세요.", components: comp.Build(), ephemeral: true);
         }
 
         private SelectMenuBuilder GetMoneySelectMenu(string id)
@@ -142,7 +142,7 @@ namespace DobakBot.Controller
             var list = WeaponPay.WeaponPayMap[id].Weapons;
             var comp = new ComponentBuilder().WithSelectMenu(GetWeponSelectMenu(list));
             comp.WithButton(label: "취소", customId: "Weapon_Cancel", row:1);
-            await arg.RespondAsync($"무기 또는 탄창을 하나만 선택해주세요. \n 선택후, 이메세지를 닫는것을 추천합니다.",component:comp.Build() ,ephemeral: true);
+            await arg.RespondAsync($"무기 또는 탄창을 하나만 선택해주세요. \n 선택후, 이메세지를 닫는것을 추천합니다.",components:comp.Build() ,ephemeral: true);
 
         }
 

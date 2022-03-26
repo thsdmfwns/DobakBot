@@ -66,7 +66,7 @@ namespace DobakBot.Controller.Handler
             var Cr = new CoinReceipt(nick, money, user, false);
             var msg = CoinReceipt.toJson(Cr);
             var comp = new ComponentBuilder().WithButton("승인", "dealer_accept").WithButton("거부", "dealer_deny");
-            await notifiyChannel.SendMessageAsync(msg, component: comp.Build());
+            await notifiyChannel.SendMessageAsync(msg, components: comp.Build());
             await arg.RespondAsync($"요청 되었습니다! 딜러의 확인까지 기달려주세요.", ephemeral: true);
         }
 
@@ -89,7 +89,7 @@ namespace DobakBot.Controller.Handler
             var Cr = new CoinReceipt(nick, money, user, true);
             var msg = CoinReceipt.toJson(Cr);
             var comp = new ComponentBuilder().WithButton("승인", "dealer_accept").WithButton("거부", "dealer_deny");
-            await notifiyChannel.SendMessageAsync(msg, component: comp.Build());
+            await notifiyChannel.SendMessageAsync(msg, components: comp.Build());
 
             await arg.RespondAsync($"요청 되었습니다! 딜러의 확인까지 기달려주세요.", ephemeral: true);
         }

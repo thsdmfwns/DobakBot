@@ -32,7 +32,7 @@ namespace DobakBot.Controller.Module
             com.WithButton(label: "할인 판매", customId: "Weapon_DCSell");
             com.WithButton(label: "취소", customId: "Weapon_Cancel");
 
-            await ReplyAsync($"{user.Nickname}님의 장부도우미 \n 요청 갯수 : {count}", component: com.Build());
+            await ReplyAsync($"{user.Nickname}님의 장부도우미 \n 요청 갯수 : {count}", components: com.Build());
         }
     }
 }

@@ -22,7 +22,7 @@ namespace DobakBot.Controller
             builder.Description = 
                 "카지노에 입장하시기 전, \n 디스코드 채널의 별명을 IC상의 이름으로 설정해주세요.\n" +
                 "IC상에서의 코인 충전과 코인 환전을 위해 필요합니다.";
-            await ReplyAsync("", embed: builder.Build(), component: button.Build());
+            await ReplyAsync("", embed: builder.Build(), components: button.Build());
         }
 
         [Command("지갑버튼")]
@@ -35,7 +35,7 @@ namespace DobakBot.Controller
             var builder = new EmbedBuilder();
             builder.Title = "환전소";
             builder.Color = Color.Blue;
-            await ReplyAsync("", embed: builder.Build(), component: buttons.Build());
+            await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
         }
 
         [Command("clear")]
