@@ -81,11 +81,13 @@ namespace DobakBot.Controller
             var cate = guild.CategoryChannels.Single(x => x.Name == "Yamaguchi Kuma Slot");
             var ch = await guild.CreateTextChannelAsync(roomName, x => x.CategoryId = cate.Id);
             var dealerPer = guild.Roles.Single(x => x.Name == "CASINO Dealer");
+            var guestPer = guild.Roles.Single(x => x.Name == "CASINO Guest");
             var per = new OverwritePermissions(viewChannel: PermValue.Deny, sendMessages: PermValue.Deny);
             var userPer = new OverwritePermissions(viewChannel: PermValue.Allow, sendMessages: PermValue.Deny);
             await ch.AddPermissionOverwriteAsync(guild.EveryoneRole, per);
             await ch.AddPermissionOverwriteAsync(arg.User, userPer);
             await ch.AddPermissionOverwriteAsync(dealerPer, userPer);
+            await ch.AddPermissionOverwriteAsync(guestPer, userPer);
 
             var comp = new ComponentBuilder()
                 .WithButton("슬롯머신 돌리기", "slot_run", style:ButtonStyle.Primary)
