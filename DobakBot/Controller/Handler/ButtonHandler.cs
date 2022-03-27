@@ -47,6 +47,7 @@ namespace DobakBot.Controller
             var guild = channel.Guild;
             var nick = guild.GetUser(arg.User.Id).Nickname;
             var ch = await guild.CreateTextChannelAsync($"{nick}님의 슬롯머신");
+            var dealerPer = guild.Roles.Single(x => x.Name == "dealer");
             var per = new OverwritePermissions(viewChannel: PermValue.Deny, sendMessages: PermValue.Deny);
             var userPer = new OverwritePermissions(viewChannel: PermValue.Allow, sendMessages: PermValue.Deny);
             await ch.AddPermissionOverwriteAsync(guild.EveryoneRole, per);
