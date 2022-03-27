@@ -46,14 +46,13 @@ namespace DobakBot.Controller
         private async Task OnSlotOddButton(SocketMessageComponent arg)
         {
             const string OddText =
-           ":shinto_shrine:　 :shinto_shrine:　 :shinto_shrine:  =　 BET X 8\n\n" +
-           ":grapes:　 :grapes:　 :grapes:  =　 BET X 13\n\n" +
-           ":tangerine:　 :tangerine:　 :tangerine:  =　 BET X 16\n\n" +
+           ":shinto_shrine:　 :shinto_shrine:　 :shinto_shrine:  =　 BET X 4\n\n" +
+           ":grapes:　 :grapes:　 :grapes:  =　 BET X 6\n\n" +
+           ":tangerine:　 :tangerine:　 :tangerine:  =　 BET X 8\n\n" +
            ":bell:　 :bell:　 :bell:  =　 BET X 10\n\n" +
-           ":flower_playing_cards:　 :flower_playing_cards:　 :flower_playing_cards:  =　 BET X 20\n\n" +
-           ":cherries:　 　 　 　      =　  BET X 2\n\n" +
-           ":cherries:　 :cherries:　 　     =　  BET X 5\n\n" +
-           ":cherries:　 :cherries:　 :cherries:  =　 BET X 10";
+           ":flower_playing_cards:　 :flower_playing_cards:　 :flower_playing_cards:  =　 BET X 12\n\n" +
+           ":cherries:　 :cherries:　 　     =　  BET X 2\n\n" +
+           ":cherries:　 :cherries:　 :cherries:  =　 BET X 3";
             var builder = new EmbedBuilder();
             builder.Title = "파칭코 배율";
             builder.Description = OddText;

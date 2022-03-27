@@ -53,17 +53,17 @@ namespace DobakBot.Model
                 case SlotCard.None:
                     return 0;
                 case SlotCard.Orange:
-                    return 16;
-                case SlotCard.Grape:
-                    return 13;
-                case SlotCard.Cherry:
-                    return 10;
-                case SlotCard.Card:
-                    return 20;
-                case SlotCard.Gate:
                     return 8;
+                case SlotCard.Grape:
+                    return 6;
+                case SlotCard.Cherry:
+                    return 3;
+                case SlotCard.Card:
+                    return 12;
+                case SlotCard.Gate:
+                    return 4;
                 case SlotCard.Bell:
-                    return 15;
+                    return 10;
                 default:
                     break;
             }
@@ -78,13 +78,8 @@ namespace DobakBot.Model
                 Odd = SlotCardToOdd(result);
                 return SlotResult.JackPot;
             }
-            if (ResultMap[SlotCard.Cherry] > 0)
+            if (ResultMap[SlotCard.Cherry] > 1)
             {
-                if (ResultMap[SlotCard.Cherry] > 1)
-                {
-                    Odd = 3;
-                    return SlotResult.Win;
-                }
                 Odd = 2;
                 return SlotResult.Win;
             }
