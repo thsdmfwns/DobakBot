@@ -133,7 +133,7 @@ namespace DobakBot.Controller
         {
             var channel = arg.Channel as SocketTextChannel;
             var guild = channel.Guild;
-            var nc = guild.Channels.Single(x => x.Name == "💬ㅣ자유채팅") as SocketTextChannel;
+            var nc = guild.Channels.Single(x => x.Name == "🔔｜환전-알림") as SocketTextChannel;
             var cr = CoinReceipt.fromJson(arg.Message.CleanContent);
             var contentmsg = $"{cr.Nickname}님의 {cr.Kind}요청은 취소됫습니다.";
             await arg.Message.ModifyAsync(msg => {
