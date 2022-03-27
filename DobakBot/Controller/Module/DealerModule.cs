@@ -94,7 +94,7 @@ namespace DobakBot.Controller.Module
                 return;
             }
 
-            await ReplyAsync($"{list[0]}님이 {money - money*0.03}$ 환전하셨습니다.");
+            await ReplyAsync($"{list[0]}님이 {money - money*0.1}$ 환전하셨습니다.");
         }
     }
 }
