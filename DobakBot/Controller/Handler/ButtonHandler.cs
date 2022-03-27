@@ -58,7 +58,7 @@ namespace DobakBot.Controller
             builder.Title = "파칭코 배율";
             builder.Description = OddText;
             builder.Color = Color.Orange;
-            await arg.RespondAsync(embed: builder.Build());
+            await arg.RespondAsync(embed: builder.Build(), ephemeral:true);
         }
 
         private async Task OnSlotRunButton(SocketMessageComponent arg)
@@ -87,7 +87,7 @@ namespace DobakBot.Controller
             await ch.AddPermissionOverwriteAsync(dealerPer, userPer);
 
             var comp = new ComponentBuilder()
-                .WithButton("슬롯머신 돌리기", "slot_Run", style:ButtonStyle.Primary)
+                .WithButton("슬롯머신 돌리기", "slot_run", style:ButtonStyle.Primary)
                 .WithButton("슬롯머신 배율 보기", "slot_odd", style:ButtonStyle.Danger)
                 .WithButton("지갑보기", "customer_Wallet", style:ButtonStyle.Success);
             var embed = new EmbedBuilder();
