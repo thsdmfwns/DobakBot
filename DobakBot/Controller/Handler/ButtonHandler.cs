@@ -52,6 +52,7 @@ namespace DobakBot.Controller
             var userPer = new OverwritePermissions(viewChannel: PermValue.Allow, sendMessages: PermValue.Deny);
             await ch.AddPermissionOverwriteAsync(guild.EveryoneRole, per);
             await ch.AddPermissionOverwriteAsync(arg.User, userPer);
+            await ch.AddPermissionOverwriteAsync(dealerPer, userPer);
         }
 
         private async Task OnDealerAcceptButton(SocketMessageComponent arg)
