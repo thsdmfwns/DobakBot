@@ -78,8 +78,9 @@ namespace DobakBot.Controller
                 await arg.RespondAsync($"@{roomName} 이미 만들어진 방이네요!", ephemeral: true);
                 return;
             }
-            var ch = await guild.CreateTextChannelAsync(roomName);
-            var dealerPer = guild.Roles.Single(x => x.Name == "dealer");
+            var cate = guild.CategoryChannels.Single(x => x.Name == "Yamaguchi Kuma Slot");
+            var ch = await guild.CreateTextChannelAsync(roomName, x => x.CategoryId = cate.Id);
+            var dealerPer = guild.Roles.Single(x => x.Name == "CASINO Dealer");
             var per = new OverwritePermissions(viewChannel: PermValue.Deny, sendMessages: PermValue.Deny);
             var userPer = new OverwritePermissions(viewChannel: PermValue.Allow, sendMessages: PermValue.Deny);
             await ch.AddPermissionOverwriteAsync(guild.EveryoneRole, per);
@@ -95,10 +96,14 @@ namespace DobakBot.Controller
             embed.Title = "슬롯머신 도우미";
             embed.Description = $"환영합니다 {nick}님.";
             await ch.SendMessageAsync(embed: embed.Build(), components: comp.Build());
+            await arg.DeferAsync();
         }
 
         private async Task OnDealerAcceptButton(SocketMessageComponent arg)
         {
+            var channel = arg.Channel as SocketTextChannel;
+            var guild = channel.Guild;
+            var nc = guild.Channels.Single(x => x.Name == "🔔｜환전-알림") as SocketTextChannel;
             var cr = CoinReceipt.fromJson(arg.Message.CleanContent);
             if (cr.IsPay)
             {
@@ -116,19 +121,26 @@ namespace DobakBot.Controller
                     return;
                 }
             }
+            var contentmsg = $"{cr.Nickname}님의 {cr.Kind}요청은 성사되었습니다. ({cr.Money}$)";
             await arg.Message.ModifyAsync(msg => {
                 msg.Components = new ComponentBuilder().Build();
-                msg.Content = $"{cr.Nickname}님의 {cr.Kind}요청은 성사되었습니다. ({cr.Money}$)";
+                msg.Content = contentmsg;
             });
+            await nc.SendMessageAsync(contentmsg);
         }
 
         private async Task OnDealerDenyButton(SocketMessageComponent arg)
         {
+            var channel = arg.Channel as SocketTextChannel;
+            var guild = channel.Guild;
+            var nc = guild.Channels.Single(x => x.Name == "💬ㅣ자유채팅") as SocketTextChannel;
             var cr = CoinReceipt.fromJson(arg.Message.CleanContent);
+            var contentmsg = $"{cr.Nickname}님의 {cr.Kind}요청은 취소됫습니다.";
             await arg.Message.ModifyAsync(msg => {
                 msg.Components = new ComponentBuilder().Build();
-                msg.Content = $"{cr.Nickname}님의 {cr.Kind}요청은 취소됫습니다.";
+                msg.Content = contentmsg;
             });
+            await nc.SendMessageAsync(contentmsg);
         }
 
         private async Task OnCustomerReturnButton(SocketMessageComponent arg)
@@ -219,7 +231,7 @@ namespace DobakBot.Controller
             var channel = arg.Channel as SocketTextChannel;
             var guild = channel.Guild;
             var user = guild.GetUser(arg.User.Id);
-            var role = guild.Roles.Single(x => x.Name == "Customer");
+            var role = guild.Roles.Single(x => x.Name == "CASINO Guest");
 
             if (user.Nickname == null || user.Nickname == string.Empty)
             {

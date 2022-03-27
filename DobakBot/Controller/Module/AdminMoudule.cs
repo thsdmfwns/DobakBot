@@ -38,13 +38,13 @@ namespace DobakBot.Controller
             await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
         }
 
-        [Command("test")]
+        [Command("슬롯머신버튼")]
         public async Task test()
         {
             var buttons = new ComponentBuilder()
-                .WithButton("방생성", "slot_roomCreate", style: ButtonStyle.Primary);
+                .WithButton("이용하기", "slot_roomCreate", style: ButtonStyle.Success);
             var builder = new EmbedBuilder();
-            builder.Title = "test";
+            builder.Title = "슬롯머신 이용하기";
             builder.Color = Color.Blue;
             await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
         }

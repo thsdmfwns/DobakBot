@@ -57,8 +57,15 @@ namespace DobakBot.Controller.Handler
                 return;
             }
 
+            var msg = await channel.GetMessagesAsync(limit: 100).SingleAsync();
+            if (msg.Count > 1)
+            {
+                await channel.DeleteMessageAsync(msg.First());
+            }
+
             DB.TrySubtractUserCoin(arg.User.Id, money);
             _ = RunSlotMachine(money, nick, arg);
+            await arg.DeferAsync();
         }
 
         private async Task RunSlotMachine(int money, string nick , SocketMessageComponent arg)
