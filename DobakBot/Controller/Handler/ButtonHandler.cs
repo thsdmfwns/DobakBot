@@ -36,9 +36,35 @@ namespace DobakBot.Controller
                 case "dealer_accept": await OnDealerAcceptButton(arg); return;
                 case "dealer_deny": await OnDealerDenyButton(arg); return;
                 case "slot_roomCreate": await OnSlotRoomCreateButton(arg); return;
+                case "slot_run": await OnSlotRunButton(arg); return;
+                case "slot_odd": await OnSlotOddButton(arg); return;
                 default: return;
             }
 
+        }
+
+        private async Task OnSlotOddButton(SocketMessageComponent arg)
+        {
+            const string OddText =
+           ":shinto_shrine:　 :shinto_shrine:　 :shinto_shrine:  =　 BET X 8\n\n" +
+           ":grapes:　 :grapes:　 :grapes:  =　 BET X 13\n\n" +
+           ":tangerine:　 :tangerine:　 :tangerine:  =　 BET X 16\n\n" +
+           ":bell:　 :bell:　 :bell:  =　 BET X 10\n\n" +
+           ":flower_playing_cards:　 :flower_playing_cards:　 :flower_playing_cards:  =　 BET X 20\n\n" +
+           ":cherries:　 　 　 　      =　  BET X 2\n\n" +
+           ":cherries:　 :cherries:　 　     =　  BET X 5\n\n" +
+           ":cherries:　 :cherries:　 :cherries:  =　 BET X 10";
+            var builder = new EmbedBuilder();
+            builder.Title = "파칭코 배율";
+            builder.Description = OddText;
+            builder.Color = Color.Orange;
+            await arg.RespondAsync(embed: builder.Build());
+        }
+
+        private async Task OnSlotRunButton(SocketMessageComponent arg)
+        {
+            var comp = new ComponentBuilder().WithSelectMenu(GetMoneySelectMenu("slot_run"));
+            await arg.RespondAsync($"베팅 금액을 선택해 주세요.", components: comp.Build(), ephemeral: true);
         }
 
         private async Task OnSlotRoomCreateButton(SocketMessageComponent arg)
@@ -46,13 +72,29 @@ namespace DobakBot.Controller
             var channel = arg.Channel as SocketTextChannel;
             var guild = channel.Guild;
             var nick = guild.GetUser(arg.User.Id).Nickname;
-            var ch = await guild.CreateTextChannelAsync($"{nick}님의 슬롯머신");
+            var roomName = $"{nick}님의_슬롯머신";
+            if (guild.Channels.SingleOrDefault(x=> x.Name == roomName) != null)
+            {
+                await arg.RespondAsync($"@{roomName} 이미 만들어진 방이네요!", ephemeral: true);
+                return;
+            }
+            var ch = await guild.CreateTextChannelAsync(roomName);
             var dealerPer = guild.Roles.Single(x => x.Name == "dealer");
             var per = new OverwritePermissions(viewChannel: PermValue.Deny, sendMessages: PermValue.Deny);
             var userPer = new OverwritePermissions(viewChannel: PermValue.Allow, sendMessages: PermValue.Deny);
             await ch.AddPermissionOverwriteAsync(guild.EveryoneRole, per);
             await ch.AddPermissionOverwriteAsync(arg.User, userPer);
             await ch.AddPermissionOverwriteAsync(dealerPer, userPer);
+
+            var comp = new ComponentBuilder()
+                .WithButton("슬롯머신 돌리기", "slot_Run", style:ButtonStyle.Primary)
+                .WithButton("슬롯머신 배율 보기", "slot_odd", style:ButtonStyle.Danger)
+                .WithButton("지갑보기", "customer_Wallet", style:ButtonStyle.Success);
+            var embed = new EmbedBuilder();
+            embed.Color = Color.Blue;
+            embed.Title = "슬롯머신 도우미";
+            embed.Description = $"환영합니다 {nick}님.";
+            await ch.SendMessageAsync(embed: embed.Build(), components: comp.Build());
         }
 
         private async Task OnDealerAcceptButton(SocketMessageComponent arg)
@@ -91,13 +133,13 @@ namespace DobakBot.Controller
 
         private async Task OnCustomerReturnButton(SocketMessageComponent arg)
         {
-            var comp = new ComponentBuilder().WithSelectMenu(GetMoneySelectMenu("return"));
-            await arg.RespondAsync($"충전할 금액을 선택해주세요.", components: comp.Build(), ephemeral: true);
+            var comp = new ComponentBuilder().WithSelectMenu(GetMoneySelectMenu("customerreturn_select"));
+            await arg.RespondAsync($"환전할 금액을 선택해주세요.", components: comp.Build(), ephemeral: true);
         }
 
         private async Task OnCustomerPayButton(SocketMessageComponent arg)
         {
-            var comp = new ComponentBuilder().WithSelectMenu(GetMoneySelectMenu("pay"));
+            var comp = new ComponentBuilder().WithSelectMenu(GetMoneySelectMenu("customerpay_select"));
             await arg.RespondAsync($"충전할 금액을 선택해주세요.", components: comp.Build(), ephemeral: true);
         }
 
@@ -105,7 +147,7 @@ namespace DobakBot.Controller
         {
             var menuBuilder = new SelectMenuBuilder()
             .WithPlaceholder("금액 선택")
-            .WithCustomId($"customer{id}_select")
+            .WithCustomId(id)
             .WithMinValues(1)
             .WithMaxValues(1);
             for (int i = 1; i < 21; i++)

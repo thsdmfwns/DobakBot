@@ -28,8 +28,53 @@ namespace DobakBot.Controller.Handler
                 case "WeaponPay_SelectMenu": await OnWeaponPaySelectMenu(arg); return;
                 case "customerpay_select": await OnCustomerPaySelectMenu(arg); return;
                 case "customerreturn_select": await OnCustomerReturnSelectMenu(arg); return;
+                case "slot_run": await OnSlotRun(arg); return;
                 default: return;
             }
+        }
+
+        private async Task OnSlotRun(SocketMessageComponent arg)
+        {
+            var channel = arg.Channel as SocketTextChannel;
+            var guild = channel.Guild;
+            var nick = guild.GetUser(arg.User.Id).Nickname;
+            int money;
+            if (!int.TryParse(arg.Data.Values.First(), out money))
+            {
+                await arg.RespondAsync($"{arg} 일치 하지 않는 값입니다.\n", ephemeral:true);
+                return;
+            }
+
+            var user = DB.GetUserByDiscordId(arg.User.Id);
+            if (user == null)
+            {
+                await arg.RespondAsync($"등록되지 않은 사용자입니다.", ephemeral: true);
+                return;
+            }
+            if (user.coin < money)
+            {
+                await arg.RespondAsync($"{nick}님의 :coin:이 부족합니다 ({user.coin - money}:coin:).", ephemeral: true);
+                return;
+            }
+
+            DB.TrySubtractUserCoin(arg.User.Id, money);
+            _ = RunSlotMachine(money, nick, arg);
+        }
+
+        private async Task RunSlotMachine(int money, string nick , SocketMessageComponent arg)
+        {
+            var slot = new SlotMachine(money);
+            await slot.SetResult();
+            var embeds = slot.getEmbeds(nick);
+            var msg = await arg.Channel.SendMessageAsync(embed:embeds[0]);
+            await Task.Delay(2000);
+            await msg.ModifyAsync(msg => msg.Embed = embeds[1]);
+            await Task.Delay(1010);
+            await msg.ModifyAsync(msg => msg.Embed = embeds[2]);
+            await Task.Delay(1010);
+            await msg.ModifyAsync(msg => msg.Embed = embeds[3]);
+            if (slot.ResultCoin == 0) return;
+            DB.TryAddUserCoin(arg.User.Id, slot.ResultCoin);
         }
 
         private async Task OnCustomerReturnSelectMenu(SocketMessageComponent arg)
