@@ -62,7 +62,7 @@ namespace DobakBot.Controller
 
         private async Task OnSlotRunButton(SocketMessageComponent arg)
         {
-            var comp = new ComponentBuilder().WithSelectMenu(GetMoneySelectMenu("slot_run"));
+            var comp = new ComponentBuilder().WithSelectMenu(GetMoneySelectMenu("slot_run", limit:11));
             await arg.RespondAsync($"베팅 금액을 선택해 주세요.", components: comp.Build());
         }
 
@@ -156,7 +156,7 @@ namespace DobakBot.Controller
             await arg.RespondAsync($"충전할 금액을 선택해주세요.", components: comp.Build(), ephemeral: true);
         }
 
-        private SelectMenuBuilder GetMoneySelectMenu(string id)
+        private SelectMenuBuilder GetMoneySelectMenu(string id, int limit = 21)
         {
             var menuBuilder = new SelectMenuBuilder()
             .WithPlaceholder("금액 선택")
