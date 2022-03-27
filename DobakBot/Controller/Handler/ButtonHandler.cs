@@ -87,7 +87,7 @@ namespace DobakBot.Controller
             await ch.AddPermissionOverwriteAsync(guild.EveryoneRole, per);
             await ch.AddPermissionOverwriteAsync(arg.User, userPer);
             await ch.AddPermissionOverwriteAsync(dealerPer, userPer);
-            await ch.AddPermissionOverwriteAsync(guestPer, userPer);
+            await ch.AddPermissionOverwriteAsync(guestPer, per);
 
             var comp = new ComponentBuilder()
                 .WithButton("슬롯머신 돌리기", "slot_run", style:ButtonStyle.Primary)
