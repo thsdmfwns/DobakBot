@@ -39,7 +39,9 @@ namespace DobakBot
 
             new ButtonHandler(client);
             new SelectMenuHandler(client);
+            new ModalHandler(client);
             client.MessageReceived += OnClientMessage;
+
             await commands.AddModulesAsync(assembly: Assembly.GetEntryAssembly(), services: null);
             await Task.Delay(-1);   
         }

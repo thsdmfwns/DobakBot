@@ -38,6 +38,17 @@ namespace DobakBot.Controller
             await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
         }
 
+        [Command("test")]
+        public async Task test()
+        {
+            var buttons = new ComponentBuilder()
+                .WithButton("방생성", "slot_roomCreate", style: ButtonStyle.Primary);
+            var builder = new EmbedBuilder();
+            builder.Title = "test";
+            builder.Color = Color.Blue;
+            await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
+        }
+
         [Command("clear")]
         public async Task ClearMessages()
         {

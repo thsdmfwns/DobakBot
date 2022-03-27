@@ -35,9 +35,22 @@ namespace DobakBot.Controller
                 case "customer_return": await OnCustomerReturnButton(arg); return;
                 case "dealer_accept": await OnDealerAcceptButton(arg); return;
                 case "dealer_deny": await OnDealerDenyButton(arg); return;
+                case "slot_roomCreate": await OnSlotRoomCreateButton(arg); return;
                 default: return;
             }
 
+        }
+
+        private async Task OnSlotRoomCreateButton(SocketMessageComponent arg)
+        {
+            var channel = arg.Channel as SocketTextChannel;
+            var guild = channel.Guild;
+            var nick = guild.GetUser(arg.User.Id).Nickname;
+            var ch = await guild.CreateTextChannelAsync($"{nick}님의 슬롯머신");
+            var per = new OverwritePermissions(viewChannel: PermValue.Deny, sendMessages: PermValue.Deny);
+            var userPer = new OverwritePermissions(viewChannel: PermValue.Allow, sendMessages: PermValue.Deny);
+            await ch.AddPermissionOverwriteAsync(guild.EveryoneRole, per);
+            await ch.AddPermissionOverwriteAsync(arg.User, userPer);
         }
 
         private async Task OnDealerAcceptButton(SocketMessageComponent arg)
