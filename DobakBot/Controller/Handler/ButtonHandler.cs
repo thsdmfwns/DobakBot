@@ -64,7 +64,7 @@ namespace DobakBot.Controller
         private async Task OnSlotRunButton(SocketMessageComponent arg)
         {
             var comp = new ComponentBuilder().WithSelectMenu(GetMoneySelectMenu("slot_run"));
-            await arg.RespondAsync($"베팅 금액을 선택해 주세요.", components: comp.Build(), ephemeral: true);
+            await arg.RespondAsync($"베팅 금액을 선택해 주세요.", components: comp.Build());
         }
 
         private async Task OnSlotRoomCreateButton(SocketMessageComponent arg)
