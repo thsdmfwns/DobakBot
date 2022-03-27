@@ -163,7 +163,7 @@ namespace DobakBot.Controller
             .WithCustomId(id)
             .WithMinValues(1)
             .WithMaxValues(1);
-            for (int i = 1; i < 21; i++)
+            for (int i = 1; i < limit; i++)
             {
                 var item = (i * 1000).ToString();
                 menuBuilder.AddOption(item, item);
