@@ -93,17 +93,22 @@ namespace DobakBot.Controller.Handler
             var nick = guild.GetUser(user).Nickname;
             var data = arg.Data.Values.First();
 
-            int money;
-            if (!int.TryParse(data, out money))
-            {
-                await arg.RespondAsync($"{data} 일치 하지 않는 값입니다.", ephemeral: true);
-                return;
-            }
-
             var dbuser = DB.GetUserByDiscordId(user);
             if (dbuser == null)
             {
                 await arg.RespondAsync($"{nick} 등록되지 않은 사용자입니다.", ephemeral: true);
+                return;
+            }
+
+            int money;
+
+            if (data == "all")
+            {
+                money = dbuser.coin;
+            }
+            else if (!int.TryParse(data, out money))
+            {
+                await arg.RespondAsync($"{data} 일치 하지 않는 값입니다.", ephemeral: true);
                 return;
             }
 
@@ -115,7 +120,7 @@ namespace DobakBot.Controller.Handler
             }
 
             var notifiyChannel = guild.Channels.Single(x => x.Name == "딜러-사무실") as SocketTextChannel;
-            var Cr = new CoinReceipt(nick, money, user, false);
+            var Cr = new CoinReceipt(nick, money - (int)(0.1 * money), user, false);
             var msg = CoinReceipt.toJson(Cr);
             var comp = new ComponentBuilder().WithButton("승인", "dealer_accept").WithButton("거부", "dealer_deny");
             await notifiyChannel.SendMessageAsync(msg, components: comp.Build());

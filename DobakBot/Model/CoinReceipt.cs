@@ -22,8 +22,6 @@ namespace DobakBot.Model
         public string Nickname { get; private set; }
         public int Money { get; private set; }
         public ulong Id { get; private set; }
-
-
         public bool IsPay => Kind == "충전";
         static public string toJson(CoinReceipt receipt) => JsonConvert.SerializeObject(receipt);
         static public CoinReceipt fromJson(string receipt) => JsonConvert.DeserializeObject<CoinReceipt>(receipt);

@@ -122,7 +122,8 @@ namespace DobakBot.Controller
                     return;
                 }
             }
-            var contentmsg = $"{cr.Nickname}님의 {cr.Kind}요청은 성사되었습니다. ({cr.Money}$)";
+            var count = cr.IsPay ? ":coin:" : "$";
+            var contentmsg = $"{cr.Nickname}님의 {cr.Kind}요청은 성사되었습니다. ({cr.Money}{count})";
             await arg.Message.ModifyAsync(msg => {
                 msg.Components = new ComponentBuilder().Build();
                 msg.Content = contentmsg;
@@ -146,7 +147,18 @@ namespace DobakBot.Controller
 
         private async Task OnCustomerReturnButton(SocketMessageComponent arg)
         {
-            var comp = new ComponentBuilder().WithSelectMenu(GetMoneySelectMenu("customerreturn_select"));
+            var menuBuilder = new SelectMenuBuilder()
+            .WithPlaceholder("금액 선택")
+            .WithCustomId("customerreturn_select")
+            .WithMinValues(1)
+            .WithMaxValues(1);
+            menuBuilder.AddOption("잔금 전액", "all");
+            for (int i = 1; i < 21; i++)
+            {
+                var item = (i * 500).ToString();
+                menuBuilder.AddOption(item, item);
+            }
+            var comp = new ComponentBuilder().WithSelectMenu(menuBuilder);
             await arg.RespondAsync($"환전할 금액을 선택해주세요.", components: comp.Build(), ephemeral: true);
         }
 
