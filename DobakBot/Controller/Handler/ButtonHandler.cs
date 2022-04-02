@@ -108,22 +108,22 @@ namespace DobakBot.Controller
             var cr = CoinReceipt.fromJson(arg.Message.CleanContent);
             if (cr.IsPay)
             {
-                if (!DB.TryAddUserCoin(cr.Id, cr.Money))
+                if (!DB.TryAddUserCoin(cr.Id, cr.TotalMoney))
                 {
-                    await arg.RespondAsync($"TryAddUserCoin Error \nID : {cr.Id}, Money {cr.Money}");
+                    await arg.RespondAsync($"TryAddUserCoin Error \nID : {cr.Id}, Money {cr.TotalMoney}");
                     return;
                 }
             }
             else
             {
-                if (!DB.TrySubtractUserCoin(cr.Id, cr.Money))
+                if (!DB.TrySubtractUserCoin(cr.Id, cr.TotalMoney))
                 {
-                    await arg.RespondAsync($"TrySubtractUserCoin Error \nID : {cr.Id}, Money {cr.Money}");
+                    await arg.RespondAsync($"TrySubtractUserCoin Error \nID : {cr.Id}, Money {cr.TotalMoney}");
                     return;
                 }
             }
             var count = cr.IsPay ? ":coin:" : "$";
-            var contentmsg = $"{cr.Nickname}님의 {cr.Kind}요청은 성사되었습니다. ({cr.Money}{count})";
+            var contentmsg = $"{cr.Nickname}님의 {cr.Kind}요청은 성사되었습니다. ({cr.TotalMoney}{count})";
             await arg.Message.ModifyAsync(msg => {
                 msg.Components = new ComponentBuilder().Build();
                 msg.Content = contentmsg;
