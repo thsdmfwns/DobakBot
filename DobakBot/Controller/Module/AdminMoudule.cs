@@ -49,12 +49,26 @@ namespace DobakBot.Controller
             await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
         }
 
-        [Command("이용문의버튼")]
-        public async Task InfoButtonSpawn()
+        [Command("슬롯문의버튼")]
+        public async Task SlotInfoButtonSpawn()
         {
             var buttons = new ComponentBuilder()
                 .WithButton("이용문의", "slot_InfoCreate", style: ButtonStyle.Success);
-            await ReplyAsync("",components: buttons.Build());
+            var builder = new EmbedBuilder();
+            builder.Title = "이용문의";
+            builder.Color = Color.Blue;
+            await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
+        }
+
+        [Command("토토문의버튼")]
+        public async Task TotoInfoButtonSpawn()
+        {
+            var buttons = new ComponentBuilder()
+                .WithButton("이용문의", "toto_InfoCreate", style: ButtonStyle.Success);
+            var builder = new EmbedBuilder();
+            builder.Title = "이용문의";
+            builder.Color = Color.Blue;
+            await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
         }
 
         [Command("clear")]
