@@ -100,6 +100,30 @@ namespace DobakBot.Controller
             await arg.DeferAsync();
         }
 
+        private async Task OnInfoRoomCreateButton(SocketMessageComponent arg)
+        {
+            var channel = arg.Channel as SocketTextChannel;
+            var guild = channel.Guild;
+            var nick = guild.GetUser(arg.User.Id).Nickname;
+            var roomName = $"{nick}님의-이용문의";
+            if (guild.Channels.SingleOrDefault(x => x.Name == roomName) != null)
+            {
+                await arg.RespondAsync($"@{roomName} 이미 만들어진 방이네요!", ephemeral: true);
+                return;
+            }
+            var cate = guild.CategoryChannels.Single(x => x.Name == "Yamaguchi Kuma Slot");
+            var ch = await guild.CreateTextChannelAsync(roomName, x => x.CategoryId = cate.Id);
+            var dealerPer = guild.Roles.Single(x => x.Name == "CASINO Dealer");
+            var guestPer = guild.Roles.Single(x => x.Name == "CASINO Guest");
+            var per = new OverwritePermissions(viewChannel: PermValue.Deny, sendMessages: PermValue.Deny);
+            var userPer = new OverwritePermissions(viewChannel: PermValue.Allow, sendMessages: PermValue.Allow);
+            await ch.AddPermissionOverwriteAsync(guild.EveryoneRole, per);
+            await ch.AddPermissionOverwriteAsync(arg.User, userPer);
+            await ch.AddPermissionOverwriteAsync(dealerPer, userPer);
+            await ch.AddPermissionOverwriteAsync(guestPer, per);
+            await arg.DeferAsync();
+        }
+
         private async Task OnDealerAcceptButton(SocketMessageComponent arg)
         {
             var channel = arg.Channel as SocketTextChannel;
@@ -108,17 +132,17 @@ namespace DobakBot.Controller
             var cr = CoinReceipt.fromJson(arg.Message.CleanContent);
             if (cr.IsPay)
             {
-                if (!DB.TryAddUserCoin(cr.Id, cr.TotalMoney))
+                if (!DB.TryAddUserCoin(cr.Id, cr.Money))
                 {
-                    await arg.RespondAsync($"TryAddUserCoin Error \nID : {cr.Id}, Money {cr.TotalMoney}");
+                    await arg.RespondAsync($"TryAddUserCoin Error \nID : {cr.Id}, Money {cr.Money}");
                     return;
                 }
             }
             else
             {
-                if (!DB.TrySubtractUserCoin(cr.Id, cr.TotalMoney))
+                if (!DB.TrySubtractUserCoin(cr.Id, cr.Money))
                 {
-                    await arg.RespondAsync($"TrySubtractUserCoin Error \nID : {cr.Id}, Money {cr.TotalMoney}");
+                    await arg.RespondAsync($"TrySubtractUserCoin Error \nID : {cr.Id}, Money {cr.Money}");
                     return;
                 }
             }

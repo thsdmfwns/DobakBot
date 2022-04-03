@@ -39,7 +39,7 @@ namespace DobakBot.Controller
         }
 
         [Command("슬롯머신버튼")]
-        public async Task test()
+        public async Task SlotButtonSpawn()
         {
             var buttons = new ComponentBuilder()
                 .WithButton("이용하기", "slot_roomCreate", style: ButtonStyle.Success);
@@ -47,6 +47,14 @@ namespace DobakBot.Controller
             builder.Title = "슬롯머신 이용하기";
             builder.Color = Color.Blue;
             await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
+        }
+
+        [Command("이용문의버튼")]
+        public async Task InfoButtonSpawn()
+        {
+            var buttons = new ComponentBuilder()
+                .WithButton("이용문의", "slot_InfoCreate", style: ButtonStyle.Success);
+            await ReplyAsync("",components: buttons.Build());
         }
 
         [Command("clear")]
