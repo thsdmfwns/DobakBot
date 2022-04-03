@@ -85,7 +85,7 @@ namespace DobakBot.Model
                     Odd = 2;
                     return SlotResult.Win;
                 }
-                Odd = 1.5;
+                Odd = 1.3;
                 return SlotResult.Win;
             }
             return SlotResult.Lose;
