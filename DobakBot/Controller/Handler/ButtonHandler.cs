@@ -113,7 +113,7 @@ namespace DobakBot.Controller
                 await arg.RespondAsync($"@{roomName} 이미 만들어진 방이네요!", ephemeral: true);
                 return;
             }
-            var cate = guild.CategoryChannels.Single(x => x.Name == "Yamaguchi Kuma Slot");
+            var cate = guild.CategoryChannels.Single(x => x.Name == $"{category]}");
             var ch = await guild.CreateTextChannelAsync(roomName, x => x.CategoryId = cate.Id);
             var dealerPer = guild.Roles.Single(x => x.Name == "CASINO Dealer");
             var guestPer = guild.Roles.Single(x => x.Name == "CASINO Guest");
