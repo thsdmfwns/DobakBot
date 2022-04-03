@@ -14,9 +14,9 @@ namespace DobakBot.Model
         public List<SlotCard> resultCards { get; private set; } = new List<SlotCard>();
         public SlotResult SlotResult { get; private set; }
         public int Coin { get; set; }
-        public int Odd { get; set; } = 0;
+        public double Odd { get; set; } = 0;
 
-        public int ResultCoin => Coin * Odd;
+        public int ResultCoin => (int)(Coin * Odd);
 
         private Dictionary<SlotCard, int> ResultMap = new Dictionary<SlotCard, int>();
         private List<SlotCard> Cards = new List<SlotCard>();
@@ -78,9 +78,14 @@ namespace DobakBot.Model
                 Odd = SlotCardToOdd(result);
                 return SlotResult.JackPot;
             }
-            if (ResultMap[SlotCard.Cherry] > 1)
+            if (ResultMap[SlotCard.Cherry] > 0)
             {
-                Odd = 2;
+                if (ResultMap[SlotCard.Cherry] > 1)
+                {
+                    Odd = 2;
+                    return SlotResult.Win;
+                }
+                Odd = 1.5;
                 return SlotResult.Win;
             }
             return SlotResult.Lose;

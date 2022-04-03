@@ -53,6 +53,7 @@ namespace DobakBot.Controller
            ":tangerine:　 :tangerine:　 :tangerine:  =　 BET X 8\n\n" +
            ":bell:　 :bell:　 :bell:  =　 BET X 10\n\n" +
            ":flower_playing_cards:　 :flower_playing_cards:　 :flower_playing_cards:  =　 BET X 12\n\n" +
+           ":cherries:　 　　 　     =　  BET X 1.5\n\n" +
            ":cherries:　 :cherries:　 　     =　  BET X 2\n\n" +
            ":cherries:　 :cherries:　 :cherries:  =　 BET X 3";
             var builder = new EmbedBuilder();
