@@ -63,7 +63,6 @@ namespace DobakBot.Controller.Handler
                 await arg.RespondAsync($"{nick}님의 :coin:이 부족합니다 ({user.coin - money}:coin:).", ephemeral: true);
                 return;
             }
-
             DB.TrySubtractUserCoin(arg.User.Id, money);
             _ = RunSlotMachine(money, nick, arg);
         }
@@ -81,6 +80,13 @@ namespace DobakBot.Controller.Handler
             await Task.Delay(1010);
             await msg.ModifyAsync(msg => msg.Embed = embeds[3]);
             if (slot.ResultCoin == 0) return;
+            if (slot.SlotResult == SlotResult.JackPot)
+            {
+                var channel = arg.Channel as SocketTextChannel;
+                var guild = channel.Guild;
+                var nc = guild.Channels.Single(x => x.Name == "🥇｜명예의전당") as SocketTextChannel;
+                nc.SendMessageAsync(embed: embeds[3]);
+            }
             DB.TryAddUserCoin(arg.User.Id, slot.ResultCoin);
         }
 
