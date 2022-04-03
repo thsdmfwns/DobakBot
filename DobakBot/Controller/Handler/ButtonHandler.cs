@@ -38,8 +38,8 @@ namespace DobakBot.Controller
                 case "slot_roomCreate": await OnSlotRoomCreateButton(arg); return;
                 case "slot_run": await OnSlotRunButton(arg); return;
                 case "slot_odd": await OnSlotOddButton(arg); return;
-                case "slot_InfoCreate": await OnInfoRoomCreateButton(arg, "슬롯머신"); return;
-                case "toto_InfoCreate": await OnInfoRoomCreateButton(arg, "토토"); return;
+                case "slot_InfoCreate": await OnInfoRoomCreateButton(arg, "슬롯머신", "! ASIAN BOYZ KUMA SLOT !"); return;
+                case "toto_InfoCreate": await OnInfoRoomCreateButton(arg, "토토", "⚾I ASIAN BOYZ TOTO I⚽"); return;
                 default: return;
             }
 
@@ -102,7 +102,7 @@ namespace DobakBot.Controller
             await arg.DeferAsync();
         }
 
-        private async Task OnInfoRoomCreateButton(SocketMessageComponent arg, string comment)
+        private async Task OnInfoRoomCreateButton(SocketMessageComponent arg, string comment, string category)
         {
             var channel = arg.Channel as SocketTextChannel;
             var guild = channel.Guild;
