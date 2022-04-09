@@ -108,6 +108,10 @@ namespace DobakBot.Controller
             var guild = channel.Guild;
             var nick = guild.GetUser(arg.User.Id).Nickname;
             var cate = guild.CategoryChannels.Single(x => x.Id == channel.CategoryId);
+            foreach (var item in cate.Channels)
+            {
+                Console.WriteLine(item.Name);
+            }
             var roomName = $"📖｜{nick}";
             if (cate.Channels.SingleOrDefault(x => x.Name == roomName) != null)
             {
