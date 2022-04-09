@@ -1,6 +1,7 @@
 ﻿using Discord.WebSocket;
 using DobakBot.Controller.Controller;
 using DobakBot.Controller.Handler;
+using DobakBot.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,5 @@ namespace DobakBot.Controller
         public AnimalRaceController animalRace = new AnimalRaceController();
         public DBController DB = new DBController();
         public WeaponPayController WeaponPay = new WeaponPayController();
-
     }
 }

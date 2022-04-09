@@ -1,4 +1,6 @@
 ﻿using Discord.WebSocket;
+using DobakBot.Controller.Controller;
+using DobakBot.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,7 @@ namespace DobakBot.Controller.Handler
 {
     internal class ModalHandler
     {
+        private WeaponPayController WeaponPay = BotController.Instance.WeaponPay;
         public ModalHandler(DiscordSocketClient client)
         {
             client.ModalSubmitted += Client_ModalSubmitted;
@@ -16,7 +19,41 @@ namespace DobakBot.Controller.Handler
 
         private async Task Client_ModalSubmitted(SocketModal arg)
         {
+            switch (arg.Data.CustomId)
+            {
+                case "weapon_add": await onWeaponAdd(arg); return;
+                default:
+                    break;
+            }
             return;
+        }
+
+        private async Task onWeaponAdd(SocketModal arg)
+        {
+            Weapon weapon;
+            try
+            {
+                weapon = new Weapon()
+                {
+                    Name = arg.Data.Components.Single(x => x.CustomId == "weapon_name").Value,
+                    Price = int.Parse(arg.Data.Components.Single(x => x.CustomId == "weapon_price").Value),
+                    Unit = arg.Data.Components.Single(x => x.CustomId == "weapon_unit").Value,
+                };
+            }
+            catch (Exception ex)
+            {
+                await arg.RespondAsync($"오류! 가격란에 숫자만 입력해주세요.", ephemeral:true);
+                return;
+            }
+            var msg = await arg.Channel.GetMessageAsync((ulong)WeaponPay.messageId);
+
+            List<Weapon> weapons;
+            if 
+                (msg.Content == null || msg.Content == "empty") weapons = new List<Weapon>();
+            else 
+                weapons = Weapon.ListFromJson(msg.Content);
+            weapons.Add(weapon);
+            await arg.Channel.ModifyMessageAsync((ulong)WeaponPay.messageId, x => x.Content = Weapon.ListToJson(weapons));
         }
     }
 }

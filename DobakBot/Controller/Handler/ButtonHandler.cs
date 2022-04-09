@@ -28,7 +28,6 @@ namespace DobakBot.Controller
                 case "casino_enter": await OnEnterButton(arg); return;
                 case "Weapon_Suply": await OnWeaponButton(arg, WeaponPayKind.supply); return;
                 case "Weapon_Sell": await OnWeaponButton(arg, WeaponPayKind.Sell); return;
-                case "Weapon_DCSell": await OnWeaponButton(arg, WeaponPayKind.DCSell); return;
                 case "Weapon_Cancel": await OnWeaponCancelButton(arg); return;
                 case "customer_Wallet": await OnCustomerWalletButton(arg); return;
                 case "customer_pay": await OnCustomerPayButton(arg); return;
@@ -49,11 +48,6 @@ namespace DobakBot.Controller
 
         private async Task OnWeaponPay(SocketMessageComponent arg)
         {
-            if (arg.Message.Content == null || arg.Message.Content == string.Empty)
-            {
-                await arg.RespondAsync($"무기 추가가 필요합니다.", ephemeral: true);
-                return;
-            }
         }
 
         private async Task OnWeaponRemove(SocketMessageComponent arg)
@@ -63,15 +57,18 @@ namespace DobakBot.Controller
                 await arg.RespondAsync($"무기 추가가 필요합니다.", ephemeral: true);
                 return;
             }
+            WeaponPay.messageId = arg.Message.Id;
         }
 
         private async Task OnWeaponAdd(SocketMessageComponent arg)
         {
+            WeaponPay.messageId = arg.Message.Id;
             var mb = new ModalBuilder()
             .WithTitle("무기 추가")
             .WithCustomId("weapon_add")
             .AddTextInput("무기 이름", "weapon_name", placeholder: "ex) 글락", required : true)
-            .AddTextInput("가격", "weapon_reason", placeholder:"ex) 2000", required : true);
+            .AddTextInput("가격", "weapon_price", placeholder:"ex) 2000", required : true)
+            .AddTextInput("단위", "weapon_unit", placeholder:"ex) 개, 정, 복", required : true);
             await arg.RespondWithModalAsync(mb.Build());
         }
 
@@ -279,7 +276,6 @@ namespace DobakBot.Controller
                 await arg.RespondAsync($"장부 도우미를 한번더 불려와 주세요!\n장부도우미 부르기 : !장부 무기갯수 (!장부 1)", ephemeral: true);
                 return;
             }
-            WeaponPay.WeaponPayMap[id].Kind = kind;
             var list = WeaponPay.WeaponPayMap[id].Weapons;
             var comp = new ComponentBuilder().WithSelectMenu(GetWeponSelectMenu(list));
             comp.WithButton(label: "취소", customId: "Weapon_Cancel", row:1);

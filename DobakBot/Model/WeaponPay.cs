@@ -9,7 +9,6 @@ namespace DobakBot.Model
         None,
         supply,
         Sell,
-        DCSell,
     }
 
     class WeaponPay
@@ -20,7 +19,7 @@ namespace DobakBot.Model
         public string UserName { get; set; }
         public List<Weapon> Weapons { get; set; }
 
-        public int Price => Weapon.GetPrice(Kind) * Count;
+        public int Price => Weapon.Price* Count;
 
         public static string WeaponPayKindToString(WeaponPayKind kind)
         {
@@ -32,8 +31,6 @@ namespace DobakBot.Model
                     return "보급";
                 case WeaponPayKind.Sell:
                     return "판매";
-                case WeaponPayKind.DCSell:
-                    return "할인 판매";
             }
             return null;
         }

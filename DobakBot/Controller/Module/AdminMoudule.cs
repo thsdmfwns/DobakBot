@@ -67,13 +67,10 @@ namespace DobakBot.Controller
         public async Task WeaponPaySpawn()
         {
             var buttons = new ComponentBuilder()
-                .WithButton("무기 추가", "weapon_add", style: ButtonStyle.Primary)
-                .WithButton("무기 제거", "weapon_remove", style: ButtonStyle.Primary)
-                .WithButton("장부 계산", "weapon_pay", style: ButtonStyle.Primary);
-            var builder = new EmbedBuilder();
-            builder.Title = "장부";
-            builder.Color = Color.Green;
-            await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
+                .WithButton("DB 추가", "weapon_add", style: ButtonStyle.Primary)
+                .WithButton("DB 제거", "weapon_remove", style: ButtonStyle.Danger)
+                .WithButton("DB 갱신", "weapon_apply", style: ButtonStyle.Success);
+            await ReplyAsync("empty", components: buttons.Build());
         }
 
         [Command("보관")]
