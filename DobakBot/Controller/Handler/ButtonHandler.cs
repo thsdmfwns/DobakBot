@@ -60,21 +60,16 @@ namespace DobakBot.Controller
 
             var menuBuilder = new SelectMenuBuilder()
                 .WithPlaceholder("무기 선택")
-                .WithCustomId("weapon_select")
+                .WithCustomId("weapon_remove")
                 .WithMinValues(1)
                 .WithMaxValues(1);
             foreach (var weapon in weapons)
             {
                 menuBuilder.AddOption(weapon.Name, weapon.Name);
             }
-            var list = new List<IMessageComponent>();
-            list.Add(menuBuilder.Build());
-            var mb = new ModalBuilder()
-                .WithTitle("무기 삭제")
-                .WithCustomId("weapon_remove")
-                .AddTextInput("시발", "sss")
-                .AddComponents(list, 2);
-            await arg.RespondWithModalAsync(mb.Build());
+
+            var cb = new ComponentBuilder().WithSelectMenu(menuBuilder);
+            await arg.RespondAsync("무기선택", components:cb.Build());
         }
 
         private async Task OnWeaponAdd(SocketMessageComponent arg)

@@ -48,7 +48,11 @@ namespace DobakBot.Controller.Handler
                 return;
             }
             var msg = await arg.Channel.GetMessageAsync((ulong)WeaponPay.messageId);
-
+            if (msg == null)
+            {
+                await arg.RespondAsync("DB를 찾을수 없음", ephemeral: true);
+                return;
+            }
             List<Weapon> weapons;
             if 
                 (msg.Content == null || msg.Content == "empty") weapons = new List<Weapon>();
@@ -57,7 +61,6 @@ namespace DobakBot.Controller.Handler
             weapons.Add(weapon);
             await arg.Channel.ModifyMessageAsync((ulong)WeaponPay.messageId, x => x.Content = Weapon.ListToJson(weapons));
             await arg.RespondAsync("DB 등록 성공!", ephemeral: true);
-
         }
     }
 }

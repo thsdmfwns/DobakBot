@@ -30,8 +30,24 @@ namespace DobakBot.Controller.Handler
                 case "customerreturn_select": await OnCustomerReturnSelectMenu(arg); return;
                 case "slot_run": await OnSlotRun(arg); return;
                 case "weapon_count": await OnWeaponCount(arg); return;
+                case "weapon_remove": await OnWeaponRemove(arg); return;
                 default: return;
             }
+        }
+
+        private async Task OnWeaponRemove(SocketMessageComponent arg)
+        {
+            var msg = await arg.Channel.GetMessageAsync((ulong)WeaponPay.messageId);
+            if (msg == null)
+            {
+                await arg.RespondAsync("DB를 찾을수 없음", ephemeral: true);
+                return;
+            }
+            var wps = Weapon.ListFromJson(msg.Content);
+            var data = arg.Data.Values.First();
+            wps.Remove(wps.Single(x => x.Name == data));
+
+            await arg.RespondAsync("제거 성공", ephemeral: true);
         }
 
         private async Task OnWeaponCount(SocketMessageComponent arg)
