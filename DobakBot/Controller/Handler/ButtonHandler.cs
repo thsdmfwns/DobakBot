@@ -108,13 +108,7 @@ namespace DobakBot.Controller
             var guild = channel.Guild;
             var nick = guild.GetUser(arg.User.Id).Nickname;
             var cate = guild.CategoryChannels.Single(x => x.Id == channel.CategoryId);
-            var roomName = $"📖｜{nick}";
-            foreach (var item in cate.Channels)
-            {
-                Console.WriteLine(roomName);
-                Console.WriteLine("=======");
-                Console.WriteLine(item.Name);
-            }
+            var roomName = $"📖｜{nick.ToLower()}";
             if (cate.Channels.SingleOrDefault(x => x.Name == roomName) != null)
             {
                 await arg.RespondAsync($"#{roomName} 이미 만들어진 방이네요!", ephemeral: true);
