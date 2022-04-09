@@ -65,7 +65,6 @@ namespace DobakBot.Controller.Handler
             var com = new ComponentBuilder();
             com.WithButton(label: "보급", customId: "Weapon_Suply");
             com.WithButton(label: "판매", customId: "Weapon_Sell");
-            com.WithButton(label: "할인 판매", customId: "Weapon_DCSell");
             com.WithButton(label: "취소", customId: "Weapon_Cancel");
 
             await arg.RespondAsync($"{user.Nickname}님의 장부도우미 \n 요청 갯수 : {count}", components: com.Build(), ephemeral:true);

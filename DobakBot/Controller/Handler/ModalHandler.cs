@@ -22,7 +22,6 @@ namespace DobakBot.Controller.Handler
             switch (arg.Data.CustomId)
             {
                 case "weapon_add": await onWeaponAdd(arg); return;
-                case "weapon_remove": await onWeaponAdd(arg); return;
                 default:
                     break;
             }
@@ -58,6 +57,11 @@ namespace DobakBot.Controller.Handler
                 (msg.Content == null || msg.Content == "empty") weapons = new List<Weapon>();
             else 
                 weapons = Weapon.ListFromJson(msg.Content);
+            if (weapons.SingleOrDefault(x=> x.Name == weapon.Name) != null)
+            {
+                await arg.RespondAsync("이미 존재하는 이름의 물건이네요.", ephemeral: true);
+                return;
+            }
             weapons.Add(weapon);
             await arg.Channel.ModifyMessageAsync((ulong)WeaponPay.messageId, x => x.Content = Weapon.ListToJson(weapons));
             await arg.RespondAsync("DB 등록 성공!", ephemeral: true);

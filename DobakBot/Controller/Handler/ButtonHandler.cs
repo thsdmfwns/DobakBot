@@ -69,7 +69,7 @@ namespace DobakBot.Controller
             }
 
             var cb = new ComponentBuilder().WithSelectMenu(menuBuilder);
-            await arg.RespondAsync("무기선택", components:cb.Build());
+            await arg.RespondAsync("무기선택", components:cb.Build(), ephemeral:true);
         }
 
         private async Task OnWeaponAdd(SocketMessageComponent arg)
