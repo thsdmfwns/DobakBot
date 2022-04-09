@@ -70,7 +70,7 @@ namespace DobakBot.Controller
                 .WithButton("무기 추가", "weapon_add", style: ButtonStyle.Primary)
                 .WithButton("무기 제거", "weapon_remove", style: ButtonStyle.Primary)
                 .WithButton("장부 계산", "weapon_pay", style: ButtonStyle.Primary);
-            await ReplyAsync(components: buttons.Build());
+            await ReplyAsync("",components: buttons.Build());
         }
 
         [Command("보관")]
