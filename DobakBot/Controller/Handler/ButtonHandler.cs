@@ -111,11 +111,9 @@ namespace DobakBot.Controller
             var roomName = $"📖｜{nick}";
             foreach (var item in cate.Channels)
             {
+                Console.WriteLine(roomName);
+                Console.WriteLine("=======");
                 Console.WriteLine(item.Name);
-                if (item.Name == roomName)
-                {
-                    Console.WriteLine("있는데?");
-                }
             }
             if (cate.Channels.SingleOrDefault(x => x.Name == roomName) != null)
             {
