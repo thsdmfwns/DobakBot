@@ -72,7 +72,7 @@ namespace DobakBot.Controller
             var mb = new ModalBuilder()
                 .WithTitle("무기 삭제")
                 .WithCustomId("weapon_remove")
-                .AddComponents(list, 0);
+                .AddComponents(list, 1);
             await arg.RespondWithModalAsync(mb.Build());
         }
 
