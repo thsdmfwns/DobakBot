@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -97,26 +98,7 @@ namespace DobakBot.Model
             return null;
         }
 
-        public static List<Weapon> GetList()
-        {
-            var list = new List<Weapon>();
-            list.Add(new Weapon("Knife", 1000, 1500, 1300, WeaponKind.Etc));
-            list.Add(new Weapon("GLOCK 17", 2000, 3000, 2800, WeaponKind.Guns));
-            list.Add(new Weapon("Desert Eagle", 2200, 3300, 3100, WeaponKind.Guns));
-            list.Add(new Weapon("Shotgun(12GAUGE)", 2500, 3800, 3600, WeaponKind.Guns));
-            list.Add(new Weapon("MP5", 3500, 5300, 5100, WeaponKind.Guns));
-            list.Add(new Weapon("K2", 4600, 10000, 9000, WeaponKind.Guns));
-            list.Add(new Weapon("M4", 4800, 10200, 10000, WeaponKind.Guns));
-            list.Add(new Weapon("9mm", 50, WeaponKind.Ammo));
-            list.Add(new Weapon("7.62mm", 80, WeaponKind.Ammo));
-            list.Add(new Weapon("5.56mm", 70, WeaponKind.Ammo));
-            list.Add(new Weapon("Shotgun Shell", 30, WeaponKind.Ammo));
-            list.Add(new Weapon(".22LR", 40, WeaponKind.Ammo));
-            list.Add(new Weapon(".45acp", 30, WeaponKind.Ammo));
-            list.Add(new Weapon(".50BMG", 20, WeaponKind.Ammo));
-            list.Add(new Weapon("경량 케블라 조끼", 400, 800, 600, WeaponKind.Armor));
-            list.Add(new Weapon("중량 케블라 조끼", 1200, 1500, 1200, WeaponKind.Armor));
-            return list;
-        }
+        public static List<Weapon> ListFromJson(string json) => JsonConvert.DeserializeObject<List<Weapon>>(json);
+        public static string ListToJson(List<Weapon> weapons) => JsonConvert.SerializeObject(weapons);
     }
 }

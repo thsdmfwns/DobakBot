@@ -29,8 +29,30 @@ namespace DobakBot.Controller.Handler
                 case "customerpay_select": await OnCustomerPaySelectMenu(arg); return;
                 case "customerreturn_select": await OnCustomerReturnSelectMenu(arg); return;
                 case "slot_run": await OnSlotRun(arg); return;
+                case "weapon_count": await OnWeaponCount(arg); return;
                 default: return;
             }
+        }
+
+        private async Task OnWeaponCount(SocketMessageComponent arg)
+        {
+            var channel = arg.Channel as SocketTextChannel;
+            var guild = channel.Guild;
+            var cate = guild.CategoryChannels.Single(x => x.Id == channel.CategoryId);
+            var count = int.Parse(arg.Data.Values.First());
+            var user = arg.User as IGuildUser;
+            BotController.Instance.WeaponPay.WeaponPayMap.TryAdd(arg.User.Id, new WeaponPay()
+            {
+                Count = count
+            });
+
+            var com = new ComponentBuilder();
+            com.WithButton(label: "보급", customId: "Weapon_Suply");
+            com.WithButton(label: "판매", customId: "Weapon_Sell");
+            com.WithButton(label: "할인 판매", customId: "Weapon_DCSell");
+            com.WithButton(label: "취소", customId: "Weapon_Cancel");
+
+            await arg.RespondAsync($"{user.Nickname}님의 장부도우미 \n 요청 갯수 : {count}", components: com.Build(), ephemeral:true);
         }
 
         private async Task OnSlotRun(SocketMessageComponent arg)
