@@ -40,24 +40,41 @@ namespace DobakBot.Controller
                 case "info_create": await OnInfoRoomCreateButton(arg); return;
                 case "weapon_add": await OnWeaponAdd(arg); return;
                 case "weapon_remove": await OnWeaponRemove(arg); return;
-                case "weapon_pay": await OnWeaponPay(arg); return;
+                case "weapon_apply": await OnWeaponApply(arg); return;
                 default: return;
             }
 
         }
 
-        private async Task OnWeaponPay(SocketMessageComponent arg)
-        {
-        }
+        private async Task OnWeaponApply(SocketMessageComponent arg) => WeaponPay.messageId = arg.Message.Id;
 
         private async Task OnWeaponRemove(SocketMessageComponent arg)
         {
-            if (arg.Message.Content == null || arg.Message.Content == string.Empty)
+            if (arg.Message.Content == null || arg.Message.Content == "empty")
             {
-                await arg.RespondAsync($"무기 추가가 필요합니다.", ephemeral: true);
+                await arg.RespondAsync($"텅텅비었네요.", ephemeral: true);
                 return;
             }
             WeaponPay.messageId = arg.Message.Id;
+            var weapons = Weapon.ListFromJson(arg.Message.Content);
+
+            var menuBuilder = new SelectMenuBuilder()
+                .WithPlaceholder("무기 선택")
+                .WithCustomId("weapon_select")
+                .WithMinValues(1)
+                .WithMaxValues(1);
+            foreach (var weapon in weapons)
+            {
+                menuBuilder.AddOption(weapon.Name, weapon.Name);
+            }
+            var cb = new ComponentBuilder()
+                .WithSelectMenu(menuBuilder);
+            var list = new List<IMessageComponent>();
+            list.Add((IMessageComponent)cb.Build());
+            var mb = new ModalBuilder()
+                .WithTitle("무기 삭제")
+                .WithCustomId("weapon_remove")
+                .AddComponents(list, 0) ;
         }
 
         private async Task OnWeaponAdd(SocketMessageComponent arg)
@@ -67,7 +84,8 @@ namespace DobakBot.Controller
             .WithTitle("무기 추가")
             .WithCustomId("weapon_add")
             .AddTextInput("무기 이름", "weapon_name", placeholder: "ex) 글락", required : true)
-            .AddTextInput("가격", "weapon_price", placeholder:"ex) 2000", required : true)
+            .AddTextInput("보급 가격", "weapon_price", placeholder:"ex) 2000 (숫자만 입력하세요!)", required : true)
+            .AddTextInput("판매 가격", "weapon_sellprice", placeholder:"ex) 2000 (숫자만 입력하세요!)", required : true)
             .AddTextInput("단위", "weapon_unit", placeholder:"ex) 개, 정, 복", required : true);
             await arg.RespondWithModalAsync(mb.Build());
         }

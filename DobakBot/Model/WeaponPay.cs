@@ -19,7 +19,7 @@ namespace DobakBot.Model
         public string UserName { get; set; }
         public List<Weapon> Weapons { get; set; }
 
-        public int Price => Weapon.Price* Count;
+        public int Price => (Kind == WeaponPayKind.supply ? Weapon.Price : Weapon.SellPrice)* Count;
 
         public static string WeaponPayKindToString(WeaponPayKind kind)
         {

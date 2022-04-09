@@ -22,6 +22,7 @@ namespace DobakBot.Controller.Handler
             switch (arg.Data.CustomId)
             {
                 case "weapon_add": await onWeaponAdd(arg); return;
+                case "weapon_remove": await onWeaponAdd(arg); return;
                 default:
                     break;
             }
@@ -37,12 +38,13 @@ namespace DobakBot.Controller.Handler
                 {
                     Name = arg.Data.Components.Single(x => x.CustomId == "weapon_name").Value,
                     Price = int.Parse(arg.Data.Components.Single(x => x.CustomId == "weapon_price").Value),
+                    SellPrice = int.Parse(arg.Data.Components.Single(x => x.CustomId == "weapon_sellprice").Value),
                     Unit = arg.Data.Components.Single(x => x.CustomId == "weapon_unit").Value,
                 };
             }
             catch (Exception ex)
             {
-                await arg.RespondAsync($"오류! 가격란에 숫자만 입력해주세요.", ephemeral:true);
+                await arg.RespondAsync("오류! 가격란에 숫자만 입력해주세요.", ephemeral:true);
                 return;
             }
             var msg = await arg.Channel.GetMessageAsync((ulong)WeaponPay.messageId);
@@ -54,6 +56,8 @@ namespace DobakBot.Controller.Handler
                 weapons = Weapon.ListFromJson(msg.Content);
             weapons.Add(weapon);
             await arg.Channel.ModifyMessageAsync((ulong)WeaponPay.messageId, x => x.Content = Weapon.ListToJson(weapons));
+            await arg.RespondAsync("DB 등록 성공!", ephemeral: true);
+
         }
     }
 }
