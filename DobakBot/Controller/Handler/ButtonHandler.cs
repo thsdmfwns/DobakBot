@@ -39,9 +39,40 @@ namespace DobakBot.Controller
                 case "slot_run": await OnSlotRunButton(arg); return;
                 case "slot_odd": await OnSlotOddButton(arg); return;
                 case "info_create": await OnInfoRoomCreateButton(arg); return;
+                case "weapon_add": await OnWeaponAdd(arg); return;
+                case "weapon_remove": await OnWeaponRemove(arg); return;
+                case "weapon_pay": await OnWeaponPay(arg); return;
                 default: return;
             }
 
+        }
+
+        private async Task OnWeaponPay(SocketMessageComponent arg)
+        {
+            if (arg.Message.Content == null || arg.Message.Content == string.Empty)
+            {
+                await arg.RespondAsync($"무기 추가가 필요합니다.", ephemeral: true);
+                return;
+            }
+        }
+
+        private async Task OnWeaponRemove(SocketMessageComponent arg)
+        {
+            if (arg.Message.Content == null || arg.Message.Content == string.Empty)
+            {
+                await arg.RespondAsync($"무기 추가가 필요합니다.", ephemeral: true);
+                return;
+            }
+        }
+
+        private async Task OnWeaponAdd(SocketMessageComponent arg)
+        {
+            var mb = new ModalBuilder()
+            .WithTitle("무기 추가")
+            .WithCustomId("weapon_add")
+            .AddTextInput("무기 이름", "weapon_name", placeholder: "ex) 글락", required : true)
+            .AddTextInput("가격", "weapon_reason", placeholder:"ex) 2000", required : true);
+            await arg.RespondWithModalAsync(mb.Build());
         }
 
         private async Task OnSlotOddButton(SocketMessageComponent arg)
