@@ -38,8 +38,9 @@ namespace DobakBot.Controller
                 case "slot_roomCreate": await OnSlotRoomCreateButton(arg); return;
                 case "slot_run": await OnSlotRunButton(arg); return;
                 case "slot_odd": await OnSlotOddButton(arg); return;
-                case "slot_InfoCreate": await OnInfoRoomCreateButton(arg, "슬롯머신", "! ASIAN BOYZ KUMA SLOT !"); return;
-                case "toto_InfoCreate": await OnInfoRoomCreateButton(arg, "토토", "⚾I ASIAN BOYZ TOTO I⚽"); return;
+                case "slot_InfoCreate": await OnInfoRoomCreateButton(arg,"! ASIAN BOYZ KUMA SLOT !"); return;
+                case "toto_InfoCreate": await OnInfoRoomCreateButton(arg,"⚾I ASIAN BOYZ TOTO I⚽"); return;
+                case "casino_InfoCreate": await OnInfoRoomCreateButton(arg, "🎲｜ASIAN BOYZ CASINO ｜🎲"); return;
                 default: return;
             }
 
@@ -103,15 +104,15 @@ namespace DobakBot.Controller
             await arg.DeferAsync();
         }
 
-        private async Task OnInfoRoomCreateButton(SocketMessageComponent arg, string comment, string category)
+        private async Task OnInfoRoomCreateButton(SocketMessageComponent arg, string category)
         {
             var channel = arg.Channel as SocketTextChannel;
             var guild = channel.Guild;
             var nick = guild.GetUser(arg.User.Id).Nickname;
-            var roomName = $"{nick}님의-{comment}-이용문의";
+            var roomName = $"📖｜{nick}";
             if (guild.Channels.SingleOrDefault(x => x.Name == roomName) != null)
             {
-                await arg.RespondAsync($"@{roomName} 이미 만들어진 방이네요!", ephemeral: true);
+                await arg.RespondAsync($"#{roomName} 이미 만들어진 방이네요!", ephemeral: true);
                 return;
             }
             var cate = guild.CategoryChannels.Single(x => x.Name == $"{category}");

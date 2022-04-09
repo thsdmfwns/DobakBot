@@ -9,15 +9,13 @@ using System.Threading.Tasks;
 
 namespace DobakBot.Controller.Module
 {
-    [RequireChannel("자유게시판")]
     [RequireRole("CASINO dealer")]
-    [Group("코인")]
     public class DealerModule : ModuleBase<SocketCommandContext>
     {
         private readonly DBController DB = BotController.Instance.DB;
 
-        const string AddHelp = "코인 충전 : !코인 충전 닉네임-금액 (ex : !코인 충전 Dalsu_Son-10000)\n";
-        const string SubtracktHelp = "코인 환전 : !코인 환전 닉네임-금액 (ex : !코인 환전 Dalsu_Son-10000)\n";
+        const string AddHelp = "코인 충전 : !충전 닉네임-금액 (ex : !코인 충전 Dalsu_Son-10000)\n";
+        const string SubtracktHelp = "코인 환전 : !환전 닉네임-금액 (ex : !코인 환전 Dalsu_Son-10000)\n";
 
         [Command("help")]
         public async Task HelpCommand()

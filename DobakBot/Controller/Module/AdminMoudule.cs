@@ -71,6 +71,17 @@ namespace DobakBot.Controller
             await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
         }
 
+        [Command("카지노문의버튼")]
+        public async Task CasinoInfoButtonSpawn()
+        {
+            var buttons = new ComponentBuilder()
+                .WithButton("이용문의", "casino_InfoCreate", style: ButtonStyle.Success);
+            var builder = new EmbedBuilder();
+            builder.Title = "이용문의";
+            builder.Color = Color.Blue;
+            await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
+        }
+
         [Command("clear")]
         public async Task ClearMessages()
         {
