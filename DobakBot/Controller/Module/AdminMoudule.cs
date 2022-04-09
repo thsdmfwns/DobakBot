@@ -1,5 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.Rest;
+using Discord.WebSocket;
 using DobakBot.Controller.Attribute;
 using System;
 using System.Collections.Generic;
@@ -80,6 +82,15 @@ namespace DobakBot.Controller
             builder.Title = "이용문의";
             builder.Color = Color.Blue;
             await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
+        }
+
+        [Command("보관")]
+        public async Task CloseChannel()
+        {
+            var channel = Context.Channel as SocketTextChannel;
+            var guild = channel.Guild;
+            var ct = guild.CategoryChannels.Single(x => x.Name == "보관소");
+            await channel.ModifyAsync(x => x.CategoryId = ct.Id);
         }
 
         [Command("clear")]
