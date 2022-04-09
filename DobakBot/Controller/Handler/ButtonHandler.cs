@@ -73,13 +73,14 @@ namespace DobakBot.Controller
             var channel = arg.Channel as SocketTextChannel;
             var guild = channel.Guild;
             var nick = guild.GetUser(arg.User.Id).Nickname;
-            var roomName = $"{nick}님의_슬롯머신";
-            if (guild.Channels.SingleOrDefault(x=> x.Name == roomName) != null)
+            var roomName = $"🎰｜{nick.ToLower()}";
+            var cate = guild.CategoryChannels.Single(x => x.Id == channel.CategoryId);
+            var temp = cate.Channels.SingleOrDefault(x => x.Name == roomName);
+            if (temp != null)
             {
-                await arg.RespondAsync($"@{roomName} 이미 만들어진 방이네요!", ephemeral: true);
+                await arg.RespondAsync($"{MentionUtils.MentionChannel(temp.Id)} 이미 만들어진 방이네요!", ephemeral: true);
                 return;
             }
-            var cate = guild.CategoryChannels.Single(x => x.Name == "! ASIAN BOYZ KUMA SLOT !");
             var ch = await guild.CreateTextChannelAsync(roomName, x => x.CategoryId = cate.Id);
             var dealerPer = guild.Roles.Single(x => x.Name == "CASINO Dealer");
             var guestPer = guild.Roles.Single(x => x.Name == "CASINO Guest");
@@ -97,7 +98,7 @@ namespace DobakBot.Controller
             var embed = new EmbedBuilder();
             embed.Color = Color.Blue;
             embed.Title = "슬롯머신 도우미";
-            embed.Description = $"환영합니다 {nick}님.";
+            embed.Description = $"환영합니다 {MentionUtils.MentionUser(arg.User.Id)}님.";
             await ch.SendMessageAsync(embed: embed.Build(), components: comp.Build());
             await arg.DeferAsync();
         }
@@ -109,9 +110,10 @@ namespace DobakBot.Controller
             var nick = guild.GetUser(arg.User.Id).Nickname;
             var cate = guild.CategoryChannels.Single(x => x.Id == channel.CategoryId);
             var roomName = $"📖｜{nick.ToLower()}";
-            if (cate.Channels.SingleOrDefault(x => x.Name == roomName) != null)
+            var temp = cate.Channels.SingleOrDefault(x => x.Name == roomName);
+            if (temp != null)
             {
-                await arg.RespondAsync($"#{roomName} 이미 만들어진 방이네요!", ephemeral: true);
+                await arg.RespondAsync($"{MentionUtils.MentionChannel(temp.Id)} 이미 만들어진 방이네요!", ephemeral: true);
                 return;
             }
             var ch = await guild.CreateTextChannelAsync(roomName, x => x.CategoryId = cate.Id);

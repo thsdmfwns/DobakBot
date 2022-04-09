@@ -68,6 +68,7 @@ namespace DobakBot.Controller
             var channel = Context.Channel as SocketTextChannel;
             var guild = channel.Guild;
             var ct = guild.CategoryChannels.Single(x => x.Name == "보관소");
+            await ReplyAsync($"채널 이름 : {channel.Id} | 카테고리 이름 : {channel.Category.Name}");
             await channel.ModifyAsync(x => x.CategoryId = ct.Id);
         }
 
