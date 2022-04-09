@@ -73,7 +73,7 @@ namespace DobakBot.Controller
                 .WithTitle("무기 삭제")
                 .WithCustomId("weapon_remove")
                 .AddTextInput("시발", "sss")
-                .AddComponents(list, 1);
+                .AddComponents(list, 2);
             await arg.RespondWithModalAsync(mb.Build());
         }
 
