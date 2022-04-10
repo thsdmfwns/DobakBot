@@ -176,11 +176,13 @@ namespace DobakBot.Controller.Handler
         private async Task OnWeaponPaySelectMenu(SocketMessageComponent arg)
         {
             var data = arg.Data.Values.First();
-
+            var channel = arg.Channel as SocketTextChannel;
+            var guild = channel.Guild;
+            var nf = guild.Channels.Single(x => x.Name == "📖ㅣ총기지급대장") as SocketTextChannel;
             WeaponPay ctx;
             if (!WeaponPay.WeaponPayMap.TryRemove(arg.User.Id, out ctx))
             {
-                await arg.RespondAsync($"유저를 찾을수 없네요..", ephemeral: true);
+                await arg.RespondAsync($"유저를 찾을수 없네요.. 한번 더 실행해주세요.", ephemeral: true);
                 return;
             }
 
@@ -197,7 +199,7 @@ namespace DobakBot.Controller.Handler
             builder.Description = ctx.ToString();
             builder.Color = Color.Green;
 
-            await arg.Channel.SendMessageAsync(embed: builder.Build());
+            await nf.SendMessageAsync(embed: builder.Build());
             await arg.DeferAsync();
         }
     }
