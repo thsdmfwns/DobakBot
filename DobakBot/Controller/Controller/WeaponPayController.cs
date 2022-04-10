@@ -10,7 +10,8 @@ namespace DobakBot.Controller.Controller
 {
     class WeaponPayController
     {
-        public ulong? messageId { get; set; }
+        public ulong? MessageId { get; set; }
+        public ulong? ChannelId { get; set; }
         public List<Weapon> Weapons { get; set; } = new List<Weapon>();
         public ConcurrentDictionary<ulong, WeaponPay> WeaponPayMap { get; private set; } = new ConcurrentDictionary<ulong, WeaponPay>();
     }

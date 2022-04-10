@@ -46,7 +46,7 @@ namespace DobakBot.Controller.Handler
                 await arg.RespondAsync("오류! 가격란에 숫자만 입력해주세요.", ephemeral:true);
                 return;
             }
-            var msg = await arg.Channel.GetMessageAsync((ulong)WeaponPay.messageId);
+            var msg = await arg.Channel.GetMessageAsync((ulong)WeaponPay.MessageId);
             if (msg == null)
             {
                 await arg.RespondAsync("DB를 찾을수 없음", ephemeral: true);
@@ -63,7 +63,7 @@ namespace DobakBot.Controller.Handler
                 return;
             }
             weapons.Add(weapon);
-            await arg.Channel.ModifyMessageAsync((ulong)WeaponPay.messageId, x => x.Content = Weapon.ListToJson(weapons));
+            await arg.Channel.ModifyMessageAsync((ulong)WeaponPay.MessageId, x => x.Content = Weapon.ListToJson(weapons));
             await arg.RespondAsync("DB 등록 성공!", ephemeral: true);
         }
     }

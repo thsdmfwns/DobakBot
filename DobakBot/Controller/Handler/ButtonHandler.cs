@@ -26,8 +26,6 @@ namespace DobakBot.Controller
             switch (arg.Data.CustomId)
             {
                 case "casino_enter": await OnEnterButton(arg); return;
-                case "Weapon_Suply": await OnWeaponButton(arg, WeaponPayKind.supply); return;
-                case "Weapon_Sell": await OnWeaponButton(arg, WeaponPayKind.Sell); return;
                 case "Weapon_Cancel": await OnWeaponCancelButton(arg); return;
                 case "customer_Wallet": await OnCustomerWalletButton(arg); return;
                 case "customer_pay": await OnCustomerPayButton(arg); return;
@@ -41,12 +39,45 @@ namespace DobakBot.Controller
                 case "weapon_add": await OnWeaponAdd(arg); return;
                 case "weapon_remove": await OnWeaponRemove(arg); return;
                 case "weapon_apply": await OnWeaponApply(arg); return;
+                case "weaponpay_supply": await OnWeaponPay(arg); return;
+                case "weaponpay_sell": await OnWeaponPay(arg, isSell:true); return;
                 default: return;
             }
 
         }
 
-        private async Task OnWeaponApply(SocketMessageComponent arg) => WeaponPay.messageId = arg.Message.Id;
+        private async Task OnWeaponPay(SocketMessageComponent arg, bool isSell = false)
+        {
+            if (WeaponPay.ChannelId == null || WeaponPay.MessageId == null)
+            {
+                await arg.RespondAsync($"DB를 찾을수 없음. 갱신부탁", ephemeral: true);
+                return;
+            }
+            var ch = (arg.Channel as SocketTextChannel).Guild.GetChannel((ulong)WeaponPay.ChannelId) as SocketTextChannel;
+            var msg = await ch.GetMessageAsync((ulong)WeaponPay.MessageId);
+            var kind = isSell ? WeaponPayKind.Sell : WeaponPayKind.supply;
+            WeaponPay.WeaponPayMap.AddOrUpdate(arg.User.Id, new WeaponPay() {Kind = kind}, (key, oldval)=> oldval=new WeaponPay() { Kind = kind });
+            var weapons = Weapon.ListFromJson(msg.Content);
+            var sb = new SelectMenuBuilder()
+                .WithCustomId("name").WithPlaceholder("무기 선택")
+                .WithMinValues(1).WithMaxValues(1);
+            foreach (var item in weapons)
+            {
+                sb.AddOption(item.Name, item.Name);
+            }
+            var mb = new ModalBuilder()
+            .WithTitle("무기 갯수")
+            .WithCustomId("weaponpay_count")
+            .AddTextInput("갯수", "count", placeholder: "숫자만 입력!", required: true);
+            await arg.RespondWithModalAsync(mb.Build());
+        }
+
+        private async Task OnWeaponApply(SocketMessageComponent arg)
+        {
+            WeaponPay.MessageId = arg.Message.Id;
+            WeaponPay.ChannelId = arg.Channel.Id;
+            await arg.DeferAsync();
+        }
 
         private async Task OnWeaponRemove(SocketMessageComponent arg)
         {
@@ -55,7 +86,8 @@ namespace DobakBot.Controller
                 await arg.RespondAsync($"텅텅비었네요.", ephemeral: true);
                 return;
             }
-            WeaponPay.messageId = arg.Message.Id;
+            WeaponPay.MessageId = arg.Message.Id;
+            WeaponPay.ChannelId = arg.Channel.Id;
             var weapons = Weapon.ListFromJson(arg.Message.Content);
 
             var menuBuilder = new SelectMenuBuilder()
@@ -74,7 +106,7 @@ namespace DobakBot.Controller
 
         private async Task OnWeaponAdd(SocketMessageComponent arg)
         {
-            WeaponPay.messageId = arg.Message.Id;
+            WeaponPay.MessageId = arg.Message.Id;
             var mb = new ModalBuilder()
             .WithTitle("무기 추가")
             .WithCustomId("weapon_add")

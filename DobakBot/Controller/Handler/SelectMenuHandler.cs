@@ -37,7 +37,7 @@ namespace DobakBot.Controller.Handler
 
         private async Task OnWeaponRemove(SocketMessageComponent arg)
         {
-            var msg = await arg.Channel.GetMessageAsync((ulong)WeaponPay.messageId);
+            var msg = await arg.Channel.GetMessageAsync((ulong)WeaponPay.MessageId);
             if (msg == null)
             {
                 await arg.RespondAsync("DB를 찾을수 없음", ephemeral: true);
@@ -46,7 +46,7 @@ namespace DobakBot.Controller.Handler
             var wps = Weapon.ListFromJson(msg.Content);
             var data = arg.Data.Values.First();
             wps.Remove(wps.Single(x => x.Name == data));
-            await arg.Channel.ModifyMessageAsync((ulong)WeaponPay.messageId, x => x.Content = Weapon.ListToJson(wps));
+            await arg.Channel.ModifyMessageAsync((ulong)WeaponPay.MessageId, x => x.Content = Weapon.ListToJson(wps));
             await arg.RespondAsync("제거 성공", ephemeral: true);
         }
 
