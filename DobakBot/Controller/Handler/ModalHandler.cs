@@ -49,17 +49,17 @@ namespace DobakBot.Controller.Handler
             var sb = new SelectMenuBuilder()
                 .WithCustomId("WeaponPay_SelectMenu").WithPlaceholder("무기 선택")
                 .WithMinValues(1).WithMaxValues(1);
-            var cb = new ComponentBuilder().WithSelectMenu(sb);
             foreach (var item in weapons)
             {
                 sb.AddOption(item.Name, item.Name);
             }
+            var cb = new ComponentBuilder().WithSelectMenu(sb);
             var embed = new EmbedBuilder()
             {
                 Color = Color.Blue,
                 Title = "무기 선택",
             };
-            await arg.RespondAsync("", embed: embed.Build(), components: cb.Build());
+            await arg.RespondAsync("무기를 선택해 주세요.", components: cb.Build());
         }
 
         private async Task onWeaponAdd(SocketModal arg)

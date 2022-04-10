@@ -79,7 +79,10 @@ namespace DobakBot.Controller
             var buttons = new ComponentBuilder()
                 .WithButton("무기 보급", "weaponpay_supply", style: ButtonStyle.Primary)
                 .WithButton("무기 판매", "weaponpay_sell", style: ButtonStyle.Success);
-            await ReplyAsync("선택해주세요.", components: buttons.Build());
+            var builder = new EmbedBuilder();
+            builder.Title = "장부 도우미";
+            builder.Color = Color.Blue;
+            await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
         }
 
         [Command("보관")]
