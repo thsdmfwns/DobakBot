@@ -17,6 +17,7 @@ namespace DobakBot.Model
         public WeaponPayKind Kind { get; set; }
         public int Count { get; set; }
         public string UserName { get; set; }
+        public string CustomerName { get; set; }
         public List<Weapon> Weapons { get; set; }
 
         public int Price => (Kind == WeaponPayKind.supply ? Weapon.Price : Weapon.SellPrice)* Count;
@@ -38,7 +39,7 @@ namespace DobakBot.Model
         public override string ToString()
         {
             NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
-            return $"{UserName}　/　{Weapon.Name}　/　{Count+Weapon.Unit}　/　{Price.ToString("C0", nfi)}　/　{WeaponPayKindToString(Kind)}";
+            return $"{WeaponPayKindToString(Kind)}자 : {UserName}  소비자: {CustomerName}　/　{Weapon.Name}　/　{Count+Weapon.Unit}　/　{Price.ToString("C0", nfi)}　/　{WeaponPayKindToString(Kind)}";
         }
     }
 }

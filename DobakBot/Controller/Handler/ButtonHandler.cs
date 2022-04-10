@@ -53,23 +53,14 @@ namespace DobakBot.Controller
                 await arg.RespondAsync($"DB를 찾을수 없음. 갱신부탁", ephemeral: true);
                 return;
             }
-            var ch = (arg.Channel as SocketTextChannel).Guild.GetChannel((ulong)WeaponPay.ChannelId) as SocketTextChannel;
-            var msg = await ch.GetMessageAsync((ulong)WeaponPay.MessageId);
+
             var kind = isSell ? WeaponPayKind.Sell : WeaponPayKind.supply;
-            WeaponPay.WeaponPayMap.AddOrUpdate(arg.User.Id, new WeaponPay() {Kind = kind}, (key, oldval)=> oldval=new WeaponPay() { Kind = kind });
-            var weapons = Weapon.ListFromJson(msg.Content);
-            var sb = new SelectMenuBuilder()
-                .WithCustomId("name").WithPlaceholder("무기 선택")
-                .WithMinValues(1).WithMaxValues(1);
-            foreach (var item in weapons)
-            {
-                sb.AddOption(item.Name, item.Name);
-            }
+            WeaponPay.WeaponPayMap.AddOrUpdate(arg.User.Id, new WeaponPay() { Kind = kind }, (key, oldval) => oldval = new WeaponPay() { Kind = kind });
             var mb = new ModalBuilder()
             .WithTitle("무기 갯수")
             .WithCustomId("weaponpay_count")
             .AddTextInput("갯수", "count", placeholder: "숫자만 입력!", required: true)
-            .AddComponents(new List<IMessageComponent>() { sb.Build() }, 0);
+            .AddTextInput("소비자 이름", "name", placeholder: "ex) Boggu_Lee (비울시 자기 닉네임)");
             await arg.RespondWithModalAsync(mb.Build());
         }
 

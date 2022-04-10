@@ -1,4 +1,5 @@
-﻿using Discord.WebSocket;
+﻿using Discord;
+using Discord.WebSocket;
 using DobakBot.Controller.Controller;
 using DobakBot.Model;
 using System;
@@ -22,10 +23,43 @@ namespace DobakBot.Controller.Handler
             switch (arg.Data.CustomId)
             {
                 case "weapon_add": await onWeaponAdd(arg); return;
+                case "weapon_pay": await onWeaponPay(arg); return;
                 default:
                     break;
             }
             return;
+        }
+
+        private async Task onWeaponPay(SocketModal arg)
+        {
+            int count;
+            if (!int.TryParse(arg.Data.Components.Single(x=>x.CustomId == "count").Value,out count))
+            {
+                await arg.RespondAsync("오류! 갯수는 숫자만 입력해주세요.", ephemeral: true);
+                return;
+            }
+            var ch = (arg.Channel as SocketTextChannel).Guild.GetChannel((ulong)WeaponPay.ChannelId) as SocketTextChannel;
+            var msg = await ch.GetMessageAsync((ulong)WeaponPay.MessageId);
+            var cu = arg.Data.Components.SingleOrDefault(x => x.CustomId == "name").Value;
+            var weapons = Weapon.ListFromJson(msg.Content);
+            WeaponPay.WeaponPayMap[arg.User.Id].Count = count;
+            WeaponPay.WeaponPayMap[arg.User.Id].Weapons = weapons;
+            WeaponPay.WeaponPayMap[arg.User.Id].UserName = ch.GetUser(arg.User.Id).Nickname;
+            WeaponPay.WeaponPayMap[arg.User.Id].CustomerName = cu ?? ch.GetUser(arg.User.Id).Nickname;
+            var sb = new SelectMenuBuilder()
+                .WithCustomId("WeaponPay_SelectMenu").WithPlaceholder("무기 선택")
+                .WithMinValues(1).WithMaxValues(1);
+            var cb = new ComponentBuilder().WithSelectMenu(sb);
+            foreach (var item in weapons)
+            {
+                sb.AddOption(item.Name, item.Name);
+            }
+            var embed = new EmbedBuilder()
+            {
+                Color = Color.Blue,
+                Title = "무기 선택",
+            };
+            await arg.RespondAsync("", embed: embed.Build(), components: cb.Build());
         }
 
         private async Task onWeaponAdd(SocketModal arg)

@@ -29,7 +29,6 @@ namespace DobakBot.Controller.Handler
                 case "customerpay_select": await OnCustomerPaySelectMenu(arg); return;
                 case "customerreturn_select": await OnCustomerReturnSelectMenu(arg); return;
                 case "slot_run": await OnSlotRun(arg); return;
-                case "weapon_count": await OnWeaponCount(arg); return;
                 case "weapon_remove": await OnWeaponRemove(arg); return;
                 default: return;
             }
@@ -48,26 +47,6 @@ namespace DobakBot.Controller.Handler
             wps.Remove(wps.Single(x => x.Name == data));
             await arg.Channel.ModifyMessageAsync((ulong)WeaponPay.MessageId, x => x.Content = Weapon.ListToJson(wps));
             await arg.RespondAsync("제거 성공", ephemeral: true);
-        }
-
-        private async Task OnWeaponCount(SocketMessageComponent arg)
-        {
-            var channel = arg.Channel as SocketTextChannel;
-            var guild = channel.Guild;
-            var cate = guild.CategoryChannels.Single(x => x.Id == channel.CategoryId);
-            var count = int.Parse(arg.Data.Values.First());
-            var user = arg.User as IGuildUser;
-            BotController.Instance.WeaponPay.WeaponPayMap.TryAdd(arg.User.Id, new WeaponPay()
-            {
-                Count = count
-            });
-
-            var com = new ComponentBuilder();
-            com.WithButton(label: "보급", customId: "Weapon_Suply");
-            com.WithButton(label: "판매", customId: "Weapon_Sell");
-            com.WithButton(label: "취소", customId: "Weapon_Cancel");
-
-            await arg.RespondAsync($"{user.Nickname}님의 장부도우미 \n 요청 갯수 : {count}", components: com.Build(), ephemeral:true);
         }
 
         private async Task OnSlotRun(SocketMessageComponent arg)
@@ -201,18 +180,16 @@ namespace DobakBot.Controller.Handler
             WeaponPay ctx;
             if (!WeaponPay.WeaponPayMap.TryRemove(arg.User.Id, out ctx))
             {
-                await arg.RespondAsync($"장부 도우미를 한번더 불려와 주세요!\n장부도우미 부르기 : !장부 무기갯수 (!장부 1)", ephemeral: true);
+                await arg.RespondAsync($"유저를 찾을수 없네요..", ephemeral: true);
                 return;
             }
 
             var Weapon = ctx.Weapons.SingleOrDefault(x => x.Name == data);
             if (Weapon == null)
             {
-                await arg.RespondAsync($"장부 도우미를 한번더 불려와 주세요!\n장부도우미 부르기 : !장부 무기갯수 (!장부 1)", ephemeral: true);
+                await arg.RespondAsync($"DB 오류...", ephemeral: true);
                 return;
             }
-
-
             ctx.Weapon = Weapon;
             ctx.UserName = (arg.User as IGuildUser).Nickname;
 
