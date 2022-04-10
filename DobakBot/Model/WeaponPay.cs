@@ -39,7 +39,7 @@ namespace DobakBot.Model
         public override string ToString()
         {
             NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
-            return $"{WeaponPayKindToString(Kind)}자 : {UserName}  소비자: {CustomerName}　/　{Weapon.Name}　/　{Count+Weapon.Unit}　/　{Price.ToString("C0", nfi)}　/　{WeaponPayKindToString(Kind)}";
+            return $"{WeaponPayKindToString(Kind)}:　{UserName}　/　소비:　{CustomerName}　/　{Weapon.Name}　/　{Count+Weapon.Unit}　/　{Price.ToString("C0", nfi)}";
         }
     }
 }
