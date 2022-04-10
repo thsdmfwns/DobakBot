@@ -59,7 +59,7 @@ namespace DobakBot.Controller.Handler
                 Color = Color.Blue,
                 Title = "무기 선택",
             };
-            await arg.RespondAsync("무기를 선택해 주세요.", components: cb.Build());
+            await arg.RespondAsync("무기를 선택해 주세요.", components: cb.Build(), ephemeral:true);
         }
 
         private async Task onWeaponAdd(SocketModal arg)
