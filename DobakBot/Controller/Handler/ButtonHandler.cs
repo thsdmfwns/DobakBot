@@ -68,7 +68,8 @@ namespace DobakBot.Controller
             var mb = new ModalBuilder()
             .WithTitle("무기 갯수")
             .WithCustomId("weaponpay_count")
-            .AddTextInput("갯수", "count", placeholder: "숫자만 입력!", required: true);
+            .AddTextInput("갯수", "count", placeholder: "숫자만 입력!", required: true)
+            .AddComponents(new List<IMessageComponent>() { sb.Build() }, 0);
             await arg.RespondWithModalAsync(mb.Build());
         }
 
