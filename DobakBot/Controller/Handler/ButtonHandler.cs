@@ -58,9 +58,9 @@ namespace DobakBot.Controller
             WeaponPay.WeaponPayMap.AddOrUpdate(arg.User.Id, new WeaponPay() { Kind = kind }, (key, oldval) => oldval = new WeaponPay() { Kind = kind });
             var mb = new ModalBuilder()
             .WithTitle("무기 갯수")
-            .WithCustomId("weaponpay_count")
+            .WithCustomId("weapon_pay")
             .AddTextInput("갯수", "count", placeholder: "숫자만 입력!", required: true)
-            .AddTextInput("소비자 이름", "name", placeholder: "ex) Boggu_Lee (비울시 자기 닉네임)");
+            .AddTextInput("소비자 이름", "name", placeholder: "ex) Boggu_Lee", value:(arg.User as IGuildUser).Nickname);
             await arg.RespondWithModalAsync(mb.Build());
         }
 
