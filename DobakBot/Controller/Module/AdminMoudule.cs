@@ -100,7 +100,7 @@ namespace DobakBot.Controller
         public async Task GetWallat([Remainder] string nick)
         {
             var discorUser = Context.Guild.Users.FirstOrDefault(x => x.Nickname == nick);
-            if (discorUser != null)
+            if (discorUser == null)
             {
                 await ReplyAsync($"{nick}를 찾을수 없음.");
                 return;
