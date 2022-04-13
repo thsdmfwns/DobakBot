@@ -15,6 +15,7 @@ namespace DobakBot.Controller
     [RequireRole("Admin-")]
     public class AdminMoudule : ModuleBase<SocketCommandContext>
     {
+        private readonly DBController DB = BotController.Instance.DB;
         [Command("입장버튼")]
         public async Task EnterButtonSpawn()
         {
@@ -93,6 +94,24 @@ namespace DobakBot.Controller
             var ct = guild.CategoryChannels.Single(x => x.Name == "보관소");
             await ReplyAsync($"채널 이름 : {channel.Id} | 카테고리 이름 : {channel.Category.Name}");
             await channel.ModifyAsync(x => x.CategoryId = ct.Id);
+        }
+
+        [Command("지갑")]
+        public async Task GetWallat([Remainder] string nick)
+        {
+            var discorUser = Context.Guild.Users.FirstOrDefault(x => x.Nickname == nick);
+            if (discorUser != null)
+            {
+                await ReplyAsync($"{nick}를 찾을수 없음.");
+                return;
+            }
+            var user = DB.GetUserByDiscordId(discorUser.Id);
+            if (user == null)
+            {
+                await ReplyAsync($"{discorUser.Nickname}은 등록되지 않은 유저");
+                return;
+            }
+            await ReplyAsync($"{discorUser.Nickname}의 보유 코인 : {user.coin}");
         }
 
         [Command("clear")]
