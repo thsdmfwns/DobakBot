@@ -99,6 +99,7 @@ namespace DobakBot.Controller
         [Command("지갑")]
         public async Task GetWallat([Remainder] string nick)
         {
+            await Context.Guild.DownloadUsersAsync();
             var discorUser = Context.Guild.Users.FirstOrDefault(x => x.Nickname == nick);
             if (discorUser == null)
             {
