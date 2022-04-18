@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace DobakBot.Controller
 {
-    [RequireRole("Admin-")]
+    [RequireRole("Discord Admin")]
     public class AdminMoudule : ModuleBase<SocketCommandContext>
     {
         [Command("입장버튼")]
