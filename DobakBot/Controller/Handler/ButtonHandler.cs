@@ -44,11 +44,56 @@ namespace DobakBot.Controller
                 case "weaponpay_supply": await OnWeaponPay(arg); return;
                 case "weaponpay_sell": await OnWeaponPay(arg, isSell:true); return;
                 case "race_make": await OnRaceMake(arg); return;
-                //case "race_start": await OnWeaponPay(arg, isSell:true); return;
+                case "race_start": await OnRaceStart(arg); return;
                 case "race_cancel": await OnRaceCancel(arg); return;
                 default: return;
             }
 
+        }
+
+        private async Task OnRaceStart(SocketMessageComponent arg)
+        {
+            if (!AnimalRace.IsSetting)
+            {
+                await arg.RespondAsync("시작을 먼저 해주세요!");
+                return;
+            }
+            if (AnimalRace.TotalMoney == 0)
+            {
+                await arg.RespondAsync("베팅한사람이 아무도 없습니다.");
+                return;
+            }
+            var guild = (arg.Channel as SocketTextChannel).Guild;
+            var ch = guild.GetTextChannel((ulong)AnimalRace.ChannelId);
+            await ch.ModifyMessageAsync((ulong)AnimalRace.BettingMsgId, x => x.Components = new ComponentBuilder().Build());
+            await arg.DeferAsync();
+            var winners = await RunAnimalRace(arg, ch);
+            if (!DB.TryAddUsersCoin(winners)) await arg.RespondAsync("TryAddUsersCoin => DB에러");
+            AnimalRace.Clear();
+        }
+
+        private async Task<BettingMembers> RunAnimalRace(SocketMessageComponent arg, SocketTextChannel channel)
+        {
+            BettingMembers WinnerMembers;
+            var race = AnimalRace.AnimalRace;
+            var msg = await channel.SendMessageAsync("", false, race.GetEmbed(isStart: true));
+
+            while (!race.isRaceDone)
+            {
+                await Task.Delay(1250);
+                var embed = race.GetEmbed();
+                if (embed == null) break;
+                await msg.ModifyAsync(msg => msg.Embed = embed);
+            }
+
+            WinnerMembers = race.WinnerMembers;
+
+            if (race.WinnerMembers == null)
+            {
+                await Task.Delay(5000);
+                WinnerMembers = await RunAnimalRace(arg, channel);
+            }
+            return WinnerMembers;
         }
 
         private async Task OnRaceMake(SocketMessageComponent arg)
