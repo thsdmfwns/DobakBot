@@ -109,7 +109,7 @@ namespace DobakBot.Model
             WinnerMembers = Bettings[winner.Name];
             var odd = Bettings.GetBettingOdds(winner.Name);
             WinnerMembers.SetOdd(odd);
-            return WinnerMembers.ToString();
+            return WinnerMembers.ToString() ?? "뭐야 아무도 베팅을 안했잖아?";
         }
     }
 }

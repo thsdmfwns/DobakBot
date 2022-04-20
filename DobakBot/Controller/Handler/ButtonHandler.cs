@@ -55,12 +55,12 @@ namespace DobakBot.Controller
         {
             if (!AnimalRace.IsSetting)
             {
-                await arg.RespondAsync("시작을 먼저 해주세요!");
+                await arg.RespondAsync("경기를 먼저 만들어 주세요.", ephemeral: true);
                 return;
             }
             if (AnimalRace.TotalMoney == 0)
             {
-                await arg.RespondAsync("베팅한사람이 아무도 없습니다.");
+                await arg.RespondAsync("베팅한사람이 아무도 없습니다.", ephemeral: true);
                 return;
             }
             var guild = (arg.Channel as SocketTextChannel).Guild;
