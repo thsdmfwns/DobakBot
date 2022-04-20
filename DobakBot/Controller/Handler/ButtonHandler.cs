@@ -1,7 +1,9 @@
 ﻿using Discord;
+using Discord.Rest;
 using Discord.WebSocket;
 using DobakBot.Controller.Controller;
 using DobakBot.Model;
+using DobakBot.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +16,7 @@ namespace DobakBot.Controller
     {
         private DBController DB = BotController.Instance.DB;
         private WeaponPayController WeaponPay = BotController.Instance.WeaponPay;
+        private AnimalRaceController AnimalRace = BotController.Instance.animalRace;
 
 
         public ButtonHandler(DiscordSocketClient client)
@@ -40,9 +43,38 @@ namespace DobakBot.Controller
                 case "weapon_apply": await OnWeaponApply(arg); return;
                 case "weaponpay_supply": await OnWeaponPay(arg); return;
                 case "weaponpay_sell": await OnWeaponPay(arg, isSell:true); return;
+                case "race_make": await OnRaceMake(arg); return;
+                //case "race_start": await OnWeaponPay(arg, isSell:true); return;
+                case "race_cancel": await OnRaceCancel(arg); return;
                 default: return;
             }
 
+        }
+
+        private async Task OnRaceMake(SocketMessageComponent arg)
+        {
+            if (AnimalRace.IsSetting)
+            {
+                await arg.RespondAsync("이미 경마 베팅이 시작되어 있습니다. 취소버튼을 눌러주세요.", ephemeral:true);
+                return;
+            }
+            var mb = new ModalBuilder()
+                .WithTitle("경기 생성")
+                .WithCustomId("race_make")
+                .AddTextInput("경기 이름", "race_name", placeholder: "ex)이봉구배 1회 경마", required: true)
+                .AddTextInput("1번마 이름", "animal1_name", placeholder: "ex) 슈퍼 짱빠른 말", required: true)
+                .AddTextInput("1번마 이모티콘", "animal1_emoji", placeholder: "ex) :horse_racing: (채팅에 이모티콘 치고 복붙)", required: true)
+                .AddTextInput("1번마 이름", "animal2_name", placeholder: "ex) 전설의 백마", required: true)
+                .AddTextInput("1번마 이모티콘", "animal2_emoji", placeholder: "ex) :horse_racing: (채팅에 이모티콘 치고 복붙)", required: true);
+            await arg.RespondWithModalAsync(mb.Build());
+        }
+
+        private async Task OnRaceCancel(SocketMessageComponent arg)
+        {
+            var guild = (arg.Channel as SocketTextChannel).Guild;
+            await (guild.GetChannel((ulong)AnimalRace.ChannelId) as SocketTextChannel).SendMessageAsync("이 경마는 취소 되었습니다.");
+            AnimalRace.Clear();
+            await arg.RespondAsync("취소 완료.", ephemeral: true);
         }
 
         private async Task OnWeaponPay(SocketMessageComponent arg, bool isSell = false)
@@ -130,8 +162,23 @@ namespace DobakBot.Controller
 
         private async Task OnSlotRunButton(SocketMessageComponent arg)
         {
-            var comp = new ComponentBuilder().WithSelectMenu(GetMoneySelectMenu("slot_run"));
+            var comp = new ComponentBuilder().WithSelectMenu(Utility.GetMoneySelectMenu("slot_run"));
             await arg.RespondAsync($"베팅 금액을 선택해 주세요.", components: comp.Build());
+        }
+
+        private async Task<RestTextChannel> makePrivateRoom(SocketMessageComponent arg, string roomName, ulong catgoryId)
+        {
+            var guild = (arg.Channel as SocketTextChannel).Guild;
+            var ch = await guild.CreateTextChannelAsync(roomName, x => x.CategoryId = catgoryId);
+            var dealerPer = guild.Roles.Single(x => x.Name == "CASINO Dealer");
+            var guestPer = guild.Roles.Single(x => x.Name == "CASINO Guest");
+            var denyper = new OverwritePermissions(viewChannel: PermValue.Deny, sendMessages: PermValue.Deny);
+            var userPer = new OverwritePermissions(viewChannel: PermValue.Allow, sendMessages: PermValue.Deny);
+            await ch.AddPermissionOverwriteAsync(guild.EveryoneRole, denyper);
+            await ch.AddPermissionOverwriteAsync(arg.User, userPer);
+            await ch.AddPermissionOverwriteAsync(dealerPer, userPer);
+            await ch.AddPermissionOverwriteAsync(guestPer, denyper);
+            return ch;
         }
 
         private async Task OnSlotRoomCreateButton(SocketMessageComponent arg)
@@ -139,27 +186,17 @@ namespace DobakBot.Controller
             var channel = arg.Channel as SocketTextChannel;
             var guild = channel.Guild;
             var roomName = $"🎰｜{guild.GetUser(arg.User.Id).Nickname.ToLower()}";
-            var cate = guild.CategoryChannels.Single(x => x.Id == channel.CategoryId);
-            var temp = cate.Channels.SingleOrDefault(x => x.Name == roomName);
+            var temp = guild.CategoryChannels.Single(x => x.Id == channel.CategoryId).Channels.SingleOrDefault(x => x.Name == roomName);
             if (temp != null)
             {
                 await arg.RespondAsync($"{MentionUtils.MentionChannel(temp.Id)} 이미 만들어진 방이네요!", ephemeral: true);
                 return;
             }
-            var ch = await guild.CreateTextChannelAsync(roomName, x => x.CategoryId = cate.Id);
-            var dealerPer = guild.Roles.Single(x => x.Name == "CASINO Dealer");
-            var guestPer = guild.Roles.Single(x => x.Name == "CASINO Guest");
-            var per = new OverwritePermissions(viewChannel: PermValue.Deny, sendMessages: PermValue.Deny);
-            var userPer = new OverwritePermissions(viewChannel: PermValue.Allow, sendMessages: PermValue.Deny);
-            await ch.AddPermissionOverwriteAsync(guild.EveryoneRole, per);
-            await ch.AddPermissionOverwriteAsync(arg.User, userPer);
-            await ch.AddPermissionOverwriteAsync(dealerPer, userPer);
-            await ch.AddPermissionOverwriteAsync(guestPer, per);
-
+            var ch = await makePrivateRoom(arg, roomName, (ulong)channel.CategoryId);
             var comp = new ComponentBuilder()
-                .WithButton("슬롯머신 돌리기", "slot_run", style:ButtonStyle.Primary)
-                .WithButton("슬롯머신 배율 보기", "slot_odd", style:ButtonStyle.Danger)
-                .WithButton("지갑보기", "customer_Wallet", style:ButtonStyle.Success);
+                .WithButton("슬롯머신 돌리기", "slot_run", style: ButtonStyle.Primary)
+                .WithButton("슬롯머신 배율 보기", "slot_odd", style: ButtonStyle.Danger)
+                .WithButton("지갑보기", "customer_Wallet", style: ButtonStyle.Success);
             var embed = new EmbedBuilder();
             embed.Color = Color.Blue;
             embed.Title = "슬롯머신 도우미";
@@ -180,15 +217,7 @@ namespace DobakBot.Controller
                 await arg.RespondAsync($"{MentionUtils.MentionChannel(room.Id)} 이미 만들어진 방이네요!", ephemeral: true);
                 return;
             }
-            var ch = await guild.CreateTextChannelAsync(roomName, x => x.CategoryId = catgoryCh.Id);
-            var dealerPer = guild.Roles.Single(x => x.Name == "CASINO Dealer");
-            var guestPer = guild.Roles.Single(x => x.Name == "CASINO Guest");
-            var per = new OverwritePermissions(viewChannel: PermValue.Deny, sendMessages: PermValue.Deny);
-            var userPer = new OverwritePermissions(viewChannel: PermValue.Allow, sendMessages: PermValue.Allow);
-            await ch.AddPermissionOverwriteAsync(guild.EveryoneRole, per);
-            await ch.AddPermissionOverwriteAsync(arg.User, userPer);
-            await ch.AddPermissionOverwriteAsync(dealerPer, userPer);
-            await ch.AddPermissionOverwriteAsync(guestPer, per);
+            var ch = await makePrivateRoom(arg, roomName, (ulong)channel.CategoryId);
             await arg.DeferAsync();
         }
 
@@ -205,13 +234,10 @@ namespace DobakBot.Controller
                     return;
                 }
             }
-            else
+            else if (!DB.TrySubtractUserCoin(cr.Id, cr.Money))
             {
-                if (!DB.TrySubtractUserCoin(cr.Id, cr.Money))
-                {
-                    await arg.RespondAsync($"TrySubtractUserCoin Error \nID : {cr.Id}, Money {cr.Money}");
-                    return;
-                }
+                await arg.RespondAsync($"TrySubtractUserCoin Error \nID : {cr.Id}, Money {cr.Money}");
+                return;
             }
             var count = cr.IsPay ? ":coin:" : "$";
             var contentmsg = $"{cr.Nickname}님의 {cr.Kind}요청은 성사되었습니다. ({cr.TotalMoney}{count})";
@@ -237,11 +263,7 @@ namespace DobakBot.Controller
 
         private async Task OnCustomerReturnButton(SocketMessageComponent arg)
         {
-            var menuBuilder = new SelectMenuBuilder()
-            .WithPlaceholder("금액 선택")
-            .WithCustomId("customerreturn_select")
-            .WithMinValues(1)
-            .WithMaxValues(1);
+            var menuBuilder = Utility.GetMoneySelectMenu("customerreturn_select");
             menuBuilder.AddOption("잔금 전액", "all");
             for (int i = 1; i < 21; i++)
             {
@@ -254,23 +276,8 @@ namespace DobakBot.Controller
 
         private async Task OnCustomerPayButton(SocketMessageComponent arg)
         {
-            var comp = new ComponentBuilder().WithSelectMenu(GetMoneySelectMenu("customerpay_select"));
+            var comp = new ComponentBuilder().WithSelectMenu(Utility.GetMoneySelectMenu("customerpay_select"));
             await arg.RespondAsync($"충전할 금액을 선택해주세요.", components: comp.Build(), ephemeral: true);
-        }
-
-        private SelectMenuBuilder GetMoneySelectMenu(string id, int limit = 21)
-        {
-            var menuBuilder = new SelectMenuBuilder()
-            .WithPlaceholder("금액 선택")
-            .WithCustomId(id)
-            .WithMinValues(1)
-            .WithMaxValues(1);
-            for (int i = 1; i < limit; i++)
-            {
-                var item = (i * 500).ToString();
-                menuBuilder.AddOption(item, item);
-            }
-            return menuBuilder;
         }
         private async Task OnCustomerWalletButton(SocketMessageComponent arg)
         {
@@ -283,34 +290,6 @@ namespace DobakBot.Controller
             var guild = (arg.Channel as SocketTextChannel).Guild;
             await arg.RespondAsync($"{guild.GetUser(user.id).Nickname}님의 현재 남은:coin:은 {user.coin}:coin: 입니다.", ephemeral: true);
         }
-
-        private async Task OnWeaponButton(SocketMessageComponent arg, WeaponPayKind kind)
-        {
-            await arg.Message.DeleteAsync();
-            var id = arg.User.Id;
-            if (!WeaponPay.WeaponPayMap.ContainsKey(id))
-            {
-                await arg.RespondAsync($"장부 도우미를 한번더 불려와 주세요!\n장부도우미 부르기 : !장부 무기갯수 (!장부 1)", ephemeral: true);
-                return;
-            }
-            var list = WeaponPay.WeaponPayMap[id].Weapons;
-            var comp = new ComponentBuilder().WithSelectMenu(GetWeponSelectMenu(list));
-            comp.WithButton(label: "취소", customId: "Weapon_Cancel", row:1);
-            await arg.RespondAsync($"무기 또는 탄창을 하나만 선택해주세요. \n 선택후, 이메세지를 닫는것을 추천합니다.",components:comp.Build() ,ephemeral: true);
-
-        }
-
-        private SelectMenuBuilder GetWeponSelectMenu(List<Weapon> weapons)
-        {
-            var menuBuilder = new SelectMenuBuilder()
-            .WithPlaceholder("장비 선택")
-            .WithCustomId("WeaponPay_SelectMenu")
-            .WithMinValues(1)
-            .WithMaxValues(1);
-            weapons.ForEach(item => menuBuilder.AddOption(item.Name, item.Name));
-            return menuBuilder;
-        }
-
         private async Task OnEnterButton(SocketMessageComponent arg)
         {
             var channel = arg.Channel as SocketTextChannel;

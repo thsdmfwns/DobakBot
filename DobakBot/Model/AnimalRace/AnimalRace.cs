@@ -11,14 +11,15 @@ namespace DobakBot.Model
 {
     class AnimalRace
     {
-        public AnimalRace(List<Animal> animals, AnimalRaceBettings bettings)
+        public AnimalRace(List<Animal> animals, AnimalRaceBettings bettings, string raceName)
         {
             embedBuilder.Color = Color.Red;
             Animals = animals;
             Animals.ForEach(animal => animal.reset());
             Bettings = bettings;
+            RaceName = raceName;
         }
-
+        public string RaceName { get; set; }
         public int RaceDistance { get; set; } = 30;
         public List<Animal> Animals { get; set; }
         public AnimalRaceBettings Bettings { get; set; }
@@ -35,6 +36,7 @@ namespace DobakBot.Model
         {
             if (isRaceDone) return null;
             if (!isStart) RunRace();
+            embedBuilder.Title = RaceName;
             var ctx = string.Empty;
             foreach (var animal in Animals)
             {

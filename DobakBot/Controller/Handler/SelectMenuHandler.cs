@@ -15,6 +15,7 @@ namespace DobakBot.Controller.Handler
     {
         private WeaponPayController WeaponPay = BotController.Instance.WeaponPay;
         private DBController DB = BotController.Instance.DB;
+        private AnimalRaceController AnimalRace = BotController.Instance.animalRace;
 
         public SelectMenuHandler(DiscordSocketClient client)
         {
@@ -30,8 +31,33 @@ namespace DobakBot.Controller.Handler
                 case "customerreturn_select": await OnCustomerReturnSelectMenu(arg); return;
                 case "slot_run": await OnSlotRun(arg); return;
                 case "weapon_remove": await OnWeaponRemove(arg); return;
+                case "race_bet": await OnRaceBet(arg); return;
                 default: return;
             }
+        }
+
+        private async Task OnRaceBet(SocketMessageComponent arg)
+        {
+            var data = arg.Data.Values.First();
+            foreach (var item in AnimalRace.Bettings.Values)
+            {
+                if (item.Any(x=>x.ID== arg.User.Id))
+                {
+                    await arg.RespondAsync($"베팅은 한번만 가능합니다.", ephemeral: true);
+                    return;
+                }
+            }
+            var user = DB.GetUserByDiscordId(arg.User.Id);
+            if (user == null)
+            {
+                await arg.RespondAsync($"등록되지 않은 사용자입니다.", ephemeral: true);
+                return;
+            }
+            var mb = new ModalBuilder()
+               .WithTitle($"{data} 베팅 | 현재 보유 코인 : {user.coin}")
+               .WithCustomId("race_bet")
+               .AddTextInput("베팅 금액", data, placeholder: "숫자만 입력", required: true);
+            await arg.RespondWithModalAsync(mb.Build());
         }
 
         private async Task OnWeaponRemove(SocketMessageComponent arg)
@@ -159,7 +185,6 @@ namespace DobakBot.Controller.Handler
             var msg = CoinReceipt.toJson(Cr);
             var comp = new ComponentBuilder().WithButton("승인", "dealer_accept").WithButton("거부", "dealer_deny");
             await notifiyChannel.SendMessageAsync(msg, components: comp.Build());
-
             await arg.RespondAsync($"요청 되었습니다! 딜러의 확인까지 기달려주세요.", ephemeral: true);
         }
 

@@ -2,6 +2,7 @@
 using Discord.WebSocket;
 using DobakBot.Controller.Controller;
 using DobakBot.Model;
+using DobakBot.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,10 @@ namespace DobakBot.Controller.Handler
 {
     internal class ModalHandler
     {
+        private AnimalRaceController AnimalRace = BotController.Instance.animalRace;
         private WeaponPayController WeaponPay = BotController.Instance.WeaponPay;
+        private DBController DB = BotController.Instance.DB;
+
         public ModalHandler(DiscordSocketClient client)
         {
             client.ModalSubmitted += Client_ModalSubmitted;
@@ -24,10 +28,96 @@ namespace DobakBot.Controller.Handler
             {
                 case "weapon_add": await onWeaponAdd(arg); return;
                 case "weapon_pay": await onWeaponPay(arg); return;
+                case "race_make": await onRaceMake(arg); return;
+                case "race_bet": await onRaceBet(arg); return;
                 default:
                     break;
             }
             return;
+        }
+
+        private async Task onRaceBet(SocketModal arg)
+        {
+            var comp = arg.Data.Components.First();
+            var animal = comp.CustomId;
+            var dbuser = DB.GetUserByDiscordId(arg.User.Id);
+            var nick = (arg.User as IGuildUser).Nickname;
+            if (dbuser == null)
+            {
+                await arg.RespondAsync($"{nick} 등록되지 않은 사용자입니다.", ephemeral: true);
+                return;
+            }
+
+            int money;
+            if (!int.TryParse(comp.Value, out money))
+            {
+                await arg.RespondAsync($"{comp.Value} 일치 하지 않는 값입니다.", ephemeral: true);
+                return;
+            }
+            if (dbuser.coin < money)
+            {
+                await arg.RespondAsync($"{nick}님의 :coin:이 부족하여 환전이 불가능합니다.\n" +
+                    $"(현재 잔액 : {dbuser.coin}:coin:) (요청금액 : {money}:coin:).", ephemeral: true);
+                return;
+            }
+
+            if (!AnimalRace.TryAddBetting(arg.User.Id, nick, animal, money))
+            {
+                {
+                    await arg.RespondAsync($"베팅실패 흐에에");
+                    return;
+                }
+            }
+
+            if (!DB.TrySubtractUserCoin(arg.User.Id, money))
+            {
+                await arg.RespondAsync($"TrySubtractUserCoin Error \nID : {arg.User.Id}, Money {money}");
+                return;
+            }
+
+            await arg.Channel.ModifyMessageAsync((ulong)AnimalRace.BettingMsgId, x=> x.Embed = AnimalRace.GetBettingPanel());
+            await arg.RespondAsync($"베팅 완료.", ephemeral: true);
+
+        }
+
+        private async Task onRaceMake(SocketModal arg)
+        {
+            var list = new List<Animal>();
+            var raceName = arg.Data.Components.Single(x => x.CustomId == $"race_name").Value;
+            for (int i = 1; i < 3; i++)
+            {
+                var name = arg.Data.Components.Single(x => x.CustomId == $"animal{i}_name").Value;
+                var emoji = arg.Data.Components.Single(x => x.CustomId == $"animal{i}_emoji").Value;
+                if (emoji.First() != ':' || emoji.Last() != ':')
+                {
+                    await arg.RespondAsync("오류! 이모티콘을 확인해 주세요!", ephemeral: true);
+                    return;
+                }
+                if (list.Any(x=> x.Name == name))
+                {
+                    await arg.RespondAsync("오류! 동물 이름이 똑같은거 같은데요?", ephemeral: true);
+                    return;
+                }
+                list.Add(new Animal(name, emoji));
+            }
+            AnimalRace.Animals = list;
+            AnimalRace.RaceName = raceName;
+            var ch = await arg.GetChannelAsync() as SocketTextChannel;
+            var nf = await Utility.makePublicRoom(ch.Guild, raceName, (ulong)ch.CategoryId);
+            AnimalRace.ChannelId = nf.Id;
+            var select = new SelectMenuBuilder()
+                .WithCustomId("race_bet")
+                .WithMinValues(1).WithMaxValues(1)
+                .WithPlaceholder("동물 선택");
+            foreach (var item in AnimalRace.Animals)
+            {
+                select.AddOption(item.Name, item.Name);
+            }
+
+            var comp = new ComponentBuilder()
+                .WithSelectMenu(select);
+            var msg = await nf.SendMessageAsync("", false, AnimalRace.GetBettingPanel(), components: comp.Build());
+            AnimalRace.BettingMsgId = msg.Id;
         }
 
         private async Task onWeaponPay(SocketModal arg)

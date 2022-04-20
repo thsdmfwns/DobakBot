@@ -184,12 +184,6 @@ namespace DobakBot.Controller
                 await ReplyAsync($"{Context.Guild.GetUser(Context.User.Id).Nickname}님의 :coin:이 부족합니다 ({user.coin - money}:coin:).");
                 return;
             }
-            if (!controller.TryAddBetting(
-                Context.User.Id, Context.Guild.GetUser(Context.User.Id).Nickname, arg[0], money))
-            {
-                await ReplyAsync($"베팅 : {arg[0]} 일치 하지 않는 값입니다.\n" +  HelpBetting);
-                return;
-            }
             if (!DB.TrySubtractUserCoin(Context.User.Id, money))
             {
                 await ReplyAsync("TrySubtractUserCoin => DB에러");

@@ -1,4 +1,7 @@
-﻿using DobakBot.Model;
+﻿using Discord;
+using Discord.Rest;
+using Discord.WebSocket;
+using DobakBot.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,5 +61,28 @@ namespace DobakBot.Utils
             ":second_place:",
             ":third_place:" 
             };
+
+        public static async Task<RestTextChannel> makePublicRoom(SocketGuild guild, string roomName, ulong catgoryId)
+        {
+            var ch = await guild.CreateTextChannelAsync(roomName, x => x.CategoryId = catgoryId);
+            return ch;
+        }
+
+        public static SelectMenuBuilder GetMoneySelectMenu(string id, int limit = 21)
+        {
+            var menuBuilder = new SelectMenuBuilder()
+            .WithPlaceholder("금액 선택")
+            .WithCustomId(id)
+            .WithMinValues(1)
+            .WithMaxValues(1);
+            for (int i = 1; i < limit; i++)
+            {
+                var item = (i * 500).ToString();
+                menuBuilder.AddOption(item, item);
+            }
+            return menuBuilder;
+        }
+
+
     }
 }

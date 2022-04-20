@@ -26,10 +26,13 @@ namespace DobakBot.Controller
                 }
             } 
         }
+        public ulong? ChannelId { get; set; }
+        public ulong? BettingMsgId { get; set; }
+        public string RaceName { get; set; }
         public AnimalRaceBettings Bettings { get; private set; }
         public int TotalMoney => Bettings.TotalMoney;
         public bool IsSetting => Animals != null && Bettings != null;
-        public AnimalRace AnimalRace => new AnimalRace(animals, Bettings);
+        public AnimalRace AnimalRace => new AnimalRace(animals, Bettings, RaceName);
 
         public bool TryAddAnimal(Animal animal)
         {
@@ -96,6 +99,8 @@ namespace DobakBot.Controller
         {
             Bettings = null;
             animals = null;
+            ChannelId = null;
+            BettingMsgId = null;
         }
 
         private string GetAnimalsInfo()

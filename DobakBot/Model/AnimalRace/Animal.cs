@@ -14,7 +14,7 @@ namespace DobakBot.Model
         public int RaceRank { get; set; }
         public int CurrentDistance { get; private set; } = 0;
         public int MinSpeed { get; set; } = 1;
-        public int MaxSpeed { get; set; } = 3;
+        public int MaxSpeed { get; set; } = 5;
 
         private Random rand = new Random();
 
@@ -22,7 +22,6 @@ namespace DobakBot.Model
         {
             Name = name;
             Imoticon = imoticon;
-            MaxSpeed = rand.Next(3, 5);
         }
 
         public void reset() => CurrentDistance = 0;
