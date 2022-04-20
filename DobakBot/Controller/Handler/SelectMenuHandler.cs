@@ -98,19 +98,15 @@ namespace DobakBot.Controller.Handler
             if (slot.ResultCoin == 0) return;
             if (slot.SlotResult == SlotResult.JackPot)
             {
-                var channel = arg.Channel as SocketTextChannel;
-                var guild = channel.Guild;
-                var nc = guild.Channels.Single(x => x.Name == "🥇｜명예의전당") as SocketTextChannel;
-                nc.SendMessageAsync(embed: embeds[3]);
+                var nc = (arg.Channel as SocketTextChannel).Guild.Channels.Single(x => x.Name == "🥇｜명예의전당") as SocketTextChannel;
+                _ = nc.SendMessageAsync(embed: embeds[3]);
             }
             DB.TryAddUserCoin(arg.User.Id, slot.ResultCoin);
         }
 
         private async Task OnCustomerReturnSelectMenu(SocketMessageComponent arg)
         {
-
-            var channel = arg.Channel as SocketTextChannel;
-            var guild = channel.Guild;
+            var guild = (arg.Channel as SocketTextChannel).Guild;
             var user = arg.User.Id;
             var nick = guild.GetUser(user).Nickname;
             var data = arg.Data.Values.First();
@@ -123,11 +119,7 @@ namespace DobakBot.Controller.Handler
             }
 
             int money;
-
-            if (data == "all")
-            {
-                money = dbuser.coin;
-            }
+            if (data == "all") money = dbuser.coin;
             else if (!int.TryParse(data, out money))
             {
                 await arg.RespondAsync($"{data} 일치 하지 않는 값입니다.", ephemeral: true);
@@ -140,7 +132,6 @@ namespace DobakBot.Controller.Handler
                     $"(현재 잔액 : {dbuser.coin}:coin:) (요청금액 : {money}:coin:).", ephemeral: true);
                 return;
             }
-
             var notifiyChannel = guild.Channels.Single(x => x.Name == "딜러-사무실") as SocketTextChannel;
             var Cr = new CoinReceipt(nick, money, user, false, tip:(int)(money * 0.1));
             var msg = CoinReceipt.toJson(Cr);
@@ -151,8 +142,7 @@ namespace DobakBot.Controller.Handler
 
         private async Task OnCustomerPaySelectMenu(SocketMessageComponent arg)
         {
-            var channel = arg.Channel as SocketTextChannel;
-            var guild = channel.Guild;
+            var guild = (arg.Channel as SocketTextChannel).Guild;
             var data = arg.Data.Values.First();
             await guild.DownloadUsersAsync();
             var user = arg.User.Id;
@@ -176,9 +166,7 @@ namespace DobakBot.Controller.Handler
         private async Task OnWeaponPaySelectMenu(SocketMessageComponent arg)
         {
             var data = arg.Data.Values.First();
-            var channel = arg.Channel as SocketTextChannel;
-            var guild = channel.Guild;
-            var nf = guild.Channels.Single(x => x.Name == "📖ㅣ총기지급대장") as SocketTextChannel;
+            var nf = (arg.Channel as SocketTextChannel).Guild.Channels.Single(x => x.Name == "📖ㅣ총기지급대장") as SocketTextChannel;
             WeaponPay ctx;
             if (!WeaponPay.WeaponPayMap.TryRemove(arg.User.Id, out ctx))
             {

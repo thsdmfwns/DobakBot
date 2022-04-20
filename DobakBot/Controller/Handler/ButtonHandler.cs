@@ -26,7 +26,6 @@ namespace DobakBot.Controller
             switch (arg.Data.CustomId)
             {
                 case "casino_enter": await OnEnterButton(arg); return;
-                case "Weapon_Cancel": await OnWeaponCancelButton(arg); return;
                 case "customer_Wallet": await OnCustomerWalletButton(arg); return;
                 case "customer_pay": await OnCustomerPayButton(arg); return;
                 case "customer_return": await OnCustomerReturnButton(arg); return;
@@ -55,7 +54,9 @@ namespace DobakBot.Controller
             }
 
             var kind = isSell ? WeaponPayKind.Sell : WeaponPayKind.supply;
-            WeaponPay.WeaponPayMap.AddOrUpdate(arg.User.Id, new WeaponPay() { Kind = kind }, (key, oldval) => oldval = new WeaponPay() { Kind = kind });
+            WeaponPay.WeaponPayMap.AddOrUpdate(arg.User.Id,
+                new WeaponPay() { Kind = kind },
+                (key, oldval) => oldval = new WeaponPay() { Kind = kind });
             var mb = new ModalBuilder()
             .WithTitle("무기 갯수")
             .WithCustomId("weapon_pay")
@@ -137,8 +138,7 @@ namespace DobakBot.Controller
         {
             var channel = arg.Channel as SocketTextChannel;
             var guild = channel.Guild;
-            var nick = guild.GetUser(arg.User.Id).Nickname;
-            var roomName = $"🎰｜{nick.ToLower()}";
+            var roomName = $"🎰｜{guild.GetUser(arg.User.Id).Nickname.ToLower()}";
             var cate = guild.CategoryChannels.Single(x => x.Id == channel.CategoryId);
             var temp = cate.Channels.SingleOrDefault(x => x.Name == roomName);
             if (temp != null)
@@ -172,16 +172,15 @@ namespace DobakBot.Controller
         {
             var channel = arg.Channel as SocketTextChannel;
             var guild = channel.Guild;
-            var nick = guild.GetUser(arg.User.Id).Nickname;
-            var cate = guild.CategoryChannels.Single(x => x.Id == channel.CategoryId);
-            var roomName = $"📖｜{nick.ToLower()}";
-            var temp = cate.Channels.SingleOrDefault(x => x.Name == roomName);
-            if (temp != null)
+            var catgoryCh = guild.CategoryChannels.Single(x => x.Id == channel.CategoryId);
+            var roomName = $"📖｜{ guild.GetUser(arg.User.Id).Nickname.ToLower()}";
+            var room = catgoryCh.Channels.SingleOrDefault(x => x.Name == roomName);
+            if (room != null)
             {
-                await arg.RespondAsync($"{MentionUtils.MentionChannel(temp.Id)} 이미 만들어진 방이네요!", ephemeral: true);
+                await arg.RespondAsync($"{MentionUtils.MentionChannel(room.Id)} 이미 만들어진 방이네요!", ephemeral: true);
                 return;
             }
-            var ch = await guild.CreateTextChannelAsync(roomName, x => x.CategoryId = cate.Id);
+            var ch = await guild.CreateTextChannelAsync(roomName, x => x.CategoryId = catgoryCh.Id);
             var dealerPer = guild.Roles.Single(x => x.Name == "CASINO Dealer");
             var guestPer = guild.Roles.Single(x => x.Name == "CASINO Guest");
             var per = new OverwritePermissions(viewChannel: PermValue.Deny, sendMessages: PermValue.Deny);
@@ -195,8 +194,7 @@ namespace DobakBot.Controller
 
         private async Task OnDealerAcceptButton(SocketMessageComponent arg)
         {
-            var channel = arg.Channel as SocketTextChannel;
-            var guild = channel.Guild;
+            var guild = (arg.Channel as SocketTextChannel).Guild;
             var nc = guild.Channels.Single(x => x.Name == "🔔｜환전-알림") as SocketTextChannel;
             var cr = CoinReceipt.fromJson(arg.Message.CleanContent);
             if (cr.IsPay)
@@ -226,8 +224,7 @@ namespace DobakBot.Controller
 
         private async Task OnDealerDenyButton(SocketMessageComponent arg)
         {
-            var channel = arg.Channel as SocketTextChannel;
-            var guild = channel.Guild;
+            var guild = (arg.Channel as SocketTextChannel).Guild;
             var nc = guild.Channels.Single(x => x.Name == "🔔｜환전-알림") as SocketTextChannel;
             var cr = CoinReceipt.fromJson(arg.Message.CleanContent);
             var contentmsg = $"{cr.Nickname}님의 {cr.Kind}요청은 취소됫습니다.";
@@ -283,25 +280,8 @@ namespace DobakBot.Controller
                 await arg.RespondAsync($"등록되지 않은 사용자입니다.", ephemeral: true);
                 return;
             }
-            var channel = arg.Channel as SocketTextChannel;
-            var guild = channel.Guild;
-            var nick = guild.GetUser(user.id).Nickname;
-            await arg.RespondAsync($"{nick}님의 현재 남은:coin:은 {user.coin}:coin: 입니다.", ephemeral: true);
-        }
-
-        private async Task OnWeaponCancelButton(SocketMessageComponent arg)
-        {
-            WeaponPay temp;
-            WeaponPay.WeaponPayMap.TryRemove(arg.User.Id, out temp);
-            try
-            {
-                await arg.Message.DeleteAsync();
-            }
-            catch { }
-            finally
-            {
-                await arg.RespondAsync($"장부를 취소 하셨습니다.", ephemeral: true);
-            }
+            var guild = (arg.Channel as SocketTextChannel).Guild;
+            await arg.RespondAsync($"{guild.GetUser(user.id).Nickname}님의 현재 남은:coin:은 {user.coin}:coin: 입니다.", ephemeral: true);
         }
 
         private async Task OnWeaponButton(SocketMessageComponent arg, WeaponPayKind kind)

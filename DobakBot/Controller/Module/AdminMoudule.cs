@@ -64,6 +64,19 @@ namespace DobakBot.Controller
             await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
         }
 
+        [Command("레이스도우미버튼")]
+        public async Task RaceButtonSpawn()
+        {
+            var buttons = new ComponentBuilder()
+                .WithButton("경기 만들기", "race_make", style: ButtonStyle.Primary)
+                .WithButton("경기 시작", "race_start", style: ButtonStyle.Success)
+                .WithButton("경기 취소", "race_cancel", style: ButtonStyle.Danger);
+            var builder = new EmbedBuilder();
+            builder.Title = "레이스 도우미";
+            builder.Color = Color.Blue;
+            await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
+        }
+
         [Command("DB")]
         public async Task WeaponDBSpawn()
         {
