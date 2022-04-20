@@ -132,7 +132,8 @@ namespace DobakBot.Controller.Handler
 
         private async Task OnCustomerReturnSelectMenu(SocketMessageComponent arg)
         {
-            var guild = (arg.Channel as SocketTextChannel).Guild;
+            var channel = arg.Channel as SocketTextChannel;
+            var guild = channel.Guild;
             var user = arg.User.Id;
             var nick = guild.GetUser(user).Nickname;
             var data = arg.Data.Values.First();
@@ -158,7 +159,7 @@ namespace DobakBot.Controller.Handler
                     $"(현재 잔액 : {dbuser.coin}:coin:) (요청금액 : {money}:coin:).", ephemeral: true);
                 return;
             }
-            var notifiyChannel = guild.Channels.Single(x => x.Name == "딜러-사무실") as SocketTextChannel;
+            var notifiyChannel = guild.GetCategoryChannel((ulong)channel.CategoryId).Channels.Single(x => x.Name == "딜러-사무실") as SocketTextChannel;
             var Cr = new CoinReceipt(nick, money, user, false, tip:(int)(money * 0.1));
             var msg = CoinReceipt.toJson(Cr);
             var comp = new ComponentBuilder().WithButton("승인", "dealer_accept").WithButton("거부", "dealer_deny");
@@ -168,7 +169,8 @@ namespace DobakBot.Controller.Handler
 
         private async Task OnCustomerPaySelectMenu(SocketMessageComponent arg)
         {
-            var guild = (arg.Channel as SocketTextChannel).Guild;
+            var channel = arg.Channel as SocketTextChannel;
+            var guild = channel.Guild;
             var data = arg.Data.Values.First();
             await guild.DownloadUsersAsync();
             var user = arg.User.Id;
@@ -180,7 +182,7 @@ namespace DobakBot.Controller.Handler
                 return;
             }
 
-            var notifiyChannel = guild.Channels.Single(x => x.Name == "딜러-사무실") as SocketTextChannel;
+            var notifiyChannel = guild.GetCategoryChannel((ulong)channel.CategoryId).Channels.Single(x => x.Name == "딜러-사무실") as SocketTextChannel;
             var Cr = new CoinReceipt(nick, money, user, true);
             var msg = CoinReceipt.toJson(Cr);
             var comp = new ComponentBuilder().WithButton("승인", "dealer_accept").WithButton("거부", "dealer_deny");
