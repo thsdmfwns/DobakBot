@@ -18,7 +18,12 @@ namespace DobakBot.Controller
         public List<Animal> Animals => Bettings.Keys.ToList();
         public int TotalMoney => Bettings.TotalMoney;
         public bool IsSetting => Bettings != null;
-        public AnimalRace MakeAnimalRace => new AnimalRace(Bettings, RaceName);
+        public bool IsRunning = false;
+        public AnimalRace MakeAnimalRace()
+        {
+            IsRunning = true;
+            return new AnimalRace(Bettings, RaceName);
+        }
         public void MakeBettings(List<Animal> animals)
         {
             Bettings = new AnimalRaceBettings();
@@ -63,6 +68,7 @@ namespace DobakBot.Controller
             Bettings = null;
             Channel = null;
             BettingMsgId = null;
+            IsRunning = false;
         }
 
         private string GetAnimalsInfo()
