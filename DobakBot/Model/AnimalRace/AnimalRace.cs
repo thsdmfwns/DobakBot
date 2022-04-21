@@ -11,45 +11,37 @@ namespace DobakBot.Model
 {
     class AnimalRace
     {
-        public AnimalRace(List<Animal> animals, AnimalRaceBettings bettings, string raceName)
+        public AnimalRace(AnimalRaceBettings bettings, string raceName)
         {
-            embedBuilder.Color = Color.Red;
-            Animals = animals;
-            Animals.ForEach(animal => animal.reset());
             Bettings = bettings;
             RaceName = raceName;
+            embedBuilder.Color = Color.Red;
+            animals.ForEach(animal => animal.reset());
         }
         public string RaceName { get; set; }
         public int RaceDistance { get; set; } = 30;
-        public List<Animal> Animals { get; set; }
         public AnimalRaceBettings Bettings { get; set; }
+        private List<Animal> animals => Bettings.Keys.ToList();
         public Queue<Animal> ArrivedAnimals { get; private set; } = new Queue<Animal>();
-        public bool isRaceDone { get; private set; } = false;
         public BettingMembers WinnerMembers { get; set; }
 
         private EmbedBuilder embedBuilder = new EmbedBuilder();
-        private void CheckRace() =>
-            isRaceDone = (ArrivedAnimals.Count == Animals.Count || ArrivedAnimals.Count > 2);
+        public bool CheckRace => ArrivedAnimals.Count == animals.Count || ArrivedAnimals.Count > 2;
         private int LastRank = 1;
-
         public Embed GetEmbed(bool isStart = false)
         {
-            if (isRaceDone) return null;
+            if (CheckRace) return null;
             if (!isStart) RunRace();
             embedBuilder.Title = RaceName;
             var ctx = string.Empty;
-            foreach (var animal in Animals)
-            {
-                ctx += animal.GetRaceContext(RaceDistance);
-                ctx += "\n\n";
-            }
+            animals.ForEach(animal => ctx += animal.GetRaceContext(RaceDistance) + "\n\n");
             embedBuilder.Description = ctx;
-            if (isRaceDone)
+            if (CheckRace)
             {
                 embedBuilder.Color = Color.Blue;
                 embedBuilder.Fields.Clear();
-                embedBuilder.AddField("결과", GetWinner(), inline: true);
-                embedBuilder.AddField("승리자들", GetDividen(), inline: true);
+                embedBuilder.AddField("레이스 결과", GetWinner(), inline: true);
+                embedBuilder.AddField("축하합니다.", GetDividen(), inline: true);
             }
             return embedBuilder.Build();
         }
@@ -57,8 +49,8 @@ namespace DobakBot.Model
         private void RunRace()
         {
             bool isWin = false;
-            if (isRaceDone) return;
-            foreach (var animal in Animals)
+            if (CheckRace) return;
+            foreach (var animal in animals)
             {
                 if (ArrivedAnimals.Contains(animal))
                 {
@@ -74,7 +66,6 @@ namespace DobakBot.Model
                 animal.Move(RaceDistance);
             }
             if (isWin) LastRank++;
-            CheckRace();
         }
 
 
@@ -94,7 +85,7 @@ namespace DobakBot.Model
         {
             var winnerCount = 0;
             Animal winner = new Animal("","");
-            foreach (var item in Animals)
+            foreach (var item in animals)
             {
                 if (item.RaceRank == 1)
                 {
@@ -106,7 +97,7 @@ namespace DobakBot.Model
             {
                 return "아쉽게도 무승부네요! \n 5초후 재경기가 펼쳐집니다!";
             }
-            WinnerMembers = Bettings[winner.Name];
+            WinnerMembers = Bettings[winner];
             var odd = Bettings.GetBettingOdds(winner.Name);
             WinnerMembers.SetOdd(odd);
             return WinnerMembers.ToString() ?? "뭐야 아무도 베팅을 안했잖아?";

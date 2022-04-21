@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Discord.Rest;
 using DobakBot.Model;
 using System;
 using System.Collections.Generic;
@@ -10,96 +11,57 @@ namespace DobakBot.Controller
 {
     class AnimalRaceController
     {
-        private List<Animal> animals;
-        public List<Animal> Animals {
-            get 
-            {
-                return animals;
-            } 
-            set 
-            {
-                animals = value;
-                Bettings = new AnimalRaceBettings();
-                foreach (var item in value)
-                {
-                    Bettings.Add(item.Name, new BettingMembers());
-                }
-            } 
-        }
-        public ulong? ChannelId { get; set; }
+        public RestTextChannel Channel { get; set; }
         public ulong? BettingMsgId { get; set; }
         public string RaceName { get; set; }
         public AnimalRaceBettings Bettings { get; private set; }
+        public List<Animal> Animals => Bettings.Keys.ToList();
         public int TotalMoney => Bettings.TotalMoney;
-        public bool IsSetting => Animals != null && Bettings != null;
-        public AnimalRace AnimalRace => new AnimalRace(animals, Bettings, RaceName);
-
+        public bool IsSetting => Bettings != null;
+        public AnimalRace MakeAnimalRace => new AnimalRace(Bettings, RaceName);
+        public void MakeBettings(List<Animal> animals)
+        {
+            Bettings = new AnimalRaceBettings();
+            animals.ForEach(item => Bettings.Add(item, new BettingMembers()));
+        }
         public bool TryAddAnimal(Animal animal)
         {
-            if (GetAnimalByName(animal.Name) != null || Bettings.ContainsKey(animal.Name))
+            if (Bettings.CheckAnimalByName(animal.Name))
                 return false;
-            Animals.Add(animal);
-            Bettings.Add(animal.Name, new BettingMembers());
+            Bettings.Add(animal, new BettingMembers());
             return true;
         }
-
         public bool TryRemoveAnimal(string animalName)
         {
-            Animal animal = GetAnimalByName(animalName);
-            if (animal == null || !Bettings.ContainsKey(animal.Name)) 
-                return false;
-            Animals.Remove(animal);
-            Bettings.Remove(animalName);
+            Animal animal = Bettings.GetAnimalByName(animalName);
+            if (animal == null) return false;
+            Bettings.Remove(animal);
             return true;
         }
-
-        public Animal GetAnimalByName(string animal)
-        {
-            foreach (var item in Animals)
-            {
-                if (item.Name == animal)
-                {
-                    return item;
-                }
-            }
-            return null;
-        }
-
         public Embed GetBettingPanel()
         {
-            EmbedBuilder builder = new EmbedBuilder();
-            builder.Color = Color.Green;
-            builder.Title = "경마 베팅";
-            builder.Description = $"총 베팅금액 : {TotalMoney}";
+            EmbedBuilder builder = new EmbedBuilder()
+            {
+                Color = Color.Green,
+                Title = "경마 베팅",
+                Description = $"총 베팅금액 : {TotalMoney}",
+            };
             builder.AddField("출전마", GetAnimalsInfo(), inline : true);
             builder.AddField("베팅정보", GetAnimalsBetting(), inline: true);
             return builder.Build();
         }
-
-        public int GetBettingMoney(string animalName) => Bettings.GetBettingMoney(animalName);
-        public float GetBettingOdds(string animalName) => Bettings.GetBettingOdds(animalName);
-
-
-        public bool TryAddBetting(ulong id, string nickname, string animalName, int money)
+        public bool TryAddBetting(BettingMember member, string animalName)
         {
-            if (!Bettings.ContainsKey(animalName)) return false;
-            foreach (var item in Bettings[animalName])
-            {
-                if (item.ID == id)
-                {
-                    item.Money += money;
-                    return true;
-                }
-            }
-            Bettings[animalName].Add(new BettingMember(id, nickname, money));
+            var animal = Bettings.GetAnimalByName(animalName);
+            if (Bettings.CheckMemberById(member.ID)) return false;
+            Bettings[animal].Add(member);
             return true;
         }
 
         public void Clear()
         {
             Bettings = null;
-            animals = null;
-            ChannelId = null;
+            Channel = null;
             BettingMsgId = null;
         }
 
@@ -107,21 +69,17 @@ namespace DobakBot.Controller
         {
             string text = string.Empty;
             for (int i = 0; i < Animals.Count; i++)
-            {
                 text += $"{i + 1}번마 : {Animals[i].Imoticon}{Animals[i].Name}\n";
-            }
             return text;
         }
 
         private string GetAnimalsBetting()
         {
             string text = string.Empty;
-            foreach (var item in Animals)
-            {
-                text += $"{item.Name}\n"+
-                    $"　총베팅금액 : {GetBettingMoney(item.Name)}\n" +
-                    $"　배당률 : {GetBettingOdds(item.Name):0.00}\n";
-            }
+            Animals.ForEach(item => text += 
+            $"{item.Name}\n" + 
+            $"　총베팅금액 : {Bettings.GetBettingMoney(item.Name)}\n" +
+            $"　배당률 : {Bettings.GetBettingOdds(item.Name):0.00}\n");
             return text;
         }
     }

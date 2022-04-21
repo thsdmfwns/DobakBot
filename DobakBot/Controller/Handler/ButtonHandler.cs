@@ -63,22 +63,20 @@ namespace DobakBot.Controller
                 await arg.RespondAsync("베팅한사람이 아무도 없습니다.", ephemeral: true);
                 return;
             }
-            var guild = (arg.Channel as SocketTextChannel).Guild;
-            var ch = guild.GetTextChannel((ulong)AnimalRace.ChannelId);
-            await ch.ModifyMessageAsync((ulong)AnimalRace.BettingMsgId, x => x.Components = new ComponentBuilder().Build());
-            await arg.DeferAsync();
-            var winners = await RunAnimalRace(arg, ch);
+            await AnimalRace.Channel.ModifyMessageAsync((ulong)AnimalRace.BettingMsgId, x => x.Components = new ComponentBuilder().Build());
+            _ = arg.DeferAsync();
+            var winners = await RunAnimalRace();
             if (!DB.TryAddUsersCoin(winners)) await arg.RespondAsync("TryAddUsersCoin => DB에러");
             AnimalRace.Clear();
         }
 
-        private async Task<BettingMembers> RunAnimalRace(SocketMessageComponent arg, SocketTextChannel channel)
+        private async Task<BettingMembers> RunAnimalRace()
         {
             BettingMembers WinnerMembers;
-            var race = AnimalRace.AnimalRace;
-            var msg = await channel.SendMessageAsync("", false, race.GetEmbed(isStart: true));
+            var race = AnimalRace.MakeAnimalRace;
+            var msg = await AnimalRace.Channel.SendMessageAsync("", false, race.GetEmbed(isStart: true));
 
-            while (!race.isRaceDone)
+            while (!race.CheckRace)
             {
                 await Task.Delay(1250);
                 var embed = race.GetEmbed();
@@ -91,7 +89,7 @@ namespace DobakBot.Controller
             if (race.WinnerMembers == null)
             {
                 await Task.Delay(5000);
-                WinnerMembers = await RunAnimalRace(arg, channel);
+                WinnerMembers = await RunAnimalRace();
             }
             return WinnerMembers;
         }
@@ -109,15 +107,14 @@ namespace DobakBot.Controller
                 .AddTextInput("경기 이름", "race_name", placeholder: "ex)이봉구배 1회 경마", required: true)
                 .AddTextInput("1번마 이름", "animal1_name", placeholder: "ex) 슈퍼 짱빠른 말", required: true)
                 .AddTextInput("1번마 이모티콘", "animal1_emoji", placeholder: "ex) :horse_racing: (채팅에 이모티콘 치고 복붙)", required: true)
-                .AddTextInput("1번마 이름", "animal2_name", placeholder: "ex) 전설의 백마", required: true)
-                .AddTextInput("1번마 이모티콘", "animal2_emoji", placeholder: "ex) :horse_racing: (채팅에 이모티콘 치고 복붙)", required: true);
+                .AddTextInput("2번마 이름", "animal2_name", placeholder: "ex) 전설의 백마", required: true)
+                .AddTextInput("2번마 이모티콘", "animal2_emoji", placeholder: "ex) :horse_racing: (채팅에 이모티콘 치고 복붙)", required: true);
             await arg.RespondWithModalAsync(mb.Build());
         }
 
         private async Task OnRaceCancel(SocketMessageComponent arg)
         {
-            var guild = (arg.Channel as SocketTextChannel).Guild;
-            await (guild.GetChannel((ulong)AnimalRace.ChannelId) as SocketTextChannel).SendMessageAsync("이 경마는 취소 되었습니다.");
+            await AnimalRace.Channel.SendMessageAsync("이 경마는 취소 되었습니다.");
             AnimalRace.Clear();
             await arg.RespondAsync("취소 완료.", ephemeral: true);
         }

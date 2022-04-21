@@ -47,40 +47,6 @@ namespace DobakBot.Controller
         }
 
         [RequireRole("CASINO dealer")]
-        [Command("시작")]
-        public async Task AnimalRaceStart([Remainder] string args)
-        {
-            if (controller.IsSetting)
-            {
-                await ReplyAsync("이미 경마 베팅이 시작되어 있습니다. 취소를 원하면 !경마 취소를 입력해주세요.");
-                return;
-            }
-
-            if (args == string.Empty)
-            {
-                await ReplyAsync(HelpStart);
-                return;
-            }
-
-            var arg = args.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            var animals = new List<Animal>();
-
-            foreach (var item in arg)
-            {
-                var animal = item.Split('#');
-                if (animal.Length < 2)
-                {
-                    await ReplyAsync(HelpStart);
-                    return;
-                }
-                animals.Add(new Animal(animal[0], animal[1]));
-            }
-
-            controller.Animals = animals;
-            await Context.Channel.SendMessageAsync("", false, controller.GetBettingPanel());
-        }
-
-        [RequireRole("CASINO dealer")]
         [Command("추가")]
         public async Task AnimalRaceAdd()
         {
@@ -214,10 +180,10 @@ namespace DobakBot.Controller
         private async Task<BettingMembers> RunAnimalRace()
         {
             BettingMembers WinnerMembers;
-            var race = controller.AnimalRace;
+            var race = controller.MakeAnimalRace;
             var msg = await Context.Channel.SendMessageAsync("", false, race.GetEmbed(isStart: true));
 
-            while (!race.isRaceDone)
+            while (!race.CheckRace)
             {
                 await Task.Delay(1250);
                 var embed = race.GetEmbed();

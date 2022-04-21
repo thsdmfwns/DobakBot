@@ -61,7 +61,7 @@ namespace DobakBot.Controller.Handler
                 return;
             }
 
-            if (!AnimalRace.TryAddBetting(arg.User.Id, nick, animal, money))
+            if (!AnimalRace.TryAddBetting(new BettingMember(arg.User.Id, nick, money), animal))
             {
                 {
                     await arg.RespondAsync($"베팅실패 흐에에");
@@ -77,7 +77,6 @@ namespace DobakBot.Controller.Handler
 
             await arg.Channel.ModifyMessageAsync((ulong)AnimalRace.BettingMsgId, x=> x.Embed = AnimalRace.GetBettingPanel());
             await arg.RespondAsync($"베팅 완료.", ephemeral: true);
-
         }
 
         private async Task onRaceMake(SocketModal arg)
@@ -100,20 +99,16 @@ namespace DobakBot.Controller.Handler
                 }
                 list.Add(new Animal(name, emoji));
             }
-            AnimalRace.Animals = list;
+            AnimalRace.MakeBettings(list);
             AnimalRace.RaceName = raceName;
             var ch = await arg.GetChannelAsync() as SocketTextChannel;
             var nf = await Utility.makePublicRoom(ch.Guild, raceName, (ulong)ch.CategoryId);
-            AnimalRace.ChannelId = nf.Id;
+            AnimalRace.Channel = nf;
             var select = new SelectMenuBuilder()
                 .WithCustomId("race_bet")
                 .WithMinValues(1).WithMaxValues(1)
                 .WithPlaceholder("동물 선택");
-            foreach (var item in AnimalRace.Animals)
-            {
-                select.AddOption(item.Name, item.Name);
-            }
-
+            AnimalRace.Animals.ForEach(item => select.AddOption(item.Name, item.Name));
             var comp = new ComponentBuilder()
                 .WithSelectMenu(select);
             var msg = await nf.SendMessageAsync("", false, AnimalRace.GetBettingPanel(), components: comp.Build());
@@ -165,7 +160,7 @@ namespace DobakBot.Controller.Handler
                     Unit = arg.Data.Components.Single(x => x.CustomId == "weapon_unit").Value,
                 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await arg.RespondAsync("오류! 가격란에 숫자만 입력해주세요.", ephemeral:true);
                 return;
