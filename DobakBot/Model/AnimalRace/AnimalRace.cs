@@ -83,7 +83,7 @@ namespace DobakBot.Model
 
         private string GetDividen()
         {
-            Console.WriteLine("호출");
+            if (WinnerMembers != null) return WinnerMembers.Count > 0 ? WinnerMembers.ToString() : "뭐야 아무도 베팅을 안했잖아?";
             var winner = Bettings.Keys.Where(x => x.RaceRank == 1);
             if (winner.Count() > 1)
             {
