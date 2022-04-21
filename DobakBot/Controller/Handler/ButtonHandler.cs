@@ -73,7 +73,7 @@ namespace DobakBot.Controller
         private async Task<BettingMembers> RunAnimalRace()
         {
             BettingMembers WinnerMembers;
-            var race = AnimalRace.MakeAnimalRace;
+            var race = AnimalRace.MakeAnimalRace();
             var msg = await AnimalRace.Channel.SendMessageAsync("", false, race.GetEmbed(isStart: true));
 
             while (!race.isDone)
