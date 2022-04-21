@@ -83,22 +83,13 @@ namespace DobakBot.Model
 
         private string GetDividen()
         {
-            var winnerCount = 0;
-            Animal winner = new Animal("","");
-            foreach (var item in animals)
-            {
-                if (item.RaceRank == 1)
-                {
-                    winner = item;
-                    winnerCount++;
-                }
-            }
-            if (winnerCount > 1)
+            var winner = Bettings.Keys.Where(x => x.RaceRank == 1);
+            if (winner.Count() > 1)
             {
                 return "아쉽게도 무승부네요! \n 5초후 재경기가 펼쳐집니다!";
             }
-            WinnerMembers = Bettings[winner];
-            var odd = Bettings.GetBettingOdds(winner.Name);
+            WinnerMembers = Bettings[winner.First()];
+            var odd = Bettings.GetBettingOdds(winner.First().Name);
             WinnerMembers.SetOdd(odd);
             return WinnerMembers.Count > 0 ? WinnerMembers.ToString() : "뭐야 아무도 베팅을 안했잖아?";
         }
