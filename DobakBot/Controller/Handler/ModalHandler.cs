@@ -86,10 +86,10 @@ namespace DobakBot.Controller.Handler
             for (int i = 1; i < 3; i++)
             {
                 var name = arg.Data.Components.Single(x => x.CustomId == $"animal{i}_name").Value;
-                var emoji = arg.Data.Components.Single(x => x.CustomId == $"animal{i}_emoji").Value;
+                var emoji = arg.Data.Components.Single(x => x.CustomId == $"animal{i}_emoji").Value.Trim();
                 if (emoji.First() != ':' || emoji.Last() != ':')
                 {
-                    await arg.RespondAsync("오류! 이모티콘을 확인해 주세요!", ephemeral: true);
+                    await arg.RespondAsync($"오류! 이모티콘을 확인해 주세요!{emoji}", ephemeral: true);
                     return;
                 }
                 if (list.Any(x=> x.Name == name))
@@ -113,6 +113,7 @@ namespace DobakBot.Controller.Handler
                 .WithSelectMenu(select);
             var msg = await nf.SendMessageAsync("", false, AnimalRace.GetBettingPanel(), components: comp.Build());
             AnimalRace.BettingMsgId = msg.Id;
+            await arg.DeferAsync();
         }
 
         private async Task onWeaponPay(SocketModal arg)
