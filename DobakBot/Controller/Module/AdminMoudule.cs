@@ -99,6 +99,17 @@ namespace DobakBot.Controller
             await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
         }
 
+        [Command("판매글버튼")]
+        public async Task SellingSpawn()
+        {
+            var buttons = new ComponentBuilder()
+                .WithButton("판매글 작성하기", "sell_upload", style: ButtonStyle.Primary)
+            var builder = new EmbedBuilder();
+            builder.Title = "판매글 도우미";
+            builder.Color = Color.Blue;
+            await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
+        }
+
         [Command("보관")]
         public async Task CloseChannel()
         {

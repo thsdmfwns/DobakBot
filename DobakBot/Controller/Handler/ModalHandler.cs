@@ -5,6 +5,7 @@ using DobakBot.Model;
 using DobakBot.Utils;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,10 +31,39 @@ namespace DobakBot.Controller.Handler
                 case "weapon_pay": await onWeaponPay(arg); return;
                 case "race_make": await onRaceMake(arg); return;
                 case "race_bet": await onRaceBet(arg); return;
+                case "sell_upload": await onSellUpload(arg); return;
                 default:
                     break;
             }
             return;
+        }
+
+        private async Task onSellUpload(SocketModal arg)
+        {
+            var name = arg.Data.Components.Single(x => x.CustomId == "name").Value;
+            int price;
+            if (!int.TryParse(arg.Data.Components.Single(x => x.CustomId == "price").Value, out price))
+            {
+                await arg.RespondAsync($"가격은 숫자로만 입력해주세요.", ephemeral: true);
+                return;
+            }
+            var phone = arg.Data.Components.Single(x => x.CustomId == "phone").Value;
+            var nf = (await arg.GetChannelAsync() as SocketTextChannel).Guild.Channels.Single(x => x.Name == "💻｜판매-물건-목록") as SocketTextChannel;
+            NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
+            var eb = new EmbedBuilder() {
+            Color = Color.Orange,
+            Title = $"{arg.User.Mention}님의 판매 물건",
+            Description = 
+                $"판매 물건 : {name} \n"+
+                $"판매 가격 : {price.ToString("C0", nfi)} \n"+
+                $"연락처 : 📞{phone} \n",
+            };
+            var cb = new ComponentBuilder()
+                .WithButton("물건 구매하기", customId: "sell_buy");
+
+            await nf.SendMessageAsync(embed: eb.Build(), components: cb.Build());
+
+            await arg.RespondAsync($"등록 완료!", ephemeral: true);
         }
 
         private async Task onRaceBet(SocketModal arg)

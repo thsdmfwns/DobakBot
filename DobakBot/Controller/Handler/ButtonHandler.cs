@@ -46,9 +46,31 @@ namespace DobakBot.Controller
                 case "race_make": await OnRaceMake(arg); return;
                 case "race_start": await OnRaceStart(arg); return;
                 case "race_cancel": await OnRaceCancel(arg); return;
+                case "sell_upload": await OnSellUpload(arg); return;
+                case "sell_buy": await OnSellBuy(arg); return;
                 default: return;
             }
 
+        }
+
+        private async Task OnSellBuy(SocketMessageComponent arg)
+        {
+            await arg.Message.ModifyAsync(x =>
+            {
+                x.Content = $"============ 판매 완료 (구매자 :{arg.User.Mention}) ============";
+                x.Components = new ComponentBuilder().Build();
+            });
+        }
+
+        private async Task OnSellUpload(SocketMessageComponent arg)
+        {
+            var mb = new ModalBuilder()
+                .WithTitle("경기 생성")
+                .WithCustomId("sell_upload")
+                .AddTextInput("판매 물건 이름", "name", placeholder: "ex)이봉구배 1회 경마", required: true)
+                .AddTextInput("판매 금액", "price", placeholder: "ex) 슈퍼 짱빠른 말", required: true)
+                .AddTextInput("연락처", "phone", placeholder: "ex) :horse_racing: (채팅에 이모티콘 치고 복붙)", required: true);
+            await arg.RespondWithModalAsync(mb.Build());
         }
 
         private async Task OnRaceStart(SocketMessageComponent arg)
