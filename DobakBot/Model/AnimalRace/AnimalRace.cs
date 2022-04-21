@@ -83,6 +83,7 @@ namespace DobakBot.Model
 
         private string GetDividen()
         {
+            Console.WriteLine("호출");
             var winner = Bettings.Keys.Where(x => x.RaceRank == 1);
             if (winner.Count() > 1)
             {
