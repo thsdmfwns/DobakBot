@@ -27,10 +27,11 @@ namespace DobakBot.Model
 
         private EmbedBuilder embedBuilder = new EmbedBuilder();
         public bool CheckRace => ArrivedAnimals.Count == animals.Count || ArrivedAnimals.Count > 2;
+        public bool isDone = false;
         private int LastRank = 1;
         public Embed GetEmbed(bool isStart = false)
         {
-            if (CheckRace) return null;
+            if (isDone) return null;
             if (!isStart) RunRace();
             embedBuilder.Title = RaceName;
             var ctx = string.Empty;
@@ -42,6 +43,7 @@ namespace DobakBot.Model
                 embedBuilder.Fields.Clear();
                 embedBuilder.AddField("레이스 결과", GetWinner(), inline: true);
                 embedBuilder.AddField("축하합니다.", GetDividen(), inline: true);
+                isDone = true;
             }
             return embedBuilder.Build();
         }

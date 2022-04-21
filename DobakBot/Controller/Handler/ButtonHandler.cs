@@ -76,9 +76,8 @@ namespace DobakBot.Controller
             var race = AnimalRace.MakeAnimalRace;
             var msg = await AnimalRace.Channel.SendMessageAsync("", false, race.GetEmbed(isStart: true));
 
-            while (!race.CheckRace)
+            while (!race.isDone)
             {
-                Console.WriteLine(race.CheckRace);
                 await Task.Delay(1500);
                 var embed = race.GetEmbed();
                 if (embed == null) break;
