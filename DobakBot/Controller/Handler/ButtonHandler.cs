@@ -64,7 +64,7 @@ namespace DobakBot.Controller
                 return;
             }
             await AnimalRace.Channel.ModifyMessageAsync((ulong)AnimalRace.BettingMsgId, x => x.Components = new ComponentBuilder().Build());
-            _ = arg.DeferAsync();
+            await  arg.DeferAsync();
             var winners = await RunAnimalRace();
             if (!DB.TryAddUsersCoin(winners)) await arg.RespondAsync("TryAddUsersCoin => DB에러");
             AnimalRace.Clear();
@@ -78,7 +78,8 @@ namespace DobakBot.Controller
 
             while (!race.CheckRace)
             {
-                await Task.Delay(1250);
+                Console.WriteLine(race.CheckRace);
+                await Task.Delay(1500);
                 var embed = race.GetEmbed();
                 if (embed == null) break;
                 await msg.ModifyAsync(msg => msg.Embed = embed);

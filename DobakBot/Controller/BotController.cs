@@ -14,7 +14,7 @@ namespace DobakBot.Controller
     {
         #region 싱글톤
         private BotController() { }
-        private static readonly Lazy<BotController> _instance = new Lazy<BotController>(() => new BotController());
+        private static readonly Lazy<BotController> _instance = new(() => new BotController());
         public static BotController Instance { get { return _instance.Value; } }
         #endregion
 
