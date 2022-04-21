@@ -30,11 +30,11 @@ namespace DobakBot.Model
         public string GetRaceContext(int raceDistance)
         {
             string ctx = string.Empty;
-            var remainingDistance = CurrentDistance - raceDistance;
+            var remainingDistance = raceDistance - CurrentDistance;
             ctx += remainingDistance <= 0 ? ":flag_white:" : ":checkered_flag:";
             for (int i = 0; i < remainingDistance; i++)
             {
-                    ctx += "　";
+                ctx += "　";
             }
             ctx += Imoticon;
             for (int i = 0; i < CurrentDistance; i++)

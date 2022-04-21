@@ -10,7 +10,6 @@ namespace DobakBot.Model
     {
 
         public void SetOdd(float odd) => ForEach(item => item.Money = (int)(item.Money * odd));
-
         public override string ToString()
         {
             string text = string.Empty;
@@ -20,7 +19,6 @@ namespace DobakBot.Model
             }
             return text;
         }
-
         public List<DBModelUser> ToDBModelUsers()
         {
             var list = new List<DBModelUser>();
