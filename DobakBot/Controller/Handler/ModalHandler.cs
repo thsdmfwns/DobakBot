@@ -52,11 +52,11 @@ namespace DobakBot.Controller.Handler
             NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
             var eb = new EmbedBuilder() {
             Color = Color.Orange,
-            Title = $"{(arg.User as IGuildUser).Nickname}님의 판매 물건",
+            Title = $"{(arg.User as IGuildUser).Nickname ?? arg.User.Username}님의 판매 물건",
             Description = 
                 $"판매 물건 : {name} \n"+
                 $"판매 가격 : {price.ToString("C0", nfi)} \n"+
-                $"연락처 : 📞{phone} \n",
+                $"연락처 :   📱{phone} \n",
             };
             var cb = new ComponentBuilder()
                 .WithButton("물건 구매하기", customId: "sell_buy");
