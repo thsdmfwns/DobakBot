@@ -55,9 +55,9 @@ namespace DobakBot.Controller
 
         private async Task OnSellBuy(SocketMessageComponent arg)
         {
+            var embed = arg.Message.Embeds.First();
             await arg.Message.ModifyAsync(x =>
             {
-                var embed = x.Embeds.Value.First();
                 var eb = new EmbedBuilder()
                 {
                     Color = Color.LightGrey,
