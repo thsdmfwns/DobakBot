@@ -60,7 +60,7 @@ namespace DobakBot.Controller
             {
                 var eb = new EmbedBuilder()
                 {
-                    Color = Color.LightGrey,
+                    Color = Color.Green,
                     Title = embed.Title,
                     Description = embed.Description,
                 }.AddField("✅ 판매 완료", $"구매자 : {arg.User.Mention}");
