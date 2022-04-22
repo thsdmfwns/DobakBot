@@ -57,7 +57,7 @@ namespace DobakBot.Controller
         {
             await arg.Message.ModifyAsync(x =>
             {
-                var embed = x.Embed.Value;
+                var embed = x.Embeds.Value.First();
                 var eb = new EmbedBuilder()
                 {
                     Color = Color.LightGrey,
