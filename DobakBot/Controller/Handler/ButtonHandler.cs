@@ -56,14 +56,14 @@ namespace DobakBot.Controller
         private async Task OnSellBuy(SocketMessageComponent arg)
         {
             var embed = arg.Message.Embeds.First();
+            var eb = new EmbedBuilder()
+            {
+                Color = Color.Green,
+                Title = embed.Title,
+                Description = embed.Description,
+            }.AddField("✅ 판매 완료", $"구매자 : {arg.User.Mention}");
             await arg.Message.ModifyAsync(x =>
             {
-                var eb = new EmbedBuilder()
-                {
-                    Color = Color.Green,
-                    Title = embed.Title,
-                    Description = embed.Description,
-                }.AddField("✅ 판매 완료", $"구매자 : {arg.User.Mention}");
                 x.Embed = eb.Build();
                 x.Components = new ComponentBuilder().Build();
             });
