@@ -110,6 +110,30 @@ namespace DobakBot.Controller
             await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
         }
 
+        [Command("블랙마켓판매글버튼")]
+        public async Task BSellingSpawn()
+        {
+            var buttons = new ComponentBuilder()
+                .WithButton("🦹🏻판매글 작성하기", "sell_balckupload", style: ButtonStyle.Success)
+                .WithButton("🦹🏻상시판매글 작성하기", "sell_blackalwayupload", style: ButtonStyle.Primary);
+            var builder = new EmbedBuilder();
+            builder.Title = "🦹🏻판매글 도우미";
+            builder.Color = Color.Blue;
+            await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
+        }
+
+        [Command("우수회원신청버튼")]
+        public async Task UpgradSellingSpawn()
+        {
+            var buttons = new ComponentBuilder()
+                .WithButton("🦹🏻신청하기", "sell_upgrade", style: ButtonStyle.Primary);
+            var builder = new EmbedBuilder();
+            builder.Title = "🦹🏻우수회원 신청";
+            builder.Description = "우수 회원이 되는데 필요한 자격조건은 아무것도 필요하지 않습니다.";
+            builder.Color = Color.Blue;
+            await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
+        }
+
         [Command("보관")]
         public async Task CloseChannel()
         {

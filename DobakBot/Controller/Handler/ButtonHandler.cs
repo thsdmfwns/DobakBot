@@ -47,10 +47,39 @@ namespace DobakBot.Controller
                 case "race_start": await OnRaceStart(arg); return;
                 case "race_cancel": await OnRaceCancel(arg); return;
                 case "sell_upload": await OnSellUpload(arg); return;
+                case "sell_balckupload": await OnSellUpload(arg, isBlack:true); return;
+                case "sell_blackalwayupload": await OnBlackALwaySellUpload(arg); return;
                 case "sell_buy": await OnSellBuy(arg); return;
+                case "sell_upgrade": await OnSellUpgrade(arg); return;
+                case "sell_ispolice_yes": await OnSellIsPoliceYes(arg); return;
+                case "sell_ispolice_no": await OnSellIsPoliceNo(arg); return;
                 default: return;
             }
 
+        }
+
+        private async Task OnSellIsPoliceNo(SocketMessageComponent arg)
+        {
+            var channel = arg.Channel as SocketTextChannel;
+            var guild = channel.Guild;
+            var user = guild.GetUser(arg.User.Id);
+            var role = guild.Roles.Single(x => x.Name == "🦹🏻우수 회원");
+            await user.AddRoleAsync(role);
+            await arg.RespondAsync("환영합니다.", ephemeral: true);
+
+        }
+
+        private async Task OnSellIsPoliceYes(SocketMessageComponent arg)
+        {
+            await arg.RespondAsync("우수회원 관련 기능은 아직 준비중입니다.", ephemeral: true);
+        }
+
+        private async Task OnSellUpgrade(SocketMessageComponent arg)
+        {
+            var cb = new ComponentBuilder()
+                .WithButton("네", "sell_ispolice_yes")
+                .WithButton("아니요", "sell_ispolice_no");
+            await arg.RespondAsync("경찰공무원에게는 추가적인 혜택이 있습니다.\n 당신은 경찰입니까?", components: cb.Build(), ephemeral: true);
         }
 
         private async Task OnSellBuy(SocketMessageComponent arg)
@@ -69,11 +98,23 @@ namespace DobakBot.Controller
             });
         }
 
-        private async Task OnSellUpload(SocketMessageComponent arg)
+        private async Task OnBlackALwaySellUpload(SocketMessageComponent arg)
         {
             var mb = new ModalBuilder()
-                .WithTitle("경기 생성")
-                .WithCustomId("sell_upload")
+                .WithTitle("판매글 작성")
+                .WithCustomId("sell_blackalwayupload")
+                .AddTextInput("글 제목", "title", placeholder: "ex) 다이아몬드 싸게 팝니다.", required: true)
+                .AddTextInput("판매 물건 이름", "name", placeholder: "판매할 물건 이름", required: true)
+                .AddTextInput("판매 금액", "price", placeholder: "판매 금액(숫자만)", required: true)
+                .AddTextInput("연락처", "phone", placeholder: "연락 받을 핸드폰 번호", required: true);
+            await arg.RespondWithModalAsync(mb.Build());
+        }
+
+        private async Task OnSellUpload(SocketMessageComponent arg, bool isBlack = false)
+        {
+            var mb = new ModalBuilder()
+                .WithTitle("판매글 작성")
+                .WithCustomId(isBlack ? "sell_blackupload" : "sell_upload")
                 .AddTextInput("글 제목", "title", placeholder: "ex) 다이아몬드 싸게 팝니다.", required: true)
                 .AddTextInput("판매 물건 이름", "name", placeholder: "판매할 물건 이름", required: true)
                 .AddTextInput("판매 금액", "price", placeholder: "판매 금액(숫자만)", required: true)
