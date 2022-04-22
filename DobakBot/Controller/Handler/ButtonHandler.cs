@@ -57,7 +57,14 @@ namespace DobakBot.Controller
         {
             await arg.Message.ModifyAsync(x =>
             {
-                x.Content = $"============ 판매 완료 (구매자 :{arg.User.Mention}) ============";
+                var embed = x.Embed.Value;
+                var eb = new EmbedBuilder()
+                {
+                    Color = Color.LightGrey,
+                    Title = embed.Title,
+                    Description = embed.Description,
+                }.AddField("✅ 판매 완료", $"구매자 : {arg.User.Mention}");
+                x.Embed = eb.Build();
                 x.Components = new ComponentBuilder().Build();
             });
         }
@@ -67,9 +74,10 @@ namespace DobakBot.Controller
             var mb = new ModalBuilder()
                 .WithTitle("경기 생성")
                 .WithCustomId("sell_upload")
+                .AddTextInput("글 제목", "title", placeholder: "ex) 다이아몬드 싸게 팝니다.", required: true)
                 .AddTextInput("판매 물건 이름", "name", placeholder: "판매할 물건 이름", required: true)
                 .AddTextInput("판매 금액", "price", placeholder: "판매 금액(숫자만)", required: true)
-                .AddTextInput("연락처", "phone", placeholder: "핸드폰 번호", required: true);
+                .AddTextInput("연락처", "phone", placeholder: "연락 받을 핸드폰 번호", required: true);
             await arg.RespondWithModalAsync(mb.Build());
         }
 
