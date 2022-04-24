@@ -66,7 +66,6 @@ namespace DobakBot.Controller
             var role = guild.Roles.Single(x => x.Name == "🦹🏻우수 회원");
             await user.AddRoleAsync(role);
             await arg.RespondAsync("환영합니다.", ephemeral: true);
-
         }
 
         private async Task OnSellIsPoliceYes(SocketMessageComponent arg)
@@ -294,6 +293,21 @@ namespace DobakBot.Controller
             return ch;
         }
 
+        private async Task<RestTextChannel> makeTicketRoom(SocketMessageComponent arg, string roomName, ulong catgoryId)
+        {
+            var guild = (arg.Channel as SocketTextChannel).Guild;
+            var ch = await guild.CreateTextChannelAsync(roomName, x => x.CategoryId = catgoryId);
+            var dealerPer = guild.Roles.Single(x => x.Name == "CASINO Dealer");
+            var guestPer = guild.Roles.Single(x => x.Name == "CASINO Guest");
+            var denyper = new OverwritePermissions(viewChannel: PermValue.Deny, sendMessages: PermValue.Deny);
+            var userPer = new OverwritePermissions(viewChannel: PermValue.Allow, sendMessages: PermValue.Allow);
+            await ch.AddPermissionOverwriteAsync(guild.EveryoneRole, denyper);
+            await ch.AddPermissionOverwriteAsync(arg.User, userPer);
+            await ch.AddPermissionOverwriteAsync(dealerPer, userPer);
+            await ch.AddPermissionOverwriteAsync(guestPer, denyper);
+            return ch;
+        }
+
         private async Task OnSlotRoomCreateButton(SocketMessageComponent arg)
         {
             var channel = arg.Channel as SocketTextChannel;
@@ -330,7 +344,7 @@ namespace DobakBot.Controller
                 await arg.RespondAsync($"{MentionUtils.MentionChannel(room.Id)} 이미 만들어진 방이네요!", ephemeral: true);
                 return;
             }
-            var ch = await makePrivateRoom(arg, roomName, (ulong)channel.CategoryId);
+            var ch = await makeTicketRoom(arg, roomName, (ulong)channel.CategoryId);
             await arg.DeferAsync();
         }
 

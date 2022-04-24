@@ -44,8 +44,7 @@ namespace DobakBot.Controller.Handler
         {
             var title = arg.Data.Components.Single(x => x.CustomId == "title").Value;
             var name = arg.Data.Components.Single(x => x.CustomId == "name").Value;
-            int price;
-            if (!int.TryParse(arg.Data.Components.Single(x => x.CustomId == "price").Value.Trim(), out price))
+            if (!ulong.TryParse(arg.Data.Components.Single(x => x.CustomId == "price").Value.Trim(), out ulong price))
             {
                 await arg.RespondAsync($"가격은 숫자로만 입력해주세요.", ephemeral: true);
                 return;
@@ -71,7 +70,7 @@ namespace DobakBot.Controller.Handler
                 await arg.RespondAsync($"등록 완료!", ephemeral: true);
                 return;
             }
-            await nf.SendMessageAsync(embed: eb.Build(), components: cb.Build());
+            await nf.SendMessageAsync(embed: eb.Build(), components: isAlways ? null : cb.Build()) ;
             await arg.RespondAsync($"등록 완료!", ephemeral: true);
         }
 
