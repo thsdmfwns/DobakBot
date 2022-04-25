@@ -32,15 +32,14 @@ namespace DobakBot.Controller.Handler
                 case "race_make": await onRaceMake(arg); return;
                 case "race_bet": await onRaceBet(arg); return;
                 case "sell_upload": await onSellUpload(arg); return;
-                case "sell_blackupload": await onSellUpload(arg, isBlack:true); return;
-                case "sell_blackalwayupload": await onSellUpload(arg, isBlack:true, isAlways: true); return;
+                case "sell_alwayupload": await onSellUpload(arg, isAlways: true); return;
                 default:
                     break;
             }
             return;
         }
 
-        private async Task onSellUpload(SocketModal arg, bool isBlack = false, bool isAlways = false)
+        private async Task onSellUpload(SocketModal arg, bool isAlways = false)
         {
             var title = arg.Data.Components.Single(x => x.CustomId == "title").Value;
             var name = arg.Data.Components.Single(x => x.CustomId == "name").Value;
@@ -50,7 +49,9 @@ namespace DobakBot.Controller.Handler
                 return;
             }
             var phone = arg.Data.Components.Single(x => x.CustomId == "phone").Value;
-            var nf = (await arg.GetChannelAsync() as SocketTextChannel).Guild.Channels.Single(x => x.Name == (isBlack ? "🦹🏻｜βlack-ⓜarket" : "💻｜판매-물건")) as SocketTextChannel;
+            var ch = await arg.GetChannelAsync() as SocketTextChannel;
+            var cate = ch.Guild.CategoryChannels.Single(x => x.Id == ch.CategoryId);
+            var nf = cate.Channels.Single(x => x.Name.Split('｜', options:StringSplitOptions.RemoveEmptyEntries)[1] == (isAlways ? "판매" : "상시-판매")) as SocketTextChannel;
             NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
             var eb = new EmbedBuilder() {
             Color = Color.Orange,
@@ -63,14 +64,7 @@ namespace DobakBot.Controller.Handler
             };
             var cb = new ComponentBuilder()
                 .WithButton("물건 구매하기", customId: "sell_buy");
-            if (isAlways && isBlack)
-            {
-                var anf = (await arg.GetChannelAsync() as SocketTextChannel).Guild.Channels.Single(x => x.Name == "🦹🏻｜상시-판매") as SocketTextChannel;
-                await anf.SendMessageAsync(embed: eb.Build());
-                await arg.RespondAsync($"등록 완료!", ephemeral: true);
-                return;
-            }
-            await nf.SendMessageAsync(embed: eb.Build(), components: isAlways ? null : cb.Build()) ;
+            await nf.SendMessageAsync(embed: eb.Build(), components: isAlways ? null : cb.Build());
             await arg.RespondAsync($"등록 완료!", ephemeral: true);
         }
 

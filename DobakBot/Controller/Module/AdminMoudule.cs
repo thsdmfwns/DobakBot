@@ -103,21 +103,10 @@ namespace DobakBot.Controller
         public async Task SellingSpawn()
         {
             var buttons = new ComponentBuilder()
-                .WithButton("판매글 작성하기", "sell_upload", style: ButtonStyle.Primary);
+                .WithButton("판매글 작성하기", "sell_upload", style: ButtonStyle.Success)
+                .WithButton("판매글 작성하기", "sell_alwayupload", style: ButtonStyle.Primary);
             var builder = new EmbedBuilder();
             builder.Title = "판매글 도우미";
-            builder.Color = Color.Blue;
-            await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
-        }
-
-        [Command("블랙마켓판매글버튼")]
-        public async Task BSellingSpawn()
-        {
-            var buttons = new ComponentBuilder()
-                .WithButton("🦹🏻판매글 작성하기", "sell_balckupload", style: ButtonStyle.Success)
-                .WithButton("🦹🏻상시판매글 작성하기", "sell_blackalwayupload", style: ButtonStyle.Primary);
-            var builder = new EmbedBuilder();
-            builder.Title = "🦹🏻판매글 도우미";
             builder.Color = Color.Blue;
             await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
         }
