@@ -104,7 +104,7 @@ namespace DobakBot.Controller
         {
             var buttons = new ComponentBuilder()
                 .WithButton("판매글 작성하기", "sell_upload", style: ButtonStyle.Success)
-                .WithButton("판매글 작성하기", "sell_alwayupload", style: ButtonStyle.Primary);
+                .WithButton("상시 판매글 작성하기", "sell_alwayupload", style: ButtonStyle.Primary);
             var builder = new EmbedBuilder();
             builder.Title = "판매글 도우미";
             builder.Color = Color.Blue;
@@ -115,7 +115,7 @@ namespace DobakBot.Controller
         public async Task UpgradSellingSpawn()
         {
             var buttons = new ComponentBuilder()
-                .WithButton("🦹🏻신청하기", "sell_upgrade", style: ButtonStyle.Primary);
+                .WithButton("신청하기", "sell_upgrade", style: ButtonStyle.Primary);
             var builder = new EmbedBuilder();
             builder.Title = "🦹🏻우수회원 신청";
             builder.Description = "우수 회원이 되는데 필요한 자격조건은 아무것도 필요하지 않습니다.";

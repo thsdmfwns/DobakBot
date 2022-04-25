@@ -51,7 +51,7 @@ namespace DobakBot.Controller.Handler
             var phone = arg.Data.Components.Single(x => x.CustomId == "phone").Value;
             var ch = await arg.GetChannelAsync() as SocketTextChannel;
             var cate = ch.Guild.CategoryChannels.Single(x => x.Id == ch.CategoryId);
-            var nf = cate.Channels.Single(x => x.Name.Split('｜', options:StringSplitOptions.RemoveEmptyEntries)[1] == (isAlways ? "판매" : "상시-판매")) as SocketTextChannel;
+            var nf = cate.Channels.Single(x => x.Name.Split('｜', options:StringSplitOptions.RemoveEmptyEntries)[1] == (isAlways ? "상시-판매" : "판매")) as SocketTextChannel;
             NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
             var eb = new EmbedBuilder() {
             Color = Color.Orange,
