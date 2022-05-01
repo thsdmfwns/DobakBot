@@ -156,14 +156,15 @@ namespace DobakBot.Controller.Handler
                 await arg.RespondAsync("오류! 갯수는 숫자만 입력해주세요.", ephemeral: true);
                 return;
             }
+            var user = arg.User as IGuildUser;
             var ch = (arg.Channel as SocketTextChannel).Guild.GetChannel((ulong)WeaponPay.ChannelId) as SocketTextChannel;
             var msg = await ch.GetMessageAsync((ulong)WeaponPay.MessageId);
             var cu = arg.Data.Components.SingleOrDefault(x => x.CustomId == "name").Value;
             var weapons = Weapon.ListFromJson(msg.Content);
             WeaponPay.WeaponPayMap[arg.User.Id].Count = count;
             WeaponPay.WeaponPayMap[arg.User.Id].Weapons = weapons;
-            WeaponPay.WeaponPayMap[arg.User.Id].UserName = ch.GetUser(arg.User.Id).Nickname ?? ch.GetUser(arg.User.Id).DisplayName;
-            WeaponPay.WeaponPayMap[arg.User.Id].CustomerName = cu ?? ch.GetUser(arg.User.Id).Nickname;
+            WeaponPay.WeaponPayMap[arg.User.Id].UserName = user.Nickname ?? user.DisplayName;
+            WeaponPay.WeaponPayMap[arg.User.Id].CustomerName = cu;
             var sb = new SelectMenuBuilder()
                 .WithCustomId("WeaponPay_SelectMenu").WithPlaceholder("무기 선택")
                 .WithMinValues(1).WithMaxValues(1);
