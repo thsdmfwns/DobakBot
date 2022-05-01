@@ -162,7 +162,7 @@ namespace DobakBot.Controller.Handler
             var weapons = Weapon.ListFromJson(msg.Content);
             WeaponPay.WeaponPayMap[arg.User.Id].Count = count;
             WeaponPay.WeaponPayMap[arg.User.Id].Weapons = weapons;
-            WeaponPay.WeaponPayMap[arg.User.Id].UserName = ch.GetUser(arg.User.Id).Nickname;
+            WeaponPay.WeaponPayMap[arg.User.Id].UserName = ch.GetUser(arg.User.Id).Nickname ?? ch.GetUser(arg.User.Id).DisplayName;
             WeaponPay.WeaponPayMap[arg.User.Id].CustomerName = cu ?? ch.GetUser(arg.User.Id).Nickname;
             var sb = new SelectMenuBuilder()
                 .WithCustomId("WeaponPay_SelectMenu").WithPlaceholder("무기 선택")
