@@ -92,7 +92,7 @@ namespace DobakBot.Controller
             embed.Title = "권한 요청";
             embed.Description = $"{MentionUtils.MentionUser(arg.User.Id)}님의 권한요청";
             await notiChannel.SendMessageAsync(embed: embed.Build());
-            await arg.RespondAsync(text: $"권한 요청이 발송되엇습니다. 잠시만 기다려주세요.", ephemeral: true);
+            await arg.RespondAsync(text: $"권한 요청이 발송되었습니다. 잠시만 기다려주세요.", ephemeral: true);
         }
 
         private async Task OnFactionJoin(SocketMessageComponent arg)
