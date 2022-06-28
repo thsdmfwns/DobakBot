@@ -78,7 +78,7 @@ namespace DobakBot.Controller
             embed.Title = "대명그룹 사원 신고서 템플릿";
             embed.Description = $"팩션원 신고 \n\n디스코드 아이디:\n\n인게임 아이디:\n\n신고 사유: 사유 및 증거자료(스샷 혹은 영상 포함)";
             await ch.SendMessageAsync(embed: embed.Build());
-            await arg.RespondAsync(text: $"{MentionUtils.MentionChannel(ch.Id)}으로 안내드리겠습니다.", ephemeral: true);
+            await arg.RespondAsync(text: $"{MentionUtils.MentionChannel(ch.Id)}으로 안내해 드리겠습니다.", ephemeral: true);
         }
 
         private async Task OnFactionPermisson(SocketMessageComponent arg)
@@ -123,7 +123,7 @@ namespace DobakBot.Controller
                 $"[!] 장기 미접속 시 팩션에서 강제해고 조치될 수 있습니다. 동의하십니까 ? (Y / N)\n" +
                 $"\n\nThank you for applying!";
             await ch.SendMessageAsync(embed: embed.Build());
-            await arg.RespondAsync(text: $"{MentionUtils.MentionChannel(ch.Id)}으로 안내드리겠습니다.", ephemeral: true);
+            await arg.RespondAsync(text: $"{MentionUtils.MentionChannel(ch.Id)}으로 안내해 드리겠습니다.", ephemeral: true);
         }
 
         private async Task OnSellIsPoliceNo(SocketMessageComponent arg)

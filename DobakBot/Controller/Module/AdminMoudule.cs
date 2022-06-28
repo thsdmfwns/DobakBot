@@ -140,7 +140,7 @@ namespace DobakBot.Controller
                 .WithButton("📝 입사 지원", "faction_join", style: ButtonStyle.Primary);
             var builder = new EmbedBuilder().WithImageUrl("https://cdn.discordapp.com/attachments/991332432873791488/991354272660852776/daeweol_will_4.jpg");
             builder.Title = "📝 입사 지원";
-            builder.Description = "대월그룹에 오신것을 환영합니다.\n아래의 입사 지원 버튼을 통해 도움을 드리겠습니다.";
+            builder.Description = "대월그룹에 오신 것을 환영합니다.\n아래의 입사 지원 버튼을 통해 도움을 드리겠습니다.";
             builder.Color = Color.Blue;
             await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
         }
