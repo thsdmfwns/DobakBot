@@ -86,7 +86,7 @@ namespace DobakBot.Controller
             var channel = arg.Channel as SocketTextChannel;
             var guild = channel.Guild;
             var cate = guild.CategoryChannels.Single(x => x.Name == "{ 권한 요청 }");
-            var notiChannel = cate.Channels.SingleOrDefault(x => x.Name == "권한 요청") as SocketTextChannel;
+            var notiChannel = cate.Channels.SingleOrDefault(x => x.Name == "권한-요청") as SocketTextChannel;
             var embed = new EmbedBuilder();
             embed.Color = Color.Blue;
             embed.Title = "권한 요청";
