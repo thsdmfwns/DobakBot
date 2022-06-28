@@ -133,6 +133,42 @@ namespace DobakBot.Controller
             await channel.ModifyAsync(x => x.CategoryId = ct.Id);
         }
 
+        [Command("지원버튼")]
+        public async Task FactionJoin()
+        {
+            var buttons = new ComponentBuilder()
+                .WithButton("📝 입사 지원", "faction_join", style: ButtonStyle.Primary);
+            var builder = new EmbedBuilder().WithImageUrl("https://cdn.discordapp.com/attachments/991332432873791488/991354272660852776/daeweol_will_4.jpg");
+            builder.Title = "📝 입사 지원";
+            builder.Description = "대월그룹에 오신것을 환영합니다.\n아래의 입사 지원 버튼을 통해 도움을 드리겠습니다.";
+            builder.Color = Color.Blue;
+            await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
+        }
+
+        [Command("신고버튼")]
+        public async Task FactionReport()
+        {
+            var buttons = new ComponentBuilder()
+                .WithButton("🚨 사원 신고", "faction_report", style: ButtonStyle.Danger);
+            var builder = new EmbedBuilder();
+            builder.Title = "🚨 대월그룹 사원 신고";
+            builder.Description = "아래의 신고 버튼을 통해 도움을 드리겠습니다.";
+            builder.Color = Color.Orange;
+            await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
+        }
+
+        [Command("권한요청버튼")]
+        public async Task FactionPermission()
+        {
+            var buttons = new ComponentBuilder()
+                .WithButton("🔔 권한 요청", "faction_permission", style: ButtonStyle.Success);
+            var builder = new EmbedBuilder();
+            builder.Title = "🔔 권한 요청";
+            builder.Description = "권한 필요시, 아래의 버튼을 눌러 요청 부탁드립니다.";
+            builder.Color = Color.Green;
+            await ReplyAsync("", embed: builder.Build(), components: buttons.Build());
+        }
+
         [Command("지갑")]
         public async Task GetWallat([Remainder] string nick)
         {

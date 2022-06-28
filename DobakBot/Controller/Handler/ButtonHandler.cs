@@ -52,9 +52,78 @@ namespace DobakBot.Controller
                 case "sell_upgrade": await OnSellUpgrade(arg); return;
                 case "sell_ispolice_yes": await arg.RespondAsync("우수회원 관련 기능은 아직 준비중입니다.", ephemeral: true); return;
                 case "sell_ispolice_no": await OnSellIsPoliceNo(arg); return;
+                case "faction_join": await OnFactionJoin(arg); return;
+                case "faction_permission": await OnFactionPermisson(arg); return;
+                case "faction_report": await OnFactionReport(arg); return;
                 default: return;
             }
 
+        }
+
+        private async Task OnFactionReport(SocketMessageComponent arg)
+        {
+            var channel = arg.Channel as SocketTextChannel;
+            var guild = channel.Guild;
+            var roomName = $"🚨｜{guild.GetUser(arg.User.Id).DisplayName.ToLower()}";
+            var cate = guild.CategoryChannels.Single(x => x.Name == "{ 사원 신고 }");
+            var temp = cate.Channels.SingleOrDefault(x => x.Name == roomName);
+            if (temp != null)
+            {
+                await arg.RespondAsync($"{MentionUtils.MentionChannel(temp.Id)} 이미 만들어진 방이네요!", ephemeral: true);
+                return;
+            }
+            var ch = await makeTicketRoom(arg, roomName, cate.Id);
+            var embed = new EmbedBuilder();
+            embed.Color = Color.Blue;
+            embed.Title = "대명그룹 사원 신고서 템플릿";
+            embed.Description = $"팩션원 신고 \n\n디스코드 아이디:\n\n인게임 아이디:\n\n신고 사유: 사유 및 증거자료(스샷 혹은 영상 포함)";
+            await ch.SendMessageAsync(embed: embed.Build());
+            await arg.RespondAsync(text: $"{MentionUtils.MentionChannel(ch.Id)}으로 안내드리겠습니다.", ephemeral: true);
+        }
+
+        private async Task OnFactionPermisson(SocketMessageComponent arg)
+        {
+            var channel = arg.Channel as SocketTextChannel;
+            var guild = channel.Guild;
+            var cate = guild.CategoryChannels.Single(x => x.Name == "{ 권한 요청 }");
+            var notiChannel = cate.Channels.SingleOrDefault(x => x.Name == "권한 요청") as SocketTextChannel;
+            var embed = new EmbedBuilder();
+            embed.Color = Color.Blue;
+            embed.Title = "권한 요청";
+            embed.Description = $"{MentionUtils.MentionUser(arg.User.Id)}님의 권한요청";
+            await notiChannel.SendMessageAsync(embed: embed.Build());
+            await arg.RespondAsync(text: $"권한 요청이 발송되엇습니다. 잠시만 기다려주세요.", ephemeral: true);
+        }
+
+        private async Task OnFactionJoin(SocketMessageComponent arg)
+        {
+            var channel = arg.Channel as SocketTextChannel;
+            var guild = channel.Guild;
+            var roomName = $"📝｜{guild.GetUser(arg.User.Id).DisplayName.ToLower()}";
+            var cate = guild.CategoryChannels.Single(x => x.Name == "{ 입사 지원서 }");
+            var temp = cate.Channels.SingleOrDefault(x => x.Name == roomName);
+            if (temp != null)
+            {
+                await arg.RespondAsync($"{MentionUtils.MentionChannel(temp.Id)} 이미 만들어진 방이네요!", ephemeral: true);
+                return;
+            }
+            var ch = await makeTicketRoom(arg, roomName, cate.Id);
+            var embed = new EmbedBuilder();
+            embed.Color = Color.Blue;
+            embed.Title = "입사 지원서 템플릿";
+            embed.Description = $"(( IN CHARACTER ))\n" +
+                $"PERSONAL INFORMATION\n\n" +
+                $"성함 : \n나이 : \n전화번호 : \n국적 : \n입사동기: (내용)(성의없거나 짧은 글은 거절될 수 있습니다. )\n\n" +
+                $"((OUT OF CHRACTER))\n" +
+                $"나 이: \nRP경력 :  TGF: RP - (팩션이름) / LARP - (팩션이름)등\n사용하시던 닉네임:\n\n" +
+                $"IC CHARACTER 성장배경: (내용)(성의없거나 짧은 글은 거절될 수 있습니다. )\n\n\n" +
+                $"(/ 스탯 사진 첨부해 주세요.)\n\n" +
+                $"[!] 개명기록을 두려워하지 마세요.당신이 누구던 마음가짐이 제대로 잡혀있다면 괜찮습니다.\n" +
+                $"[!] 본인의 부주의로 인하여 팩션 내 불이익 발생시 해고 또는 CK에 동의하십니까 ? (Y / N)\n" +
+                $"[!] 장기 미접속 시 팩션에서 강제해고 조치될 수 있습니다. 동의하십니까 ? (Y / N)\n" +
+                $"\n\nThank you for applying!";
+            await ch.SendMessageAsync(embed: embed.Build());
+            await arg.RespondAsync(text: $"{MentionUtils.MentionChannel(ch.Id)}으로 안내드리겠습니다.", ephemeral: true);
         }
 
         private async Task OnSellIsPoliceNo(SocketMessageComponent arg)
@@ -272,33 +341,23 @@ namespace DobakBot.Controller
             await arg.RespondAsync($"베팅 금액을 선택해 주세요.", components: comp.Build());
         }
 
-        private async Task<RestTextChannel> makePrivateRoom(SocketMessageComponent arg, string roomName, ulong catgoryId)
+        private async Task<RestTextChannel> makeTicketRoom(
+            SocketMessageComponent arg, 
+            string roomName, 
+            ulong catgoryId, 
+            List<SocketRole>? roles = null, 
+            List<SocketRole>? denyroles = null)
         {
             var guild = (arg.Channel as SocketTextChannel).Guild;
             var ch = await guild.CreateTextChannelAsync(roomName, x => x.CategoryId = catgoryId);
-            var dealerPer = guild.Roles.Single(x => x.Name == "CASINO Dealer");
-            var guestPer = guild.Roles.Single(x => x.Name == "CASINO Guest");
-            var denyper = new OverwritePermissions(viewChannel: PermValue.Deny, sendMessages: PermValue.Deny);
-            var userPer = new OverwritePermissions(viewChannel: PermValue.Allow, sendMessages: PermValue.Deny);
-            await ch.AddPermissionOverwriteAsync(guild.EveryoneRole, denyper);
-            await ch.AddPermissionOverwriteAsync(arg.User, userPer);
-            await ch.AddPermissionOverwriteAsync(dealerPer, userPer);
-            await ch.AddPermissionOverwriteAsync(guestPer, denyper);
-            return ch;
-        }
-
-        private async Task<RestTextChannel> makeTicketRoom(SocketMessageComponent arg, string roomName, ulong catgoryId)
-        {
-            var guild = (arg.Channel as SocketTextChannel).Guild;
-            var ch = await guild.CreateTextChannelAsync(roomName, x => x.CategoryId = catgoryId);
-            var dealerPer = guild.Roles.Single(x => x.Name == "CASINO Dealer");
-            var guestPer = guild.Roles.Single(x => x.Name == "CASINO Guest");
             var denyper = new OverwritePermissions(viewChannel: PermValue.Deny, sendMessages: PermValue.Deny);
             var userPer = new OverwritePermissions(viewChannel: PermValue.Allow, sendMessages: PermValue.Allow);
+            if (roles != null)
+                roles.ForEach(async x => await ch.AddPermissionOverwriteAsync(x, userPer));
+            if (denyroles != null)
+                denyroles.ForEach(async x => await ch.AddPermissionOverwriteAsync(x, denyper));
             await ch.AddPermissionOverwriteAsync(guild.EveryoneRole, denyper);
             await ch.AddPermissionOverwriteAsync(arg.User, userPer);
-            await ch.AddPermissionOverwriteAsync(dealerPer, userPer);
-            await ch.AddPermissionOverwriteAsync(guestPer, denyper);
             return ch;
         }
 
@@ -313,7 +372,9 @@ namespace DobakBot.Controller
                 await arg.RespondAsync($"{MentionUtils.MentionChannel(temp.Id)} 이미 만들어진 방이네요!", ephemeral: true);
                 return;
             }
-            var ch = await makePrivateRoom(arg, roomName, (ulong)channel.CategoryId);
+            var dealerPer = guild.Roles.Where(x => x.Name == "CASINO Dealer").ToList();
+            var guestPer = guild.Roles.Where(x => x.Name == "CASINO Guest").ToList();
+            var ch = await makeTicketRoom(arg, roomName, (ulong)channel.CategoryId, dealerPer, guestPer);
             var comp = new ComponentBuilder()
                 .WithButton("슬롯머신 돌리기", "slot_run", style: ButtonStyle.Primary)
                 .WithButton("슬롯머신 배율 보기", "slot_odd", style: ButtonStyle.Danger)
@@ -338,7 +399,9 @@ namespace DobakBot.Controller
                 await arg.RespondAsync($"{MentionUtils.MentionChannel(room.Id)} 이미 만들어진 방이네요!", ephemeral: true);
                 return;
             }
-            var ch = await makeTicketRoom(arg, roomName, (ulong)channel.CategoryId);
+            var dealerPer = guild.Roles.Where(x => x.Name == "CASINO Dealer").ToList();
+            var guestPer = guild.Roles.Where(x => x.Name == "CASINO Guest").ToList();
+            var ch = await makeTicketRoom(arg, roomName, (ulong)channel.CategoryId, dealerPer, guestPer);
             await arg.DeferAsync();
         }
 
